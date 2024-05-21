@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'noteworthy'
-include('app')
+include('noteworthyServiceLambda')

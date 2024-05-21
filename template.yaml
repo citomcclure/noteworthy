@@ -216,7 +216,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Role: !GetAtt AccessRole.Arn
-      CodeUri: app
+      CodeUri: noteworthyServiceLambda
       Handler: com.nashss.se.noteworthy.lambda.GetNotesLambda::handleRequest
       Runtime: java11
       Architectures:
