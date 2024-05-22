@@ -238,7 +238,7 @@ Resources:
   # DynamoDB Configuration
   #-----------------------------------------------------
   
-  PlaylistsTable:
+  NotesTable:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
