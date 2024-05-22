@@ -39,7 +39,7 @@ public class NoteDao {
         DynamoDBQueryExpression<Note> queryExpression = new DynamoDBQueryExpression<Note>()
                 .withHashKeyValues(note);
 
-        return dynamoDBMapper.query(Note.class, queryExpression);
-
+        List<Note> noteList = dynamoDBMapper.query(Note.class, queryExpression);
+        return noteList;
     }
 }
