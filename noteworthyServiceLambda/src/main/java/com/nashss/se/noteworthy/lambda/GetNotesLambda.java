@@ -7,9 +7,9 @@ public class GetNotesLambda implements RequestHandler<LambdaRequest<String>, Lam
     /**
      * Handles a Lambda Function request.
      *
-     * @param input   The Lambda Function input
+     * @param input   The Lambda Function input.
      * @param context The Lambda execution environment context object.
-     * @return The Lambda Function output
+     * @return The Lambda Function output.
      */
     @Override
     public LambdaResponse handleRequest(LambdaRequest<String> input, Context context) {
