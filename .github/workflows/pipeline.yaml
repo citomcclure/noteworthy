@@ -10,7 +10,7 @@ on:
 env:
 
   # STUDENTS: Set these environment variables
-  API_BASE_URL: https://i48vsoyvv9.execute-api.us-east-2.amazonaws.com/Prod/
+  API_BASE_URL: https://mmuotk1tuc.execute-api.us-east-2.amazonaws.com/Prod/
   COGNITO_DOMAIN: project-noteworthy-cito-mcclure
   COGNITO_REDIRECT_SIGNIN: https://d3r2t0o2s8l90u.cloudfront.net
   COGNITO_REDIRECT_SIGNOUT: https://d3r2t0o2s8l90u.cloudfront.net
