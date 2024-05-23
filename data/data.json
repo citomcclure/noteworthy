@@ -1,0 +1,26 @@
+{
+  "notes": [
+    {
+      "PutRequest": {
+        "Item": {
+          "email": { "S": "citomcclure+noteworthytest1@gmail.com" },
+          "dateUpdated": { "S": "2020-07-10 15:00:00.000" },
+          "noteId": { "S": "L49U6" },
+          "title": { "S": "New Band to Checkout" },
+          "content": { "S": "Olympus Lenticular" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "email": { "S": "citomcclure+noteworthytest1@gmail.com" },
+          "dateUpdated": { "S": "2020-08-15 20:00:00.000" },
+          "noteId": { "S": "TY51F" },
+          "title": { "S": "Groceries" },
+          "content": { "S": "milk, eggs, bread" }
+        }
+      }
+    }
+  ]
+}
