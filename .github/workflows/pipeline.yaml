@@ -5,14 +5,15 @@ on:
     branches:
       - 'main'
       - 'feature**'
+      - 'deploy**'
 
 env:
 
   # STUDENTS: Set these environment variables
-  API_BASE_URL: https://i48vsoyvv9.execute-api.us-east-2.amazonaws.com/Prod/
+  API_BASE_URL: https://mmuotk1tuc.execute-api.us-east-2.amazonaws.com/Prod/
   COGNITO_DOMAIN: project-noteworthy-cito-mcclure
-  COGNITO_REDIRECT_SIGNIN: https://d2hqijb1z1lf8i.cloudfront.net
-  COGNITO_REDIRECT_SIGNOUT: https://d2hqijb1z1lf8i.cloudfront.net
+  COGNITO_REDIRECT_SIGNIN: https://d3r2t0o2s8l90u.cloudfront.net
+  COGNITO_REDIRECT_SIGNOUT: https://d3r2t0o2s8l90u.cloudfront.net
 
   COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
   COGNITO_USER_POOL_CLIENT_ID: ${{ secrets.COGNITO_USER_POOL_CLIENT_ID }}
@@ -60,7 +61,7 @@ jobs:
           sam build --template ${SAM_TEMPLATE}
 
   build-and-package-main:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/deploy')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -136,7 +137,7 @@ jobs:
           path: web/build
 
   deploy-to-aws:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/deploy')
     needs: [build-and-package-main]
     runs-on: ubuntu-latest
     steps:
