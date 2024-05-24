@@ -5,20 +5,20 @@ import com.nashss.se.noteworthy.models.NoteModel;
 import java.util.List;
 
 public class GetNotesResult {
-    private final List<NoteModel> noteModels;
+    private final List<NoteModel> notes;
 
-    private GetNotesResult(List<NoteModel> noteModels) {
-        this.noteModels = noteModels;
+    private GetNotesResult(List<NoteModel> notes) {
+        this.notes = notes;
     }
 
     public List<NoteModel> getNoteModels() {
-        return noteModels;
+        return notes;
     }
 
     @Override
     public String toString() {
         return "GetNotesResult{" +
-                "noteModel=" + noteModels +
+                "noteModel=" + notes +
                 '}';
     }
 
@@ -28,15 +28,15 @@ public class GetNotesResult {
     }
 
     public static class Builder {
-        private List<NoteModel> noteModels;
+        private List<NoteModel> notes;
 
-        public Builder withNoteModels(List<NoteModel> noteModels) {
-            this.noteModels = noteModels;
+        public Builder withNoteModels(List<NoteModel> notes) {
+            this.notes = notes;
             return this;
         }
 
         public GetNotesResult build() {
-            return new GetNotesResult(noteModels);
+            return new GetNotesResult(notes);
         }
     }
 }
