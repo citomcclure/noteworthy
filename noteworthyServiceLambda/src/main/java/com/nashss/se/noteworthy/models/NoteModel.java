@@ -1,17 +1,16 @@
 package com.nashss.se.noteworthy.models;
 
-import org.joda.time.DateTime;
-
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class NoteModel {
     private final String noteId;
     private final String title;
     private final String content;
-    private final DateTime dateUpdated;
+    private final LocalDateTime dateUpdated;
     private final String email;
 
-    private NoteModel(String noteId, String title, String content, DateTime dateUpdated, String email) {
+    private NoteModel(String noteId, String title, String content, LocalDateTime dateUpdated, String email) {
         this.noteId = noteId;
         this.title = title;
         this.content = content;
@@ -31,7 +30,7 @@ public class NoteModel {
         return content;
     }
 
-    public DateTime getDateUpdated() {
+    public LocalDateTime getDateUpdated() {
         return dateUpdated;
     }
 
@@ -69,7 +68,7 @@ public class NoteModel {
         private String noteId;
         private String title;
         private String content;
-        private DateTime dateUpdated;
+        private LocalDateTime dateUpdated;
         private String email;
 
         public Builder withNoteId(String noteId) {
@@ -87,7 +86,7 @@ public class NoteModel {
             return this;
         }
 
-        public Builder withDateUpdated(DateTime dateUpdated) {
+        public Builder withDateUpdated(LocalDateTime dateUpdated) {
             this.dateUpdated = dateUpdated;
             return this;
         }

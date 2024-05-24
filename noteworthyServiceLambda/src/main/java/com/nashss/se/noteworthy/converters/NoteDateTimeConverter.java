@@ -2,22 +2,22 @@ package com.nashss.se.noteworthy.converters;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 
-public class NoteDateTimeConverter implements DynamoDBTypeConverter<String, DateTime> {
+public class NoteDateTimeConverter implements DynamoDBTypeConverter<String, LocalDateTime> {
     @Override
-    public String convert(DateTime datetime) {
-        if (datetime == null) {
+    public String convert(LocalDateTime localdatetime) {
+        if (localdatetime == null) {
             return null;
         }
-        return datetime.toString();
+        return localdatetime.toString();
     }
 
     @Override
-    public DateTime unconvert(String stringValue) {
+    public LocalDateTime unconvert(String stringValue) {
         if (stringValue == null || stringValue.isEmpty()) {
             return null;
         }
-        return DateTime.parse(stringValue);
+        return LocalDateTime.parse(stringValue);
     }
 }

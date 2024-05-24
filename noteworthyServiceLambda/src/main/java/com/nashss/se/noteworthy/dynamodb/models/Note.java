@@ -8,8 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 
-import org.joda.time.DateTime;
-
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -20,7 +19,7 @@ public class Note {
     private String noteId;
     private String title;
     private String content;
-    private DateTime dateUpdated;
+    private LocalDateTime dateUpdated;
     private String email;
 
     @DynamoDBAttribute(attributeName = "noteId")
@@ -52,11 +51,11 @@ public class Note {
 
     @DynamoDBTypeConverted(converter = NoteDateTimeConverter.class)
     @DynamoDBRangeKey(attributeName = "dateUpdated")
-    public DateTime getDateUpdated() {
+    public LocalDateTime getDateUpdated() {
         return dateUpdated;
     }
 
-    public void setDateUpdated(DateTime dateUpdated) {
+    public void setDateUpdated(LocalDateTime dateUpdated) {
         this.dateUpdated = dateUpdated;
     }
 
