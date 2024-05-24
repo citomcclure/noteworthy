@@ -209,3 +209,14 @@ body {
     font-weight: 400;
     color: rgb(108, 108, 108);
 }
+
+.note-previews-container {
+    padding-top: 25px;
+    display: flex;
+    align-items: center;
+}
+
+#note-preview-button {
+    height: 50px;
+    width: 200px;
+}

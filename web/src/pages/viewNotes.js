@@ -41,23 +41,22 @@ class ViewNotes extends BindingClass {
      * When the songs are updated in the datastore, update the list of songs on the page.
      */
     displayNotesOnPage() {
-        const notes = this.dataStore.get('notes')
+        const notes = this.dataStore.get('notes');
+        const notePreviewsContainer = document.querySelector(".note-previews-container");
 
         if (notes == null) {
             return;
         }
-
-        let noteHtml = '';
+        
         let note;
         for (note of notes) {
-            noteHtml += `
-                <li class="song">
-                    <span class="title">${note.title}</span>
-                    <span class="content">${note.content}</span>
-                </li>
-            `;
+            let notePreviewButton = document.createElement("button");
+            notePreviewButton.className = "button";
+            notePreviewButton.id = "note-preview-button";
+            notePreviewButton.type = "button";
+            notePreviewButton.textContent = note.title;
+            notePreviewsContainer.appendChild(notePreviewButton);
         }
-        document.getElementById('notes').innerHTML = noteHtml;
     }
 
     /**
