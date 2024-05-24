@@ -66,29 +66,29 @@ class ViewNotes extends BindingClass {
      */
     async createNote() {
 
-        const errorMessageDisplay = document.getElementById('error-message');
-        errorMessageDisplay.innerText = ``;
-        errorMessageDisplay.classList.add('hidden');
+        // const errorMessageDisplay = document.getElementById('error-message');
+        // errorMessageDisplay.innerText = ``;
+        // errorMessageDisplay.classList.add('hidden');
 
-        const playlist = this.dataStore.get('playlist');
-        if (playlist == null) {
-            return;
-        }
+        // const playlist = this.dataStore.get('playlist');
+        // if (playlist == null) {
+        //     return;
+        // }
 
-        document.getElementById('add-song').innerText = 'Adding...';
-        const asin = document.getElementById('album-asin').value;
-        const trackNumber = document.getElementById('track-number').value;
-        const playlistId = playlist.id;
+        // document.getElementById('add-song').innerText = 'Adding...';
+        // const asin = document.getElementById('album-asin').value;
+        // const trackNumber = document.getElementById('track-number').value;
+        // const playlistId = playlist.id;
 
-        const songList = await this.client.addSongToPlaylist(playlistId, asin, trackNumber, (error) => {
-            errorMessageDisplay.innerText = `Error: ${error.message}`;
-            errorMessageDisplay.classList.remove('hidden');
-        });
+        // const songList = await this.client.addSongToPlaylist(playlistId, asin, trackNumber, (error) => {
+        //     errorMessageDisplay.innerText = `Error: ${error.message}`;
+        //     errorMessageDisplay.classList.remove('hidden');
+        // });
 
-        this.dataStore.set('songs', songList);
+        // this.dataStore.set('songs', songList);
 
-        document.getElementById('add-song').innerText = 'Add Song';
-        document.getElementById("add-song-form").reset();
+        // document.getElementById('add-song').innerText = 'Add Song';
+        // document.getElementById("add-song-form").reset();
     }
 }
 

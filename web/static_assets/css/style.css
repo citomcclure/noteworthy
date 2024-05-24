@@ -1,13 +1,13 @@
 :root {
     /* css variables: https://developer.mozilla.org/en-US/docs/Web/CSS/var */
-    --primary-color: #5D5E5E;
-    --secondary-color: #ffffff;
-    --tertiary-color: #F5881F;
+    --primary-color: #ffffff;
+    --secondary-color: #202020;
+    --tertiary-color: #51ff77;
     --error-color: #EE3A23;
 }
 
 .background {
-    background-color: #8A8C8F;
+    background: linear-gradient(135deg, #ff9f50, #fcbbff);;
     margin: 0;
     counter-reset: section;
     font-family: "Helvetica Neue",Helvetica,sans-serif;
@@ -21,14 +21,16 @@
     background-color: var(--primary-color);
     color: var(--secondary-color);
     padding: 4px 20px;
+    border: solid;
 }
 
 .button {
-  background-color: var(--tertiary-color);
-  border: none;
+  background-color: var(--primary-color);
+  border: solid;
+  border-radius: 5px;
   color: var(--secondary-color);
-  padding: 6px 8px 4px 8px;
-  text-align: center;
+  padding: 6px 8px 6px 8px;
+  line-height: 100%;
   font-weight: bold;
   text-decoration: none;
   cursor: pointer;
@@ -37,21 +39,43 @@
 .button-group {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .header_home {
     font-size: 36px;
+    font-weight: 600;
     line-height: 40px;
     height: 100px;
     text-decoration: none;
     color: var(--secondary-color);
 }
 
-.card {
+/* .card {
     color: var(--primary-color);
     background-color: var(--secondary-color);
     margin: 20px;
     padding: 10px 20px;
+} */
+
+.card {
+    color: var(--secondary-color);
+    background-color: var(--primary-color);
+    text-align: center;
+    margin-top: 100px;
+    margin-left: 350px;
+    margin-right: 350px;
+    padding: 10px 20px;
+    border-radius: 25px;
+}
+
+.card-content {
+    max-width: 500px;
+}
+
+.card-content .form-field {
+    display: flex;
+    flex-direction: column;
 }
 
 .error {
@@ -65,15 +89,6 @@
 }
 .validated-field:focus:invalid {
     color: var(--error-color);
-}
-
-.card-content {
-    max-width: 500px;
-}
-
-.card-content .form-field {
-    display: flex;
-    flex-direction: column;
 }
 
 .tags {
@@ -134,4 +149,63 @@ th {
 a {
     color: var(--tertiary-color);
     text-decoration: none;
+}
+
+
+
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.row {
+    padding-top: 50px;
+}
+
+.current-note-container {
+    width: 100%;
+    height: 500px;
+    background: #ffffff;
+    border: solid;
+    border-radius: 25px;
+    padding-top: 15px;
+}
+
+.col-4 .button div {
+    display: flex;
+    align-items: center;
+    /* line-height: 100%;
+    vertical-align: middle; */
+    font-size: x-large;
+    font-weight: 500;
+    padding: 5px 10px;
+}
+
+.col-4 .button div img {
+    max-height: 22px;
+    object-fit: scale-down;
+    padding-right: 10px;
+}
+
+.note-sort-and-search {
+    padding-top: 10px;
+}
+
+#search {
+    width: 70%;
+    text-align: left;
+    font-weight: 400;
+    color: rgb(108, 108, 108);
+}
+
+#sort {
+    font-weight: 400;
+    color: rgb(108, 108, 108);
 }
