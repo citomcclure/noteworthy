@@ -23,7 +23,7 @@ public class Note {
     private DateTime dateUpdated;
     private String email;
 
-    @DynamoDBAttribute(attributeName = "note_id")
+    @DynamoDBAttribute(attributeName = "noteId")
     public String getNoteId() {
         return noteId;
     }
@@ -51,7 +51,7 @@ public class Note {
     }
 
     @DynamoDBTypeConverted(converter = NoteDateTimeConverter.class)
-    @DynamoDBRangeKey(attributeName = "date_updated")
+    @DynamoDBRangeKey(attributeName = "dateUpdated")
     public DateTime getDateUpdated() {
         return dateUpdated;
     }
