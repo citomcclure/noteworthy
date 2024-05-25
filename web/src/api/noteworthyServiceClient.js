@@ -84,7 +84,7 @@ export default class NoteworthyService extends BindingClass {
                     Authorization: `Bearer ${token}`
                 }
             });
-            return response.data.noteModels;
+            return response.data.noteList;
         } catch (error) {
             this.handleError(error, errorCallback)
         }
