@@ -43,4 +43,17 @@ public class NoteDaoTest {
         assertEquals(email, noteQueried.getEmail(), "Expected query expression to query for " +
                 "partition key: " + email);
     }
+
+    @Test
+    public void saveNote_callsMapperWithNote() {
+        // GIVEN
+        Note note = new Note();
+
+        // WHEN
+        Note result = noteDao.saveNote(note);
+
+        // THEN
+        verify(dynamoDBMapper).save(note);
+        assertEquals(note, result);
+    }
 }
