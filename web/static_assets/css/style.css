@@ -213,10 +213,12 @@ body {
 .note-previews-container {
     padding-top: 25px;
     display: flex;
+    flex-direction: column;
+    gap: 15px;
     align-items: center;
 }
 
 #note-preview-button {
-    height: 50px;
-    width: 200px;
+    height: 100px;
+    width: 100%;
 }
