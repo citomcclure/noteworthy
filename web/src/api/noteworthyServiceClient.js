@@ -72,10 +72,9 @@ export default class NoteworthyService extends BindingClass {
     }
 
     /**
-     * Get the songs on a given playlist by the playlist's identifier.
-     * @param id Unique identifier for a playlist
+     * Get the notes from the authenticated user.
      * @param errorCallback (Optional) A function to execute if the call fails.
-     * @returns The list of songs on a playlist.
+     * @returns The json response data with an iterable of noteModels.
      */
     async getNotes(errorCallback) {
         try {

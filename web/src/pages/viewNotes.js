@@ -12,13 +12,12 @@ class ViewNotes extends BindingClass {
         this.bindClassMethods(['clientLoaded', 'mount', 'displayNotesOnPage', 'createNote'], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotesOnPage);
-        this.dataStore.addChangeListener(this.createNote);
         this.header = new Header(this.dataStore);
         console.log("viewnotes constructor");
     }
 
     /**
-     * Once the client is loaded, get the playlist metadata and song list.
+     * Once the client is loaded, get the note data.
      */
     async clientLoaded() {
         const notes = await this.client.getNotes();
@@ -38,16 +37,20 @@ class ViewNotes extends BindingClass {
     }
 
     /**
-     * When the songs are updated in the datastore, update the list of songs on the page.
+     * When the notes are updated in the datastore, update the notes metadata on the page.
+     * Display notes by generating html elements for the note previews and the current note view.
      */
     displayNotesOnPage() {
         const notes = this.dataStore.get('notes');
         const notePreviewsContainer = document.querySelector(".note-previews-container");
+        const currentNoteContainer = document.querySelector(".current-note-container");
 
         if (notes == null) {
             return;
         }
         
+        let firstNote = true;
+
         let note;
         for (note of notes) {
             let notePreviewButton = document.createElement("button");
@@ -55,39 +58,33 @@ class ViewNotes extends BindingClass {
             notePreviewButton.id = "note-preview-button";
             notePreviewButton.type = "button";
             notePreviewButton.textContent = note.title;
+            notePreviewButton.noteTitle = note.title;
+            notePreviewButton.noteContent = note.content;
+
+            const currentNoteTitle = document.querySelector(".current-note-title");
+            const currentNoteContent = document.querySelector(".current-note-content");
+            notePreviewButton.addEventListener("click", function (evt) {
+                currentNoteTitle.textContent = evt.target.noteTitle;
+                currentNoteContent.textContent = evt.target.noteContent;
+            });
+
             notePreviewsContainer.appendChild(notePreviewButton);
+
+            // if (firstNote === true) {
+            //     firstNote = false;
+            //     currentNoteTitle.textContent = 
+            // }
         }
+
+
     }
 
     /**
-     * Method to run when the add song playlist submit button is pressed. Call the NoteworthyService to add a song to the
-     * playlist.
+     * Method to run when the new note button is pressed. Call the NoteworthyService to create
+     * a new empty note and set as current note.
      */
     async createNote() {
-
-        // const errorMessageDisplay = document.getElementById('error-message');
-        // errorMessageDisplay.innerText = ``;
-        // errorMessageDisplay.classList.add('hidden');
-
-        // const playlist = this.dataStore.get('playlist');
-        // if (playlist == null) {
-        //     return;
-        // }
-
-        // document.getElementById('add-song').innerText = 'Adding...';
-        // const asin = document.getElementById('album-asin').value;
-        // const trackNumber = document.getElementById('track-number').value;
-        // const playlistId = playlist.id;
-
-        // const songList = await this.client.addSongToPlaylist(playlistId, asin, trackNumber, (error) => {
-        //     errorMessageDisplay.innerText = `Error: ${error.message}`;
-        //     errorMessageDisplay.classList.remove('hidden');
-        // });
-
-        // this.dataStore.set('songs', songList);
-
-        // document.getElementById('add-song').innerText = 'Add Song';
-        // document.getElementById("add-song-form").reset();
+        alert("not implemented yet!")
     }
 }
 
