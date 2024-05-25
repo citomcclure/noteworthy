@@ -27,6 +27,17 @@ public class NoteDao {
     }
 
     /**
+     * Saves (creates or updates) the note.
+     *
+     * @param note The note to save.
+     * @return the Note object that was saved.
+     */
+    public Note saveNote(Note note) {
+        this.dynamoDBMapper.save(note);
+        return note;
+    }
+
+    /**
      * Retrieves all notes made by a specific user, determined by their email.
      *
      * @param email the user's email.
