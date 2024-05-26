@@ -2,25 +2,15 @@ package com.nashss.se.noteworthy.activity.requests;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import java.time.LocalDateTime;
-
 public class CreateNoteRequest {
-    private String noteId;
     private String title;
     private String content;
-    private LocalDateTime dateUpdated;
     private String email;
 
-    private CreateNoteRequest(String noteId, String title, String content, LocalDateTime dateUpdated, String email) {
-        this.noteId = noteId;
+    private CreateNoteRequest(String title, String content, String email) {
         this.title = title;
         this.content = content;
-        this.dateUpdated = dateUpdated;
         this.email = email;
-    }
-
-    public String getNoteId() {
-        return noteId;
     }
 
     public String getTitle() {
@@ -31,10 +21,6 @@ public class CreateNoteRequest {
         return content;
     }
 
-    public LocalDateTime getDateUpdated() {
-        return dateUpdated;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -42,10 +28,8 @@ public class CreateNoteRequest {
     @Override
     public String toString() {
         return "CreateNoteRequest{" +
-                "noteId='" + noteId + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", dateUpdated=" + dateUpdated +
                 ", email='" + email + '\'' +
                 '}';
     }
@@ -57,16 +41,9 @@ public class CreateNoteRequest {
 
     @JsonPOJOBuilder
     public static class Builder {
-        private String noteId;
         private String title;
         private String content;
-        private LocalDateTime dateUpdated;
         private String email;
-
-        public Builder withNoteId(String noteId) {
-            this.noteId = noteId;
-            return this;
-        }
 
         public Builder withTitle(String title) {
             this.title = title;
@@ -78,18 +55,13 @@ public class CreateNoteRequest {
             return this;
         }
 
-        public Builder withDateUpdated(LocalDateTime dateUpdated) {
-            this.dateUpdated = dateUpdated;
-            return this;
-        }
-
         public Builder withEmail(String email) {
             this.email = email;
             return this;
         }
 
         public CreateNoteRequest build() {
-            return new CreateNoteRequest(noteId, title, content, dateUpdated, email);
+            return new CreateNoteRequest(title, content, email);
         }
     }
 }
