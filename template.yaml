@@ -47,7 +47,7 @@ Resources:
   #-----------------------------------------------------
   # Cognito Configuration for user management
   #-----------------------------------------------------
-  
+
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
@@ -57,7 +57,7 @@ Resources:
             Priority: 1
       UsernameAttributes:
         - email
-      UsernameConfiguration: 
+      UsernameConfiguration:
         CaseSensitive: false
       AutoVerifiedAttributes:
         - email
@@ -180,8 +180,8 @@ Resources:
         - 'arn:aws:iam::aws:policy/service-role/AWSLambdaRole'
         - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17" 
-        Statement: 
+        Version: "2012-10-17"
+        Statement:
           - Effect: Allow
             Principal:
               Service:
@@ -231,13 +231,11 @@ Resources:
           Properties:
             Path: /notes
             Method: get
-            Auth:
-              Authorizer: 'NONE'
 
   #-----------------------------------------------------
   # DynamoDB Configuration
   #-----------------------------------------------------
-  
+
   NotesTable:
     Type: AWS::DynamoDB::Table
     Properties:
