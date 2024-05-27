@@ -12,12 +12,12 @@ html {
 body {
     height: 100%;
     margin: 0;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-repeat:round;
+    background-attachment: scroll;
 }
 
 .background {
-    background: linear-gradient(135deg, #ff9f50, #fcbbff);;
+    background: linear-gradient(90deg, #ff9f50, #fcbbff);
     margin: 0;
     counter-reset: section;
     font-family: "Helvetica Neue",Helvetica,sans-serif;
@@ -94,6 +94,7 @@ body {
     flex-direction: column;
     gap: 15px;
     align-items: center;
+    margin-bottom: 15px;
 }
 
 .note-previews-container .button {
@@ -108,7 +109,7 @@ body {
 .current-note-container {
     width: 100%;
     height: auto;
-    min-height: 500px;
+    min-height: 600px;
     background: #ffffff;
     padding-top: 15px;
     border: solid;
