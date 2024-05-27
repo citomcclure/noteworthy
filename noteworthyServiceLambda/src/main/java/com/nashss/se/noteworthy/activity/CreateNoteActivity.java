@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 /**
  * Implementation of the CreateNoteActivity for the NoteworthyService's CreateNote API.
- * This API allows the user to save an existing note.
+ * This API allows the user to save a new note.
  */
 public class CreateNoteActivity {
     private final Logger log = LogManager.getLogger();
@@ -34,7 +34,6 @@ public class CreateNoteActivity {
     /**
      * This method handles the incoming request by persisting a new note
      * with the provided note title and content.
-     * Retrieves all notes made by the user with that email.
      * @param createNoteRequest request object containing the note title, content,
      *                          and user email
      * @return result object containing the API defined by {@link NoteModel}
