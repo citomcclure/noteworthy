@@ -7,7 +7,6 @@ import com.nashss.se.noteworthy.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.dynamodb.models.Note;
 import com.nashss.se.noteworthy.models.NoteModel;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,9 +31,10 @@ public class UpdateNoteActivity {
     }
 
     /**
-     * This method handles the incoming request by persisting an existing note
-     * using the provided noteId and updated note title and content.
-     * Updates the last updated time to now as well.
+     * This method handles the incoming request by creating a new note
+     * using the same noteId and updated note title and content.
+     * User will see the newer version of their note as well as
+     * the older one.
      * @param updateNoteRequest request object containing the note ID, note title,
      *                          content, and user email
      * @return result object containing the API defined by {@link NoteModel}

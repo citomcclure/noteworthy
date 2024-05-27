@@ -19,18 +19,18 @@ public class UpdateNoteLambda
     public LambdaResponse handleRequest(AuthenticatedLambdaRequest<UpdateNoteRequest> input, Context context) {
         log.info("handleRequest");
         return super.runActivity(
-                () -> {
-                    UpdateNoteRequest unauthenticatedRequest = input.fromBody(UpdateNoteRequest.class);
-                    return input.fromUserClaims(claims ->
-                            UpdateNoteRequest.builder()
-                                    .withNoteId(unauthenticatedRequest.getNoteId())
-                                    .withTitle(unauthenticatedRequest.getTitle())
-                                    .withContent(unauthenticatedRequest.getContent())
-                                    .withEmail(claims.get("email"))
-                                    .build());
-                },
-                (request, serviceComponent) ->
-                        serviceComponent.provideUpdateNoteActivity().handleRequest(request)
+            () -> {
+                UpdateNoteRequest unauthenticatedRequest = input.fromBody(UpdateNoteRequest.class);
+                return input.fromUserClaims(claims ->
+                        UpdateNoteRequest.builder()
+                                .withNoteId(unauthenticatedRequest.getNoteId())
+                                .withTitle(unauthenticatedRequest.getTitle())
+                                .withContent(unauthenticatedRequest.getContent())
+                                .withEmail(claims.get("email"))
+                                .build());
+            },
+            (request, serviceComponent) ->
+                    serviceComponent.provideUpdateNoteActivity().handleRequest(request)
         );
     }
 }
