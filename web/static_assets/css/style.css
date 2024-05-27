@@ -12,12 +12,12 @@ html {
 body {
     height: 100%;
     margin: 0;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-repeat:round;
+    background-attachment: scroll;
 }
 
 .background {
-    background: linear-gradient(135deg, #ff9f50, #fcbbff);;
+    background: linear-gradient(90deg, #ff9f50, #fcbbff);
     margin: 0;
     counter-reset: section;
     font-family: "Helvetica Neue",Helvetica,sans-serif;
@@ -58,15 +58,6 @@ body {
   cursor: pointer;
 }
 
-.current-note-container {
-    width: 100%;
-    height: 600px;
-    background: #ffffff;
-    padding-top: 15px;
-    border: solid;
-    border-radius: 60px;
-}
-
 .col-4 .button div {
     display: flex;
     align-items: center;
@@ -103,6 +94,7 @@ body {
     flex-direction: column;
     gap: 15px;
     align-items: center;
+    margin-bottom: 15px;
 }
 
 .note-previews-container .button {
@@ -114,12 +106,45 @@ body {
     width: 100%;
 }
 
+.current-note-container {
+    width: 100%;
+    height: auto;
+    min-height: 600px;
+    background: #ffffff;
+    padding-top: 15px;
+    border: solid;
+    border-radius: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
 .current-note-title {
     font-size: xx-large;
     font-weight: 500;
 }
 
+.divider {
+    width: 100%;
+}
+
 .current-note-content {
     text-align: left;
-    padding: 10px 30px;
+    width: 90%;
+    padding-bottom: 50px;
+    margin-bottom: 25px;
+}
+
+.space-between-content-and-save{
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: stretch;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    padding-right: 45px;
+    padding-bottom: 25px;
 }

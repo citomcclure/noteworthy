@@ -51,7 +51,7 @@ public class GetNotesActivity {
         }
 
         return GetNotesResult.builder()
-                .withNoteModels(noteModels)
+                .withNoteList(noteModels)
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.nashss.se.noteworthy.dependency;
 
+import com.nashss.se.noteworthy.activity.CreateNoteActivity;
 import com.nashss.se.noteworthy.activity.GetNotesActivity;
 
 import dagger.Component;
@@ -18,4 +19,10 @@ public interface ServiceComponent {
      * @return GetNotesActivity
      */
     GetNotesActivity provideGetNotesActivity();
+
+    /**
+     * Provides the relevant activity.
+     * @return CreateNoteActivity
+     */
+    CreateNoteActivity provideCreateNoteActivity();
 }
