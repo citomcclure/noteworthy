@@ -78,7 +78,7 @@ export default class NoteworthyService extends BindingClass {
      */
     async getNotes(errorCallback) {
         try {
-            const token = await this.getTokenOrThrow("Only authenticated users retrieve their notes");
+            const token = await this.getTokenOrThrow("Only authenticated users can retrieve their notes.");
             const response = await this.axiosClient.get(`notes`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -88,6 +88,20 @@ export default class NoteworthyService extends BindingClass {
         } catch (error) {
             this.handleError(error, errorCallback)
         }
+    }
+
+    //TODO: add documentation and errorCallback
+    async createNote(title, content) {
+            const token = await this.getTokenOrThrow("Only authenticated users can save notes.");
+            const response = await this.axiosClient.post(`notes`, {
+                title: title,
+                content: content
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            return response.data.note;
     }
 
     /**

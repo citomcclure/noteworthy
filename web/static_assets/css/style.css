@@ -131,7 +131,9 @@ body {
 
 .current-note-content {
     text-align: left;
-    padding: 0 25px 75px;
+    width: 90%;
+    padding-bottom: 50px;
+    margin-bottom: 25px;
 }
 
 .space-between-content-and-save{
