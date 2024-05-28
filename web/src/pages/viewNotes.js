@@ -9,7 +9,7 @@ import DataStore from "../util/DataStore";
 class ViewNotes extends BindingClass {
     constructor() {
         super();
-        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotesOnPage', 'createNote', 'saveNote'], this);
+        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'createNote', 'displayPrimaryNote'], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotesOnPage);
         this.header = new Header(this.dataStore);
@@ -29,7 +29,7 @@ class ViewNotes extends BindingClass {
      */
     mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
-        document.getElementById('save-note').addEventListener('click', this.saveNote);
+        // document.getElementById('save-note').addEventListener('click', this.displayPrimaryNote);
 
         this.header.addHeaderToPage();
 
@@ -39,9 +39,9 @@ class ViewNotes extends BindingClass {
 
     /**
      * When the notes are updated in the datastore, update the notes metadata on the page.
-     * Display notes by generating html elements for the note previews and the current note view.
+     * Display note preview by generating button elements for each note.
      */
-    async displayNotesOnPage() {
+    async displayNotePreviews() {
         const notes = this.dataStore.get('notes');
         const notePreviewsContainer = document.querySelector(".note-previews-container");
 
@@ -56,33 +56,33 @@ class ViewNotes extends BindingClass {
         }
     }
 
-    /**
-     * Method to run when the new note button is pressed. Call the NoteworthyService to create
-     * a new empty note and set as current note.
-     */
-    async createNote() {
-        const notePreviews = document.querySelector(".note-previews-container");
-        const currentNoteTitle = document.querySelector(".current-note-title");
-        const currentNoteContent = document.querySelector(".current-note-content");
-        
-        let newTitle = "Untitled";
-        let newContent = "";
-
-        currentNoteTitle.textContent = newTitle;
-        currentNoteContent.textContent = newContent;
-        const newNote = await this.client.createNote(newTitle, newContent);
-        const newNotePreviewButton = this.createNotePreviewButtonHelper(newNote);
-        notePreviews.prepend(newNotePreviewButton);
-    }
-
-    async saveNote() {
-        const currentNoteTitle = document.querySelector(".current-note-title");
-        const currentNoteContent = document.querySelector(".current-note-content");
-        const newNote = await this.client.createNote(currentNoteTitle.textContent, currentNoteContent.textContent);
+    async displayPrimaryNote() {
+        const primaryNoteTitle = document.querySelector(".primary-note-title");
+        const primaryNoteContent = document.querySelector(".primary-note-content");
+        const newNote = await this.client.createNote(primaryNoteTitle.textContent, primaryNoteContent.textContent);
 
         const notePreviewsContainer = document.querySelector(".note-previews-container");
         notePreviewsContainer.appendChild(
             this.createNotePreviewButtonHelper(newNote));
+    }
+
+    /**
+     * Method to run when the new note button is pressed. Creates a new empty note,
+     * saves it on the backend, and displays as new preview and primary note.
+     */
+    async createNote() {
+        const notePreviews = document.querySelector(".note-previews-container");
+        const primaryNoteTitle = document.querySelector(".primary-note-title");
+        const primaryNoteContent = document.querySelector(".primary-note-content");
+        
+        let newTitle = "Untitled";
+        let newContent = "";
+
+        primaryNoteTitle.textContent = newTitle;
+        primaryNoteContent.textContent = newContent;
+        const newNote = await this.client.createNote(newTitle, newContent);
+        const newNotePreviewButton = this.createNotePreviewButtonHelper(newNote);
+        notePreviews.prepend(newNotePreviewButton);
     }
 
     createNotePreviewButtonHelper(note) {
@@ -94,11 +94,11 @@ class ViewNotes extends BindingClass {
         notePreviewButton.noteTitle = note.title;
         notePreviewButton.noteContent = note.content;
 
-        const currentNoteTitle = document.querySelector(".current-note-title");
-        const currentNoteContent = document.querySelector(".current-note-content");
+        const primaryNoteTitle = document.querySelector(".primary-note-title");
+        const primaryNoteContent = document.querySelector(".primary-note-content");
         notePreviewButton.addEventListener("click", function (evt) {
-            currentNoteTitle.textContent = evt.target.noteTitle;
-            currentNoteContent.textContent = evt.target.noteContent;
+            primaryNoteTitle.textContent = evt.target.noteTitle;
+            primaryNoteContent.textContent = evt.target.noteContent;
         });
 
         return notePreviewButton;

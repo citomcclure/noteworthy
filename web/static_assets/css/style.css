@@ -106,7 +106,7 @@ body {
     width: 100%;
 }
 
-.current-note-container {
+.primary-note-container {
     width: 100%;
     height: auto;
     min-height: 600px;
@@ -121,7 +121,7 @@ body {
     position: relative;
 }
 
-.current-note-title {
+.primary-note-title {
     font-size: xx-large;
     font-weight: 500;
 }
@@ -130,7 +130,7 @@ body {
     width: 100%;
 }
 
-.current-note-content {
+.primary-note-content {
     text-align: left;
     width: 90%;
     padding-bottom: 50px;
