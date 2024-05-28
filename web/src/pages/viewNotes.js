@@ -61,11 +61,18 @@ class ViewNotes extends BindingClass {
      * a new empty note and set as current note.
      */
     async createNote() {
+        const notePreviews = document.querySelector(".note-previews-container");
         const currentNoteTitle = document.querySelector(".current-note-title");
         const currentNoteContent = document.querySelector(".current-note-content");
+        
+        let newTitle = "Untitled";
+        let newContent = "";
 
-        currentNoteTitle.textContent = "Untitled";
-        currentNoteContent.textContent = "";
+        currentNoteTitle.textContent = newTitle;
+        currentNoteContent.textContent = newContent;
+        const newNote = await this.client.createNote(newTitle, newContent);
+        const newNotePreviewButton = this.createNotePreviewButtonHelper(newNote);
+        notePreviews.prepend(newNotePreviewButton);
     }
 
     async saveNote() {
