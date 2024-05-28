@@ -9,9 +9,9 @@ import DataStore from "../util/DataStore";
 class ViewNotes extends BindingClass {
     constructor() {
         super();
-        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'createNote', 'displayPrimaryNote'], this);
+        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayPrimaryNote', 'createNote', 'updateNote'], this);
         this.dataStore = new DataStore();
-        this.dataStore.addChangeListener(this.displayNotesOnPage);
+        this.dataStore.addChangeListener(this.displayNotePreviews);
         this.header = new Header(this.dataStore);
         console.log("viewnotes constructor");
     }
@@ -29,7 +29,7 @@ class ViewNotes extends BindingClass {
      */
     mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
-        // document.getElementById('save-note').addEventListener('click', this.displayPrimaryNote);
+        document.getElementById('save-note').addEventListener('click', this.updateNote);
 
         this.header.addHeaderToPage();
 
@@ -83,6 +83,16 @@ class ViewNotes extends BindingClass {
         const newNote = await this.client.createNote(newTitle, newContent);
         const newNotePreviewButton = this.createNotePreviewButtonHelper(newNote);
         notePreviews.prepend(newNotePreviewButton);
+    }
+
+    async updateNote() {
+        const primaryNoteTitle = document.querySelector(".primary-note-title");
+        const primaryNoteContent = document.querySelector(".primary-note-content");
+
+        const updatedNote = await this.client.updateNote(primaryNoteTitle.textContent, primaryNoteContent.textContent);
+        // current UpdateNote endpoint does not update the same note due to current schema limitations. Future feature
+        // to be implemented.
+        const updatedNotePreviewButton = this.createNotePreviewButtonHelper(updatedNote);
     }
 
     createNotePreviewButtonHelper(note) {
