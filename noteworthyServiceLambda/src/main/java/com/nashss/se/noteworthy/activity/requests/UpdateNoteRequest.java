@@ -3,7 +3,7 @@ package com.nashss.se.noteworthy.activity.requests;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = CreateNoteRequest.Builder.class)
+@JsonDeserialize(builder = UpdateNoteRequest.Builder.class)
 public class UpdateNoteRequest {
     private String noteId;
     private String title;
