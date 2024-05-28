@@ -4,7 +4,7 @@
       "PutRequest": {
         "Item": {
           "email": { "S": "citomcclure+noteworthytest1@gmail.com" },
-          "dateUpdated": { "S": "2024-02-03T11:30:00" },
+          "dateCreated": { "S": "2024-02-03T11:30:00" },
           "noteId": { "S": "L49U6" },
           "title": { "S": "New Band to Checkout" },
           "content": { "S": "Olympus Lenticular" }
@@ -15,7 +15,8 @@
       "PutRequest": {
         "Item": {
           "email": { "S": "citomcclure+noteworthytest1@gmail.com" },
-          "dateUpdated": { "S": "2024-04-15T15:00:00" },
+          "dateCreated": { "S": "2024-04-15T15:00:00" },
+          "dateUpdated": { "S": "2024-04-17T15:00:00" },
           "noteId": { "S": "TY51F" },
           "title": { "S": "Groceries" },
           "content": { "S": "milk, eggs, bread" }
@@ -26,7 +27,7 @@
       "PutRequest": {
         "Item": {
           "email": { "S": "citomcclure+noteworthytest1@gmail.com" },
-          "dateUpdated": { "S": "2024-05-13T09:00:00" },
+          "dateCreated": { "S": "2024-05-13T09:00:00" },
           "noteId": { "S": "Z009K" },
           "title": { "S": "Nashville Zoo's Tiger Cubs" },
           "content": { "S": "Bulan, Kirana and Zara can now be seen at Tiger Crossroads! The cubs and mom, Anne, will be out daily although weather and animal care factors may occasionally prevent the cubs from being outside. These are the first Sumatran tigers to be born at Nashville Zoo. Anne gave birth to the cubs on the evening of October 20, 2023." }
