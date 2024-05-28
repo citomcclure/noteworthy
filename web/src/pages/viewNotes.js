@@ -56,6 +56,7 @@ class ViewNotes extends BindingClass {
         }
     }
 
+    // TODO: attach noteId to all methods in order to update
     async displayPrimaryNote() {
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
