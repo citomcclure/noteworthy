@@ -1,6 +1,6 @@
 {
-  "name": "u5-project-template-static-website",
-  "description": "Website for the NSS Unit 5 Project",
+  "name": "noteworthy-static-website",
+  "description": "Manage notes across all of your devices with an easy to use interface.",
   "version": "1.0.0",
   "license": "UNLICENSED",
   "main": "js/index.js",

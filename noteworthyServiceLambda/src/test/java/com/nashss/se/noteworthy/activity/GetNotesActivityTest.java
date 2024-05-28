@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,17 +34,16 @@ public class GetNotesActivityTest {
     @Test
     public void handleRequest_savedNotesFound_returnsListOfNoteModelsInResult() {
         // GIVEN
-        String expectedNoteId = "12345";
         String expectedTitle = "expectedTitle";
         String expectedContent = "expectedContent";
-        LocalDateTime expectedDateUpdated = LocalDateTime.now();
+        LocalDateTime expectedDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         String expectedEmail = "email@test.com";
 
         Note note = new Note();
-        note.setNoteId(expectedNoteId);
         note.setTitle(expectedTitle);
         note.setContent(expectedContent);
-        note.setDateUpdated(expectedDateUpdated);
+        note.setDateCreated(expectedDate);
+        note.setDateUpdated(expectedDate);
         note.setEmail(expectedEmail);
 
         when(noteDao.getAllNotes(expectedEmail)).thenReturn(List.of(note));
@@ -56,10 +57,10 @@ public class GetNotesActivityTest {
         NoteModel resultNote = result.getNoteList().get(0);
 
         // THEN
-        assertEquals(expectedNoteId, resultNote.getNoteId());
         assertEquals(expectedTitle, resultNote.getTitle());
         assertEquals(expectedContent, resultNote.getContent());
-        assertEquals(expectedDateUpdated, resultNote.getDateUpdated());
+        assertEquals(expectedDate, resultNote.getDateCreated());
+        assertEquals(expectedDate, resultNote.getDateUpdated());
         assertEquals(expectedEmail, resultNote.getEmail());
     }
 }

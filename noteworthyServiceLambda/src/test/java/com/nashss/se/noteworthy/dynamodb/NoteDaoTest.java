@@ -56,4 +56,6 @@ public class NoteDaoTest {
         verify(dynamoDBMapper).save(note);
         assertEquals(note, result);
     }
+
+    // TODO: add unit test for update?
 }

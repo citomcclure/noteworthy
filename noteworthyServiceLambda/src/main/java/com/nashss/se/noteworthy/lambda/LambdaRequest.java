@@ -19,7 +19,6 @@ import static com.nashss.se.noteworthy.utils.NullUtils.ifNull;
  * @param <T> The type of the concrete request that should be created from this LambdaRequest
  */
 public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
-
     protected static final ObjectMapper MAPPER = new ObjectMapper();
     protected final Logger log = LogManager.getLogger();
 
@@ -31,6 +30,7 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
     public T fromBody(Class<T> requestClass) {
         log.info("Attempting to deserialize object from request body ({}).", requestClass.getSimpleName());
         try {
+            MAPPER.findAndRegisterModules();
             return MAPPER.readValue(super.getBody(), requestClass);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(

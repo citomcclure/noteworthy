@@ -104,6 +104,20 @@ export default class NoteworthyService extends BindingClass {
             return response.data.note;
     }
 
+    async updateNote(title, content, dateCreated) {
+        const token = await this.getTokenOrThrow("Only authenticated users can save notes.");
+        const response = await this.axiosClient.put(`notes`, {
+            title: title,
+            content: content,
+            dateCreated: dateCreated
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data.note;
+    }
+
     /**
      * Helper method to log the error and run any error functions.
      * @param error The error received from the server.

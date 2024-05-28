@@ -4,22 +4,19 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class NoteModel {
-    private final String noteId;
     private final String title;
     private final String content;
+    private final LocalDateTime dateCreated;
     private final LocalDateTime dateUpdated;
     private final String email;
 
-    private NoteModel(String noteId, String title, String content, LocalDateTime dateUpdated, String email) {
-        this.noteId = noteId;
+    private NoteModel(String title, String content, LocalDateTime dateCreated,
+                      LocalDateTime dateUpdated, String email) {
         this.title = title;
         this.content = content;
+        this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
         this.email = email;
-    }
-
-    public String getNoteId() {
-        return noteId;
     }
 
     public String getTitle() {
@@ -28,6 +25,10 @@ public class NoteModel {
 
     public String getContent() {
         return content;
+    }
+
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
     }
 
     public LocalDateTime getDateUpdated() {
@@ -47,16 +48,16 @@ public class NoteModel {
             return false;
         }
         NoteModel noteModel = (NoteModel) o;
-        return Objects.equals(noteId, noteModel.noteId) &&
-                Objects.equals(title, noteModel.title) &&
+        return Objects.equals(title, noteModel.title) &&
                 Objects.equals(content, noteModel.content) &&
+                Objects.equals(dateCreated, noteModel.dateCreated) &&
                 Objects.equals(dateUpdated, noteModel.dateUpdated) &&
                 Objects.equals(email, noteModel.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(noteId, title, content, dateUpdated, email);
+        return Objects.hash(title, content, dateCreated, dateUpdated, email);
     }
 
     //CHECKSTYLE:OFF:Builder
@@ -65,16 +66,11 @@ public class NoteModel {
     }
 
     public static class Builder {
-        private String noteId;
         private String title;
         private String content;
+        private LocalDateTime dateCreated;
         private LocalDateTime dateUpdated;
         private String email;
-
-        public Builder withNoteId(String noteId) {
-            this.noteId = noteId;
-            return this;
-        }
 
         public Builder withTitle(String title) {
             this.title = title;
@@ -83,6 +79,11 @@ public class NoteModel {
 
         public Builder withContent(String content) {
             this.content = content;
+            return this;
+        }
+
+        public Builder withDateCreated(LocalDateTime dateCreated) {
+            this.dateCreated = dateCreated;
             return this;
         }
 
@@ -97,7 +98,7 @@ public class NoteModel {
         }
 
         public NoteModel build() {
-            return new NoteModel(noteId, title, content, dateUpdated, email);
+            return new NoteModel(title, content, dateCreated, dateUpdated, email);
         }
     }
 }
