@@ -42,30 +42,21 @@ class ViewNotes extends BindingClass {
      * Display note preview by generating button elements for each note.
      */
     async displayNotePreviews() {
-        const notes = this.dataStore.get('notes');
-        const notePreviewsContainer = document.querySelector(".note-previews-container");
+        const notes = await this.dataStore.get('notes');
 
         if (notes == null) {
             return;
         }
 
+        // empties current note previews
+        const notePreviewsContainer = document.querySelector(".note-previews-container");
+        notePreviewsContainer.replaceChildren();
+
         let note;
         for (note of notes) {
-            notePreviewsContainer.appendChild(
-                this.createNotePreviewButtonHelper(note));
+            notePreviewsContainer.appendChild(this.createNotePreviewButtonHelper(note));
         }
     }
-
-    // async displayPrimaryNote() {
-    //     const primaryNoteTitle = document.querySelector(".primary-note-title");
-    //     const primaryNoteContent = document.querySelector(".primary-note-content");
-        
-    //     const newNote = await this.client.createNote(primaryNoteTitle.textContent, primaryNoteContent.textContent);
-
-    //     const notePreviewsContainer = document.querySelector(".note-previews-container");
-    //     notePreviewsContainer.appendChild(
-    //         this.createNotePreviewButtonHelper(newNote));
-    // }
 
     /**
      * Method to run when the new note button is pressed. Creates a new empty note,
@@ -78,14 +69,22 @@ class ViewNotes extends BindingClass {
         
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
+        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
         primaryNoteTitle.textContent = newTitle;
         primaryNoteContent.textContent = newContent;
+        primaryNoteDateCreated.textContent = newNote.dateCreated;
+    
         
         const newNotePreviewButton = this.createNotePreviewButtonHelper(newNote);
 
-        // TODO: update datastore and repaint the note preview area
         const notePreviews = document.querySelector(".note-previews-container");
         notePreviews.prepend(newNotePreviewButton);
+
+        // add new note in datastore
+        debugger;
+        const notes = await this.dataStore.get('notes');
+        notes.unshift(newNote);
+        this.dataStore.set('notes', notes);
     }
 
     async updateNote() {
@@ -94,8 +93,18 @@ class ViewNotes extends BindingClass {
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
 
         const updatedNote = await this.client.updateNote(primaryNoteTitle.textContent, primaryNoteContent.textContent, primaryNoteDateCreated.textContent);
-        // TODO: also update datastore here (in case title updated for previews and so clicking previews shows right info)
-        const updatedNotePreviewButton = this.createNotePreviewButtonHelper(updatedNote);
+
+        const notes = await this.dataStore.get('notes');
+
+        let note;
+        for (note of notes) {
+            if (note.dateCreated == updatedNote.dateCreated) {
+                note.title = updatedNote.title;
+                note.content = updatedNote.content;
+                break;
+            }
+        }
+        this.displayNotePreviews();
     }
 
     createNotePreviewButtonHelper(note) {
