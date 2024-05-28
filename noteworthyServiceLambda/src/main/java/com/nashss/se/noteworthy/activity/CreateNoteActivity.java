@@ -41,8 +41,6 @@ public class CreateNoteActivity {
     public CreateNoteResult handleRequest(CreateNoteRequest createNoteRequest) {
         log.info("Received CreateNoteRequest {}", createNoteRequest);
 
-        //TODO: check if illegal characters from project template affect endpoint
-
         Note note = new Note();
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());

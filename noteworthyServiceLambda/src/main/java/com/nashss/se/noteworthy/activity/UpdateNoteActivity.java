@@ -43,8 +43,6 @@ public class UpdateNoteActivity {
     public UpdateNoteResult handleRequest(UpdateNoteRequest updateNoteRequest) {
         log.info("Received UpdateNoteRequest {}", updateNoteRequest);
 
-        //TODO: check if illegal characters from project template affect endpoint
-
         Note note = new Note();
         note.setTitle(updateNoteRequest.getTitle());
         note.setContent(updateNoteRequest.getContent());

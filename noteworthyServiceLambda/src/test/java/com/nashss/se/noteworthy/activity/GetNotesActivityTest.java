@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +36,7 @@ public class GetNotesActivityTest {
         // GIVEN
         String expectedTitle = "expectedTitle";
         String expectedContent = "expectedContent";
-        LocalDateTime expectedDate = LocalDateTime.now();
+        LocalDateTime expectedDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         String expectedEmail = "email@test.com";
 
         Note note = new Note();
