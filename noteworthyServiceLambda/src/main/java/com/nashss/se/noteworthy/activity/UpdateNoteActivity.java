@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import javax.inject.Inject;
 
 /**
@@ -48,7 +49,7 @@ public class UpdateNoteActivity {
         note.setTitle(updateNoteRequest.getTitle());
         note.setContent(updateNoteRequest.getContent());
         note.setDateCreated(updateNoteRequest.getDateCreated());
-        note.setDateUpdated(LocalDateTime.now());
+        note.setDateUpdated(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         note.setEmail(updateNoteRequest.getEmail());
 
         noteDao.saveNote(note);

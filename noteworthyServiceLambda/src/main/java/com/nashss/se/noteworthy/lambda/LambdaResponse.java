@@ -3,6 +3,7 @@ package com.nashss.se.noteworthy.lambda;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +34,7 @@ public class LambdaResponse extends APIGatewayProxyResponseEvent {
         log.info("success");
         try {
             MAPPER.findAndRegisterModules();
+            MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             return new LambdaResponse(200, MAPPER.writeValueAsString(payload));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unable to convert payload to JSON.");
