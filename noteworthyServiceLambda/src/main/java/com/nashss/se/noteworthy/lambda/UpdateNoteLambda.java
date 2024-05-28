@@ -23,9 +23,9 @@ public class UpdateNoteLambda
                 UpdateNoteRequest unauthenticatedRequest = input.fromBody(UpdateNoteRequest.class);
                 return input.fromUserClaims(claims ->
                         UpdateNoteRequest.builder()
-                                .withNoteId(unauthenticatedRequest.getNoteId())
                                 .withTitle(unauthenticatedRequest.getTitle())
                                 .withContent(unauthenticatedRequest.getContent())
+                                .withDateCreated(unauthenticatedRequest.getDateCreated())
                                 .withEmail(claims.get("email"))
                                 .build());
             },

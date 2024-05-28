@@ -16,10 +16,10 @@ public class ModelConverter {
     //TODO: make unit test
     public static NoteModel toNoteModel(Note note) {
         return NoteModel.builder()
-                .withNoteId(note.getNoteId())
                 .withTitle(note.getTitle())
                 .withContent(note.getContent())
                 .withDateUpdated(note.getDateUpdated())
+                .withDateCreated(note.getDateCreated())
                 .withEmail(note.getEmail())
                 .build();
     }

@@ -7,7 +7,6 @@ import com.nashss.se.noteworthy.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.dynamodb.models.Note;
 import com.nashss.se.noteworthy.models.NoteModel;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,9 +43,9 @@ public class CreateNoteActivity {
         //TODO: check if illegal characters from project template affect endpoint
 
         Note note = new Note();
-        note.setNoteId(RandomStringUtils.randomAlphanumeric(5));
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
+        note.setDateCreated(LocalDateTime.now());
         note.setDateUpdated(LocalDateTime.now());
         note.setEmail(createNoteRequest.getEmail());
 

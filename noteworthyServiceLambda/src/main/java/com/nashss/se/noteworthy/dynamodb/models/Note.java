@@ -16,20 +16,11 @@ import java.util.Objects;
  */
 @DynamoDBTable(tableName = "notes")
 public class Note {
-    private String noteId;
     private String title;
     private String content;
     private LocalDateTime dateUpdated;
+    private LocalDateTime dateCreated;
     private String email;
-
-    @DynamoDBAttribute(attributeName = "noteId")
-    public String getNoteId() {
-        return noteId;
-    }
-
-    public void setNoteId(String noteId) {
-        this.noteId = noteId;
-    }
 
     @DynamoDBAttribute(attributeName = "title")
     public String getTitle() {
@@ -59,6 +50,16 @@ public class Note {
         this.dateUpdated = dateUpdated;
     }
 
+    @DynamoDBTypeConverted(converter = NoteDateTimeConverter.class)
+    @DynamoDBRangeKey(attributeName = "dateCreated")
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
     @DynamoDBHashKey(attributeName = "email")
     public String getEmail() {
         return email;
@@ -77,25 +78,25 @@ public class Note {
             return false;
         }
         Note note = (Note) o;
-        return Objects.equals(noteId, note.noteId) &&
-                Objects.equals(title, note.title) &&
+        return Objects.equals(title, note.title) &&
                 Objects.equals(content, note.content) &&
                 Objects.equals(dateUpdated, note.dateUpdated) &&
+                Objects.equals(dateCreated, note.dateCreated) &&
                 Objects.equals(email, note.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(noteId, title, content, dateUpdated, email);
+        return Objects.hash(title, content, dateUpdated, dateCreated, email);
     }
 
     @Override
     public String toString() {
         return "Note{" +
-                "noteId='" + noteId + '\'' +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", dateUpdated=" + dateUpdated +
+                ", dateCreated=" + dateCreated +
                 ", email='" + email + '\'' +
                 '}';
     }

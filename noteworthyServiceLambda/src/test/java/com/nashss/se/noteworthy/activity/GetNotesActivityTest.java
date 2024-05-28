@@ -32,17 +32,16 @@ public class GetNotesActivityTest {
     @Test
     public void handleRequest_savedNotesFound_returnsListOfNoteModelsInResult() {
         // GIVEN
-        String expectedNoteId = "12345";
         String expectedTitle = "expectedTitle";
         String expectedContent = "expectedContent";
-        LocalDateTime expectedDateUpdated = LocalDateTime.now();
+        LocalDateTime expectedDate = LocalDateTime.now();
         String expectedEmail = "email@test.com";
 
         Note note = new Note();
-        note.setNoteId(expectedNoteId);
         note.setTitle(expectedTitle);
         note.setContent(expectedContent);
-        note.setDateUpdated(expectedDateUpdated);
+        note.setDateUpdated(expectedDate);
+        note.setDateCreated(expectedDate);
         note.setEmail(expectedEmail);
 
         when(noteDao.getAllNotes(expectedEmail)).thenReturn(List.of(note));
@@ -56,10 +55,10 @@ public class GetNotesActivityTest {
         NoteModel resultNote = result.getNoteList().get(0);
 
         // THEN
-        assertEquals(expectedNoteId, resultNote.getNoteId());
         assertEquals(expectedTitle, resultNote.getTitle());
         assertEquals(expectedContent, resultNote.getContent());
-        assertEquals(expectedDateUpdated, resultNote.getDateUpdated());
+        assertEquals(expectedDate, resultNote.getDateUpdated());
+        assertEquals(expectedDate, resultNote.getDateCreated());
         assertEquals(expectedEmail, resultNote.getEmail());
     }
 }

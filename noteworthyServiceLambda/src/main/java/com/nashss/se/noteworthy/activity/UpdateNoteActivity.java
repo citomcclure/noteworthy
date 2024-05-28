@@ -45,9 +45,9 @@ public class UpdateNoteActivity {
         //TODO: check if illegal characters from project template affect endpoint
 
         Note note = new Note();
-        note.setNoteId(updateNoteRequest.getNoteId());
         note.setTitle(updateNoteRequest.getTitle());
         note.setContent(updateNoteRequest.getContent());
+        note.setDateCreated(updateNoteRequest.getDateCreated());
         note.setDateUpdated(LocalDateTime.now());
         note.setEmail(updateNoteRequest.getEmail());
 
