@@ -18,8 +18,8 @@ public class ModelConverter {
         return NoteModel.builder()
                 .withTitle(note.getTitle())
                 .withContent(note.getContent())
-                .withDateUpdated(note.getDateUpdated())
                 .withDateCreated(note.getDateCreated())
+                .withDateUpdated(note.getDateUpdated())
                 .withEmail(note.getEmail())
                 .build();
     }

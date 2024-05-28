@@ -40,8 +40,8 @@ public class GetNotesActivityTest {
         Note note = new Note();
         note.setTitle(expectedTitle);
         note.setContent(expectedContent);
-        note.setDateUpdated(expectedDate);
         note.setDateCreated(expectedDate);
+        note.setDateUpdated(expectedDate);
         note.setEmail(expectedEmail);
 
         when(noteDao.getAllNotes(expectedEmail)).thenReturn(List.of(note));
@@ -57,8 +57,8 @@ public class GetNotesActivityTest {
         // THEN
         assertEquals(expectedTitle, resultNote.getTitle());
         assertEquals(expectedContent, resultNote.getContent());
-        assertEquals(expectedDate, resultNote.getDateUpdated());
         assertEquals(expectedDate, resultNote.getDateCreated());
+        assertEquals(expectedDate, resultNote.getDateUpdated());
         assertEquals(expectedEmail, resultNote.getEmail());
     }
 }

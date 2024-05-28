@@ -45,8 +45,9 @@ public class CreateNoteActivity {
         Note note = new Note();
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
-        note.setDateCreated(LocalDateTime.now());
-        note.setDateUpdated(LocalDateTime.now());
+        LocalDateTime currentTime = LocalDateTime.now();
+        note.setDateCreated(currentTime);
+        note.setDateUpdated(currentTime);
         note.setEmail(createNoteRequest.getEmail());
 
         noteDao.saveNote(note);

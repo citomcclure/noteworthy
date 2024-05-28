@@ -45,8 +45,8 @@ public class CreateNoteActivityTest {
         // THEN
         assertEquals(expectedTitle, resultNote.getTitle());
         assertEquals(expectedContent, resultNote.getContent());
-        assertNotNull(resultNote.getDateUpdated());
         assertNotNull(resultNote.getDateCreated());
+        assertNotNull(resultNote.getDateUpdated());
         assertEquals(expectedEmail, resultNote.getEmail());
     }
 }

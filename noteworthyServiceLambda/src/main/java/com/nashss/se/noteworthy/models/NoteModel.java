@@ -6,16 +6,16 @@ import java.util.Objects;
 public class NoteModel {
     private final String title;
     private final String content;
-    private final LocalDateTime dateUpdated;
     private final LocalDateTime dateCreated;
+    private final LocalDateTime dateUpdated;
     private final String email;
 
-    private NoteModel(String title, String content, LocalDateTime dateUpdated,
-                      LocalDateTime dateCreated, String email) {
+    private NoteModel(String title, String content, LocalDateTime dateCreated,
+                      LocalDateTime dateUpdated, String email) {
         this.title = title;
         this.content = content;
-        this.dateUpdated = dateUpdated;
         this.dateCreated = dateCreated;
+        this.dateUpdated = dateUpdated;
         this.email = email;
     }
 
@@ -27,12 +27,12 @@ public class NoteModel {
         return content;
     }
 
-    public LocalDateTime getDateUpdated() {
-        return dateUpdated;
-    }
-
     public LocalDateTime getDateCreated() {
         return dateCreated;
+    }
+
+    public LocalDateTime getDateUpdated() {
+        return dateUpdated;
     }
 
     public String getEmail() {
@@ -50,14 +50,14 @@ public class NoteModel {
         NoteModel noteModel = (NoteModel) o;
         return Objects.equals(title, noteModel.title) &&
                 Objects.equals(content, noteModel.content) &&
-                Objects.equals(dateUpdated, noteModel.dateUpdated) &&
                 Objects.equals(dateCreated, noteModel.dateCreated) &&
+                Objects.equals(dateUpdated, noteModel.dateUpdated) &&
                 Objects.equals(email, noteModel.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, content, dateUpdated, dateCreated, email);
+        return Objects.hash(title, content, dateCreated, dateUpdated, email);
     }
 
     //CHECKSTYLE:OFF:Builder
@@ -68,8 +68,8 @@ public class NoteModel {
     public static class Builder {
         private String title;
         private String content;
-        private LocalDateTime dateUpdated;
         private LocalDateTime dateCreated;
+        private LocalDateTime dateUpdated;
         private String email;
 
         public Builder withTitle(String title) {
@@ -82,13 +82,13 @@ public class NoteModel {
             return this;
         }
 
-        public Builder withDateUpdated(LocalDateTime dateUpdated) {
-            this.dateUpdated = dateUpdated;
+        public Builder withDateCreated(LocalDateTime dateCreated) {
+            this.dateCreated = dateCreated;
             return this;
         }
 
-        public Builder withDateCreated(LocalDateTime dateCreated) {
-            this.dateCreated = dateCreated;
+        public Builder withDateUpdated(LocalDateTime dateUpdated) {
+            this.dateUpdated = dateUpdated;
             return this;
         }
 
@@ -98,7 +98,7 @@ public class NoteModel {
         }
 
         public NoteModel build() {
-            return new NoteModel(title, content, dateUpdated, dateCreated, email);
+            return new NoteModel(title, content, dateCreated, dateUpdated, email);
         }
     }
 }

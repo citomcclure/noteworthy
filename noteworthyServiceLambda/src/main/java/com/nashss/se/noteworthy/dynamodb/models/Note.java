@@ -18,8 +18,8 @@ import java.util.Objects;
 public class Note {
     private String title;
     private String content;
-    private LocalDateTime dateUpdated;
     private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
     private String email;
 
     @DynamoDBAttribute(attributeName = "title")
@@ -41,16 +41,6 @@ public class Note {
     }
 
     @DynamoDBTypeConverted(converter = NoteDateTimeConverter.class)
-    @DynamoDBRangeKey(attributeName = "dateUpdated")
-    public LocalDateTime getDateUpdated() {
-        return dateUpdated;
-    }
-
-    public void setDateUpdated(LocalDateTime dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
-
-    @DynamoDBTypeConverted(converter = NoteDateTimeConverter.class)
     @DynamoDBRangeKey(attributeName = "dateCreated")
     public LocalDateTime getDateCreated() {
         return dateCreated;
@@ -58,6 +48,16 @@ public class Note {
 
     public void setDateCreated(LocalDateTime dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    @DynamoDBTypeConverted(converter = NoteDateTimeConverter.class)
+    @DynamoDBAttribute(attributeName = "dateUpdated")
+    public LocalDateTime getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(LocalDateTime dateUpdated) {
+        this.dateUpdated = dateUpdated;
     }
 
     @DynamoDBHashKey(attributeName = "email")
@@ -80,14 +80,14 @@ public class Note {
         Note note = (Note) o;
         return Objects.equals(title, note.title) &&
                 Objects.equals(content, note.content) &&
-                Objects.equals(dateUpdated, note.dateUpdated) &&
                 Objects.equals(dateCreated, note.dateCreated) &&
+                Objects.equals(dateUpdated, note.dateUpdated) &&
                 Objects.equals(email, note.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, content, dateUpdated, dateCreated, email);
+        return Objects.hash(title, content, dateCreated, dateUpdated, email);
     }
 
     @Override
@@ -95,8 +95,8 @@ public class Note {
         return "Note{" +
                 "title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", dateUpdated=" + dateUpdated +
                 ", dateCreated=" + dateCreated +
+                ", dateUpdated=" + dateUpdated +
                 ", email='" + email + '\'' +
                 '}';
     }
