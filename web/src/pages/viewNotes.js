@@ -9,19 +9,11 @@ import DataStore from "../util/DataStore";
 class ViewNotes extends BindingClass {
     constructor() {
         super();
-        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayPrimaryNote', 'createNote', 'updateNote'], this);
+        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'createNote', 'updateNote'], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
         this.header = new Header(this.dataStore);
         console.log("viewnotes constructor");
-    }
-
-    /**
-     * Once the client is loaded, get the note data.
-     */
-    async clientLoaded() {
-        const notes = await this.client.getNotes();
-        this.dataStore.set('notes', notes);
     }
 
     /**
@@ -36,6 +28,14 @@ class ViewNotes extends BindingClass {
         this.client = new NoteworthyServiceClient();
         this.clientLoaded();
     }
+
+    /**
+     * Once the client is loaded, get the note data.
+     */
+        async clientLoaded() {
+            const notes = await this.client.getNotes();
+            this.dataStore.set('notes', notes);
+        }
 
     /**
      * When the notes are updated in the datastore, update the notes metadata on the page.
@@ -56,43 +56,45 @@ class ViewNotes extends BindingClass {
         }
     }
 
-    // TODO: attach noteId to all methods in order to update
-    async displayPrimaryNote() {
-        const primaryNoteTitle = document.querySelector(".primary-note-title");
-        const primaryNoteContent = document.querySelector(".primary-note-content");
-        const newNote = await this.client.createNote(primaryNoteTitle.textContent, primaryNoteContent.textContent);
+    // async displayPrimaryNote() {
+    //     const primaryNoteTitle = document.querySelector(".primary-note-title");
+    //     const primaryNoteContent = document.querySelector(".primary-note-content");
+        
+    //     const newNote = await this.client.createNote(primaryNoteTitle.textContent, primaryNoteContent.textContent);
 
-        const notePreviewsContainer = document.querySelector(".note-previews-container");
-        notePreviewsContainer.appendChild(
-            this.createNotePreviewButtonHelper(newNote));
-    }
+    //     const notePreviewsContainer = document.querySelector(".note-previews-container");
+    //     notePreviewsContainer.appendChild(
+    //         this.createNotePreviewButtonHelper(newNote));
+    // }
 
     /**
      * Method to run when the new note button is pressed. Creates a new empty note,
      * saves it on the backend, and displays as new preview and primary note.
      */
     async createNote() {
-        const notePreviews = document.querySelector(".note-previews-container");
-        const primaryNoteTitle = document.querySelector(".primary-note-title");
-        const primaryNoteContent = document.querySelector(".primary-note-content");
-        
         let newTitle = "Untitled";
         let newContent = "";
-
+        const newNote = await this.client.createNote(newTitle, newContent);
+        
+        const primaryNoteTitle = document.querySelector(".primary-note-title");
+        const primaryNoteContent = document.querySelector(".primary-note-content");
         primaryNoteTitle.textContent = newTitle;
         primaryNoteContent.textContent = newContent;
-        const newNote = await this.client.createNote(newTitle, newContent);
+        
         const newNotePreviewButton = this.createNotePreviewButtonHelper(newNote);
+
+        // TODO: update datastore and repaint the note preview area
+        const notePreviews = document.querySelector(".note-previews-container");
         notePreviews.prepend(newNotePreviewButton);
     }
 
     async updateNote() {
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
+        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
 
-        const updatedNote = await this.client.updateNote(primaryNoteTitle.textContent, primaryNoteContent.textContent);
-        // current UpdateNote endpoint does not update the same note due to current schema limitations. Future feature
-        // to be implemented.
+        const updatedNote = await this.client.updateNote(primaryNoteTitle.textContent, primaryNoteContent.textContent, primaryNoteDateCreated.textContent);
+        // TODO: also update datastore here (in case title updated for previews and so clicking previews shows right info)
         const updatedNotePreviewButton = this.createNotePreviewButtonHelper(updatedNote);
     }
 
@@ -104,12 +106,15 @@ class ViewNotes extends BindingClass {
         notePreviewButton.textContent = note.title;
         notePreviewButton.noteTitle = note.title;
         notePreviewButton.noteContent = note.content;
+        notePreviewButton.noteDateCreated = note.dateCreated;
 
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
+        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
         notePreviewButton.addEventListener("click", function (evt) {
             primaryNoteTitle.textContent = evt.target.noteTitle;
             primaryNoteContent.textContent = evt.target.noteContent;
+            primaryNoteDateCreated.textContent = evt.target.noteDateCreated;
         });
 
         return notePreviewButton;

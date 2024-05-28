@@ -126,6 +126,10 @@ body {
     font-weight: 500;
 }
 
+.primary-note-date-created {
+    display: none;
+}
+
 .divider {
     width: 100%;
 }

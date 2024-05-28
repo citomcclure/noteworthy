@@ -13,7 +13,6 @@ import java.util.Map;
  */
 public class LambdaResponse extends APIGatewayProxyResponseEvent {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private static final Logger log = LogManager.getLogger();
     private LambdaResponse(int statusCode, String body) {
         super.setStatusCode(statusCode);

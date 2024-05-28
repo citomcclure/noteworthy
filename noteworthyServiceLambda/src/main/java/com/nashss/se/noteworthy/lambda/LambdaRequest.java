@@ -19,7 +19,6 @@ import static com.nashss.se.noteworthy.utils.NullUtils.ifNull;
  * @param <T> The type of the concrete request that should be created from this LambdaRequest
  */
 public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
-
     protected static final ObjectMapper MAPPER = new ObjectMapper();
     protected final Logger log = LogManager.getLogger();
 
