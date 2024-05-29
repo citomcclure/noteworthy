@@ -12,8 +12,8 @@ env:
   # STUDENTS: Set these environment variables
   API_BASE_URL: https://mmuotk1tuc.execute-api.us-east-2.amazonaws.com/Prod/
   COGNITO_DOMAIN: project-noteworthy-cito-mcclure
-  COGNITO_REDIRECT_SIGNIN: https://d3r2t0o2s8l90u.cloudfront.net
-  COGNITO_REDIRECT_SIGNOUT: https://d3r2t0o2s8l90u.cloudfront.net
+  COGNITO_REDIRECT_SIGNIN: https://d37b89xepth84o.cloudfront.net
+  COGNITO_REDIRECT_SIGNOUT: https://d37b89xepth84o.cloudfront.net
 
   COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
   COGNITO_USER_POOL_CLIENT_ID: ${{ secrets.COGNITO_USER_POOL_CLIENT_ID }}
