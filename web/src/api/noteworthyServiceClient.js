@@ -122,10 +122,11 @@ export default class NoteworthyService extends BindingClass {
     async deleteNote(dateCreated) {
         const token = await this.getTokenOrThrow("Only authenticated users can delete notes.");
         const response = await this.axiosClient.delete(`notes`, {
-            dateCreated: dateCreated
-        }, {
             headers: {
                 Authorization: `Bearer ${token}`
+            },
+            data: {
+                dateCreated: dateCreated
             }
         });
         return response.data.note;

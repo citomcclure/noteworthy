@@ -10,11 +10,10 @@ import DataStore from "../util/DataStore";
 class ViewNotes extends BindingClass {
     constructor() {
         super();
-        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'createNote', 'updateNote'], this);
+        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'createNote', 'updateNote', 'deleteNote'], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
         this.header = new Header(this.dataStore);
-        console.log("viewnotes constructor");
     }
 
     /**
@@ -23,6 +22,7 @@ class ViewNotes extends BindingClass {
     mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
         document.getElementById('save-note').addEventListener('click', this.updateNote);
+        document.getElementById('delete-note').addEventListener('click', this.deleteNote);
 
         this.header.addHeaderToPage();
 
@@ -106,6 +106,20 @@ class ViewNotes extends BindingClass {
                 break;
             }
         }
+
+        // Repaint note preview area
+        this.displayNotePreviews();
+    }
+
+    async deleteNote() {
+        // Delete note from backend using primary note dateCreated
+        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
+        const deletedNote = await this.client.deleteNote(primaryNoteDateCreated.textContent);
+
+        // Delete note in datastore
+        let notes = await this.dataStore.get('notes');
+        notes = notes.filter(note => note.dateCreated != deletedNote.dateCreated);
+        this.dataStore.set('notes', notes);
 
         // Repaint note preview area
         this.displayNotePreviews();
