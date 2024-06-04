@@ -1,7 +1,7 @@
 package com.nashss.se.noteworthy.activity;
 
-import com.nashss.se.noteworthy.activity.requests.UpdateNoteRequest;
-import com.nashss.se.noteworthy.activity.results.UpdateNoteResult;
+import com.nashss.se.noteworthy.activity.requests.DeleteNoteRequest;
+import com.nashss.se.noteworthy.activity.results.DeleteNoteResult;
 import com.nashss.se.noteworthy.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.models.NoteModel;
 
@@ -17,42 +17,35 @@ import java.time.temporal.ChronoUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class UpdateNoteActivityTest {
+public class DeleteNoteActivityTest {
     @Mock
     private NoteDao noteDao;
 
-    private UpdateNoteActivity updateNoteActivity;
+    private DeleteNoteActivity deleteNoteActivity;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        updateNoteActivity = new UpdateNoteActivity(noteDao);
+        deleteNoteActivity = new DeleteNoteActivity(noteDao);
     }
 
     @Test
     public void handleRequest_goodRequest_updatesNote() {
         // GIVEN
-        String expectedTitle = "New Title";
-        String expectedContent = "new content";
         LocalDateTime expectedDateCreated = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         String expectedEmail = "email@test.com";
 
-        UpdateNoteRequest request = UpdateNoteRequest.builder()
-                .withTitle(expectedTitle)
-                .withContent(expectedContent)
+        DeleteNoteRequest request = DeleteNoteRequest.builder()
                 .withDateCreated(expectedDateCreated)
                 .withEmail(expectedEmail)
                 .build();
 
         // WHEN
-        UpdateNoteResult result = updateNoteActivity.handleRequest(request);
+        DeleteNoteResult result = deleteNoteActivity.handleRequest(request);
         NoteModel resultNote = result.getNote();
 
         // THEN
-        assertEquals(expectedTitle, resultNote.getTitle());
-        assertEquals(expectedContent, resultNote.getContent());
         assertNotNull(resultNote.getDateCreated());
-        assertNotNull(resultNote.getDateUpdated());
         assertEquals(expectedEmail, resultNote.getEmail());
     }
 }

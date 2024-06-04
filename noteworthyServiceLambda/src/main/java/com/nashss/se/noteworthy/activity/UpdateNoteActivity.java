@@ -32,12 +32,9 @@ public class UpdateNoteActivity {
     }
 
     /**
-     * This method handles the incoming request by creating a new note
-     * using the same noteId and updated note title and content.
-     * User will see the newer version of their note as well as
-     * the older one.
-     * @param updateNoteRequest request object containing the note ID, note title,
-     *                          content, and user email
+     * This method handles the incoming request by updating an existing note
+     * with an updated title, content, and last updated date.
+     * @param updateNoteRequest request object containing all fields for the note.
      * @return result object containing the API defined by {@link NoteModel}
      */
     public UpdateNoteResult handleRequest(UpdateNoteRequest updateNoteRequest) {

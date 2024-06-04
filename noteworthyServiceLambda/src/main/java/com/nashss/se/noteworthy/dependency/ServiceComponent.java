@@ -1,6 +1,7 @@
 package com.nashss.se.noteworthy.dependency;
 
 import com.nashss.se.noteworthy.activity.CreateNoteActivity;
+import com.nashss.se.noteworthy.activity.DeleteNoteActivity;
 import com.nashss.se.noteworthy.activity.GetNotesActivity;
 import com.nashss.se.noteworthy.activity.UpdateNoteActivity;
 
@@ -29,7 +30,13 @@ public interface ServiceComponent {
 
     /**
      * Provides the relevant activity.
-     * @return CreateNoteActivity
+     * @return UpdateNoteActivity
      */
     UpdateNoteActivity provideUpdateNoteActivity();
+
+    /**
+     * Provides the relevant activity.
+     * @return DeleteNoteActivity
+     */
+    DeleteNoteActivity provideDeleteNoteActivity();
 }

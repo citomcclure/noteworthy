@@ -6,27 +6,29 @@ import DataStore from "../util/DataStore";
 /**
  * Logic needed to view main page of the website displaying all notes.
  */
+// TODO: change name of class and file
 class ViewNotes extends BindingClass {
     constructor() {
         super();
-        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'createNote', 'updateNote'], this);
+        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote', 'createNote', 'updateNote', 'deleteNote'], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
         this.header = new Header(this.dataStore);
-        console.log("viewnotes constructor");
     }
 
     /**
      * Add the header to the page and load the NoteworthyServiceClient.
      */
-    mount() {
+    async mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
         document.getElementById('save-note').addEventListener('click', this.updateNote);
+        document.getElementById('delete-note').addEventListener('click', this.deleteNote);
 
         this.header.addHeaderToPage();
 
         this.client = new NoteworthyServiceClient();
-        this.clientLoaded();
+        await this.clientLoaded();
+        this.displayFirstNoteAsPrimaryNote();
     }
 
     /**
@@ -60,6 +62,28 @@ class ViewNotes extends BindingClass {
     }
 
     /**
+     * Takes the first note preview and displays it as the primary note.
+     */
+    async displayFirstNoteAsPrimaryNote() {
+        // Get html elements for primary note
+        const primaryNoteTitle = document.querySelector(".primary-note-title");
+        const primaryNoteContent = document.querySelector(".primary-note-content");
+        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
+
+        // Get first note preview if there is one
+        const notes = await this.dataStore.get('notes');
+        if (notes == null) {
+            return;
+        }
+        let firstNote = notes[0];
+
+        // Set primary note elements to first note preview values
+        primaryNoteTitle.textContent = firstNote.title;
+        primaryNoteContent.textContent = firstNote.content;
+        primaryNoteDateCreated.textContent = firstNote.dateCreated;
+    }
+
+    /**
      * Method to run when the new note button is pressed. Creates a new empty note,
      * saves it on the backend, and displays as new preview and primary note.
      */
@@ -88,6 +112,10 @@ class ViewNotes extends BindingClass {
         this.dataStore.set('notes', notes);
     }
 
+    /**
+     * Update a note's title and content. The last updated date will be updated to now on the backend.
+     * The note preview will reflect the new title, if any.
+     */
     async updateNote() {
         // Update note using primary note values
         const primaryNoteTitle = document.querySelector(".primary-note-title");
@@ -110,6 +138,30 @@ class ViewNotes extends BindingClass {
         this.displayNotePreviews();
     }
 
+    /**
+     * Deletes the primary note in view. After deletion, it will be removed from the note
+     * preview area and the first note will now be displayed as the primary note.
+     */
+    async deleteNote() {
+        // Delete note from backend using primary note dateCreated
+        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
+        const deletedNote = await this.client.deleteNote(primaryNoteDateCreated.textContent);
+
+        // Delete note in datastore
+        let notes = await this.dataStore.get('notes');
+        notes = notes.filter(note => note.dateCreated != deletedNote.dateCreated);
+        this.dataStore.set('notes', notes);
+
+        // Repaint note preview area and show first note preview as primary note
+        this.displayNotePreviews();
+        this.displayFirstNoteAsPrimaryNote();
+    }
+
+    /**
+     * Helper class to generate the note preview button for the note preview area.
+     * @param {*} note the note a button is being made for.
+     * @returns the note preview button with attached event listener.
+     */
     createNotePreviewButtonHelper(note) {
         // Create button element, set button text to note title, and set values
         let notePreviewButton = document.createElement("button");
