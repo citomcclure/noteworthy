@@ -141,7 +141,7 @@ body {
     margin-bottom: 25px;
 }
 
-.space-between-content-and-save{
+.space-after-content{
     display: flex;
     flex-direction: row;
     justify-content: right;
@@ -149,6 +149,15 @@ body {
     width: 100%;
     position: absolute;
     bottom: 0;
-    padding-right: 45px;
+    padding-right: 40px;
     padding-bottom: 25px;
+}
+
+#delete-note {
+    margin-left: 10px;
+}
+
+.col-6 .button img {
+    max-height: 22px;
+    object-fit: scale-down;
 }
