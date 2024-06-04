@@ -50,7 +50,17 @@ public class NoteDao {
         DynamoDBQueryExpression<Note> queryExpression = new DynamoDBQueryExpression<Note>()
                 .withHashKeyValues(note);
 
-        List<Note> noteList = dynamoDBMapper.query(Note.class, queryExpression);
-        return noteList;
+        return this.dynamoDBMapper.query(Note.class, queryExpression);
+    }
+
+    /**
+     * Deletes a note using the set partition and sort keys.
+     *
+     * @param note the note to be deleted.
+     * @return the note that was used for deletion.
+     */
+    public Note deleteNote(Note note) {
+        this.dynamoDBMapper.delete(note);
+        return note;
     }
 }
