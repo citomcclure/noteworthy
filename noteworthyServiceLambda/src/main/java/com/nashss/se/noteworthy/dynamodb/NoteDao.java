@@ -54,9 +54,9 @@ public class NoteDao {
     }
 
     /**
-     * Deletes a note using the set partition and sort keys.
+     * Hard deletes a note using the set partition and sort keys.
      *
-     * @param note the note to be deleted.
+     * @param note the note to be deleted, containing the email and dateCreated.
      * @return the note that was used for deletion.
      */
     public Note deleteNote(Note note) {

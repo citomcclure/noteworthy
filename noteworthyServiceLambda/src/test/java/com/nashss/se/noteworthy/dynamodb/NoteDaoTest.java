@@ -9,6 +9,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -58,4 +61,22 @@ public class NoteDaoTest {
     }
 
     // TODO: add unit test for update?
+
+    @Test
+    public void deleteNote_callsMapperWithNote() {
+        // GIVEN
+        String expectedEmail = "email@test.com";
+        LocalDateTime expectedDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
+        Note note = new Note();
+        note.setEmail(expectedEmail);
+        note.setDateCreated(expectedDate);
+
+        // WHEN
+        Note result = noteDao.deleteNote(note);
+
+        // THEN
+        verify(dynamoDBMapper).delete(note);
+        assertEquals(note, result);
+    }
 }
