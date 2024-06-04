@@ -15,7 +15,8 @@ export default class NoteworthyService extends BindingClass {
     constructor(props = {}) {
         super();
 
-        const methodsToBind = ['clientLoaded', 'getIdentity', 'login', 'logout', 'getNotes'];
+        const methodsToBind = ['clientLoaded', 'getIdentity', 'login', 'logout',
+                                'getNotes', 'createNote', 'updateNote', 'deleteNote'];
         this.bindClassMethods(methodsToBind, this);
 
         this.authenticator = new Authenticator();;
@@ -92,7 +93,7 @@ export default class NoteworthyService extends BindingClass {
 
     //TODO: add documentation and errorCallback
     async createNote(title, content) {
-            const token = await this.getTokenOrThrow("Only authenticated users can save notes.");
+            const token = await this.getTokenOrThrow("Only authenticated users can create notes.");
             const response = await this.axiosClient.post(`notes`, {
                 title: title,
                 content: content
@@ -105,10 +106,22 @@ export default class NoteworthyService extends BindingClass {
     }
 
     async updateNote(title, content, dateCreated) {
-        const token = await this.getTokenOrThrow("Only authenticated users can save notes.");
+        const token = await this.getTokenOrThrow("Only authenticated users can update notes.");
         const response = await this.axiosClient.put(`notes`, {
             title: title,
             content: content,
+            dateCreated: dateCreated
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data.note;
+    }
+
+    async deleteNote(dateCreated) {
+        const token = await this.getTokenOrThrow("Only authenticated users can delete notes.");
+        const response = await this.axiosClient.delete(`notes`, {
             dateCreated: dateCreated
         }, {
             headers: {

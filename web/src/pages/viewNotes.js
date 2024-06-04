@@ -6,6 +6,7 @@ import DataStore from "../util/DataStore";
 /**
  * Logic needed to view main page of the website displaying all notes.
  */
+// TODO: change name of class and file
 class ViewNotes extends BindingClass {
     constructor() {
         super();
