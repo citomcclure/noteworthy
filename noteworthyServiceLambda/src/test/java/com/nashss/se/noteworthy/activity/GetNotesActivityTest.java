@@ -4,16 +4,16 @@ import com.nashss.se.noteworthy.activity.requests.GetNotesRequest;
 import com.nashss.se.noteworthy.activity.results.GetNotesResult;
 import com.nashss.se.noteworthy.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.dynamodb.models.Note;
-
 import com.nashss.se.noteworthy.models.NoteModel;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
