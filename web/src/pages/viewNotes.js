@@ -10,7 +10,7 @@ import DataStore from "../util/DataStore";
 class ViewNotes extends BindingClass {
     constructor() {
         super();
-        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'createNote', 'updateNote', 'deleteNote'], this);
+        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote', 'createNote', 'updateNote', 'deleteNote'], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
         this.header = new Header(this.dataStore);
@@ -19,7 +19,7 @@ class ViewNotes extends BindingClass {
     /**
      * Add the header to the page and load the NoteworthyServiceClient.
      */
-    mount() {
+    async mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
         document.getElementById('save-note').addEventListener('click', this.updateNote);
         document.getElementById('delete-note').addEventListener('click', this.deleteNote);
@@ -27,7 +27,8 @@ class ViewNotes extends BindingClass {
         this.header.addHeaderToPage();
 
         this.client = new NoteworthyServiceClient();
-        this.clientLoaded();
+        await this.clientLoaded();
+        this.displayFirstNoteAsPrimaryNote();
     }
 
     /**
@@ -58,6 +59,25 @@ class ViewNotes extends BindingClass {
         for (note of notes) {
             notePreviewsContainer.appendChild(this.createNotePreviewButtonHelper(note));
         }
+    }
+
+    async displayFirstNoteAsPrimaryNote() {
+        // Get html elements for primary note
+        const primaryNoteTitle = document.querySelector(".primary-note-title");
+        const primaryNoteContent = document.querySelector(".primary-note-content");
+        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
+
+        // Get first note preview if there is one
+        const notes = await this.dataStore.get('notes');
+        if (notes == null) {
+            return;
+        }
+        let firstNote = notes[0];
+
+        // Set primary note elements to first note preview values
+        primaryNoteTitle.textContent = firstNote.title;
+        primaryNoteContent.textContent = firstNote.content;
+        primaryNoteDateCreated.textContent = firstNote.dateCreated;
     }
 
     /**
@@ -121,8 +141,9 @@ class ViewNotes extends BindingClass {
         notes = notes.filter(note => note.dateCreated != deletedNote.dateCreated);
         this.dataStore.set('notes', notes);
 
-        // Repaint note preview area
+        // Repaint note preview area and show first note preview as primary note
         this.displayNotePreviews();
+        this.displayFirstNoteAsPrimaryNote();
     }
 
     createNotePreviewButtonHelper(note) {
