@@ -61,6 +61,9 @@ class ViewNotes extends BindingClass {
         }
     }
 
+    /**
+     * Takes the first note preview and displays it as the primary note.
+     */
     async displayFirstNoteAsPrimaryNote() {
         // Get html elements for primary note
         const primaryNoteTitle = document.querySelector(".primary-note-title");
@@ -109,6 +112,10 @@ class ViewNotes extends BindingClass {
         this.dataStore.set('notes', notes);
     }
 
+    /**
+     * Update a note's title and content. The last updated date will be updated to now on the backend.
+     * The note preview will reflect the new title, if any.
+     */
     async updateNote() {
         // Update note using primary note values
         const primaryNoteTitle = document.querySelector(".primary-note-title");
@@ -131,6 +138,10 @@ class ViewNotes extends BindingClass {
         this.displayNotePreviews();
     }
 
+    /**
+     * Deletes the primary note in view. After deletion, it will be removed from the note
+     * preview area and the first note will now be displayed as the primary note.
+     */
     async deleteNote() {
         // Delete note from backend using primary note dateCreated
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
@@ -146,6 +157,11 @@ class ViewNotes extends BindingClass {
         this.displayFirstNoteAsPrimaryNote();
     }
 
+    /**
+     * Helper class to generate the note preview button for the note preview area.
+     * @param {*} note the note a button is being made for.
+     * @returns the note preview button with attached event listener.
+     */
     createNotePreviewButtonHelper(note) {
         // Create button element, set button text to note title, and set values
         let notePreviewButton = document.createElement("button");
