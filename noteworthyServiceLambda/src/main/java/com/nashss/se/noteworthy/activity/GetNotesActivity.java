@@ -6,12 +6,16 @@ import com.nashss.se.noteworthy.converters.ModelConverter;
 import com.nashss.se.noteworthy.dynamodb.NoteDao;
 
 import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.exceptions.InvalidAttributeValueException;
 import com.nashss.se.noteworthy.models.NoteModel;
 
+import com.nashss.se.noteworthy.models.NoteOrder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -23,6 +27,7 @@ import javax.inject.Inject;
 public class GetNotesActivity {
     private final Logger log = LogManager.getLogger();
     private final NoteDao noteDao;
+    private GetNotesRequest getNotesRequest;
 
     /**
      * Instantiates a new GetNotesActivity object.
@@ -41,11 +46,15 @@ public class GetNotesActivity {
      */
     public GetNotesResult handleRequest(final GetNotesRequest getNotesRequest) {
         log.info("Received GetNotesRequest {}", getNotesRequest);
+        this.getNotesRequest = getNotesRequest;
+
         String email = getNotesRequest.getEmail();
         List<Note> notes = noteDao.getAllNotes(email);
 
+        List<Note> orderedNotes = orderNotes(notes);
+
         List<NoteModel> noteModels = new ArrayList<>();
-        for (Note note : notes) {
+        for (Note note : orderedNotes) {
             NoteModel noteModel = ModelConverter.toNoteModel(note);
             noteModels.add(noteModel);
         }
@@ -53,5 +62,21 @@ public class GetNotesActivity {
         return GetNotesResult.builder()
                 .withNoteList(noteModels)
                 .build();
+    }
+
+    private List<Note> orderNotes(List<Note> notes) {
+        String noteOrder = getNotesRequest.getOrder();
+
+        if (noteOrder == null) {
+            noteOrder = NoteOrder.DEFAULT;
+        } else if (!Arrays.asList(NoteOrder.values()).contains(noteOrder)) {
+            throw new InvalidAttributeValueException(String.format("Unrecognized sort order: '%s'", noteOrder));
+        }
+
+        if (noteOrder.equals(NoteOrder.DEFAULT_REVERSED)) {
+            Collections.reverse(notes);
+        }
+
+        return notes;
     }
 }
