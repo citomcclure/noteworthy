@@ -8,8 +8,8 @@ import com.nashss.se.noteworthy.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.dynamodb.models.Note;
 import com.nashss.se.noteworthy.exceptions.InvalidAttributeValueException;
 import com.nashss.se.noteworthy.models.NoteModel;
-
 import com.nashss.se.noteworthy.models.NoteOrder;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +27,7 @@ import javax.inject.Inject;
 public class GetNotesActivity {
     private final Logger log = LogManager.getLogger();
     private final NoteDao noteDao;
-    private GetNotesRequest getNotesRequest;
+    private String noteOrder;
 
     /**
      * Instantiates a new GetNotesActivity object.
@@ -46,11 +46,10 @@ public class GetNotesActivity {
      */
     public GetNotesResult handleRequest(final GetNotesRequest getNotesRequest) {
         log.info("Received GetNotesRequest {}", getNotesRequest);
-        this.getNotesRequest = getNotesRequest;
-
         String email = getNotesRequest.getEmail();
         List<Note> notes = noteDao.getAllNotes(email);
 
+        noteOrder = getNotesRequest.getOrder();
         List<Note> orderedNotes = orderNotes(notes);
 
         List<NoteModel> noteModels = new ArrayList<>();
@@ -65,8 +64,6 @@ public class GetNotesActivity {
     }
 
     private List<Note> orderNotes(List<Note> notes) {
-        String noteOrder = getNotesRequest.getOrder();
-
         if (noteOrder == null) {
             noteOrder = NoteOrder.DEFAULT;
         } else if (!Arrays.asList(NoteOrder.values()).contains(noteOrder)) {
