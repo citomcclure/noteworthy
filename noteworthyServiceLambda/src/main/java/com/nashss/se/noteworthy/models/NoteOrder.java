@@ -2,10 +2,11 @@ package com.nashss.se.noteworthy.models;
 
 public class NoteOrder {
 
-    public static final String DEFAULT = "date_created_newest_to_oldest";
-    public static final String DEFAULT_REVERSED = "date_created_oldest_to_newest";
-    public static final String LAST_UPDATED = "date_created_newest_to_oldest";
-    public static final String LAST_UPDATED_REVERSED = "date_last_updated_oldest_to_newest";
+    // Default is newest to oldest using dateCreated
+    public static final String DEFAULT = "default";
+    public static final String DEFAULT_REVERSED = "default_reversed";
+    public static final String LAST_UPDATED = "last_updated";
+    public static final String LAST_UPDATED_REVERSED = "last_updated_reversed";
 
 
     private NoteOrder() {
