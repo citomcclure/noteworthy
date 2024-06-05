@@ -11,7 +11,7 @@ class ViewNotes extends BindingClass {
     constructor() {
         super();
         this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote', 'createNote', 'updateNote', 'deleteNote',
-                                'reverseNoteOrder', 'sortNotes'
+                                'reverseNoteOrder'
         ], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
@@ -162,24 +162,18 @@ class ViewNotes extends BindingClass {
     }
 
     async reverseNoteOrder() {
+        const notes = await this.dataStore.get('notes');
         const noteOrder = await this.dataStore.get('noteOrder');
 
+        // reverse note order and update datastore
+        notes.reverse();
+        this.dataStore.set('notes', notes);
+
+        // set noteOrder to opposite in datastore
         if (noteOrder == 'default') {
             this.dataStore.set('noteOrder', 'default_reversed')
         } else {
             this.dataStore.set('noteOrder', 'default')
-        }
-    }
-    
-    async sortNotes() {
-        // const notes = await this.dataStore.get('notes');
-        const noteOrder = await this.dataStore.get('noteOrder');
-        debugger;
-        if (noteOrder == 'default') {
-            return;
-        } else if (noteOrder == 'default_reversed') {
-            notes.reverse();
-            // this.dataStore.set('notes', notes);
         }
     }
 
