@@ -10,7 +10,8 @@ import DataStore from "../util/DataStore";
 class ViewNotes extends BindingClass {
     constructor() {
         super();
-        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote', 'createNote', 'updateNote', 'deleteNote',
+        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote',
+                                'createNote', 'updateNote', 'deleteNote',
                                 'reverseNoteOrder'
         ], this);
         this.dataStore = new DataStore();
@@ -161,6 +162,10 @@ class ViewNotes extends BindingClass {
         this.displayFirstNoteAsPrimaryNote();
     }
 
+    /**
+     * Reverses the note previews order and updates the datastore for notes and noteOrder.
+     * This implementation does not make use of backend to order notes.
+     */
     async reverseNoteOrder() {
         const notes = await this.dataStore.get('notes');
         const noteOrder = await this.dataStore.get('noteOrder');
