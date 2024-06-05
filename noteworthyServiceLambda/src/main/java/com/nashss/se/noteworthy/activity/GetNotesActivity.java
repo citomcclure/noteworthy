@@ -27,7 +27,6 @@ import javax.inject.Inject;
 public class GetNotesActivity {
     private final Logger log = LogManager.getLogger();
     private final NoteDao noteDao;
-    private String noteOrder;
 
     /**
      * Instantiates a new GetNotesActivity object.
@@ -49,37 +48,37 @@ public class GetNotesActivity {
         String email = getNotesRequest.getEmail();
         List<Note> notes = noteDao.getAllNotes(email);
 
-        noteOrder = getNotesRequest.getOrder();
-        List<Note> orderedNotes = orderNotes(notes);
-
         List<NoteModel> noteModels = new ArrayList<>();
-        for (Note note : orderedNotes) {
+        for (Note note : notes) {
             NoteModel noteModel = ModelConverter.toNoteModel(note);
             noteModels.add(noteModel);
         }
 
+        List<NoteModel> orderedNotes = orderNotes(noteModels, getNotesRequest.getOrder());
+
         return GetNotesResult.builder()
-                .withNoteList(noteModels)
+                .withNoteList(orderedNotes)
                 .build();
     }
 
     /**
      * Helper function to determine order of notes using the request's query parameter.
-     * @param notes the current list of notes retrieved from noteDao. Will be in
+     * @param noteModels the current list of notes retrieved from noteDao. Will be in
      *              order of newest to oldest by creation date already.
      * @return the updated order of the notes.
      */
-    private List<Note> orderNotes(List<Note> notes) {
-        if (noteOrder == null) {
-            noteOrder = NoteOrder.DEFAULT;
+    private List<NoteModel> orderNotes(List<NoteModel> noteModels, String noteOrder) {
+        // TODO: make case statement
+        if (noteOrder == null || noteOrder.equals(NoteOrder.DEFAULT)) {
+            return noteModels;
         } else if (!Arrays.asList(NoteOrder.values()).contains(noteOrder)) {
             throw new InvalidAttributeValueException(String.format("Unrecognized sort order: '%s'", noteOrder));
         }
 
         if (noteOrder.equals(NoteOrder.DEFAULT_REVERSED)) {
-            Collections.reverse(notes);
+            Collections.reverse(noteModels);
         }
 
-        return notes;
+        return noteModels;
     }
 }

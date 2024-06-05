@@ -77,12 +77,15 @@ export default class NoteworthyService extends BindingClass {
      * @param errorCallback (Optional) A function to execute if the call fails.
      * @returns The json response data with an iterable of noteModels.
      */
-    async getNotes(errorCallback) {
+    async getNotes(order, errorCallback) {
         try {
             const token = await this.getTokenOrThrow("Only authenticated users can retrieve their notes.");
             const response = await this.axiosClient.get(`notes`, {
                 headers: {
                     Authorization: `Bearer ${token}`
+                },
+                params: {
+                    order: order
                 }
             });
             return response.data.noteList;
