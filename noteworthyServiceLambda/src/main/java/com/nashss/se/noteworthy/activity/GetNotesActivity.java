@@ -63,6 +63,12 @@ public class GetNotesActivity {
                 .build();
     }
 
+    /**
+     * Helper function to determine order of notes using the request's query parameter.
+     * @param notes the current list of notes retrieved from noteDao. Will be in
+     *              order of newest to oldest by creation date already.
+     * @return the updated order of the notes.
+     */
     private List<Note> orderNotes(List<Note> notes) {
         if (noteOrder == null) {
             noteOrder = NoteOrder.DEFAULT;
