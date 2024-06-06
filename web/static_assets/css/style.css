@@ -76,14 +76,25 @@ body {
     padding-top: 10px;
 }
 
-#search {
-    width: 70%;
-    text-align: left;
-    font-weight: 400;
-    color: rgb(108, 108, 108);
+.dropdown-toggle {
+    background-color: var(--primary-color);
+    border: solid;
+    border-radius: 5px;
+    padding: 6px 8px 6px 8px;
+    line-height: 100%;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 #sort-by {
+    font-weight: 400;
+    background-color: white;
+}
+
+#search {
+    width: 70%;
+    text-align: left;
     font-weight: 400;
     color: rgb(108, 108, 108);
 }
