@@ -48,7 +48,8 @@ public class NoteDao {
         note.setEmail(email);
 
         DynamoDBQueryExpression<Note> queryExpression = new DynamoDBQueryExpression<Note>()
-                .withHashKeyValues(note);
+                .withHashKeyValues(note)
+                .withScanIndexForward(false);
 
         return this.dynamoDBMapper.query(Note.class, queryExpression);
     }

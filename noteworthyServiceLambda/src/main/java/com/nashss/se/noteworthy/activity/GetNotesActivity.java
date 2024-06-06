@@ -6,12 +6,16 @@ import com.nashss.se.noteworthy.converters.ModelConverter;
 import com.nashss.se.noteworthy.dynamodb.NoteDao;
 
 import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.exceptions.InvalidAttributeValueException;
 import com.nashss.se.noteworthy.models.NoteModel;
+import com.nashss.se.noteworthy.models.NoteOrder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -50,8 +54,31 @@ public class GetNotesActivity {
             noteModels.add(noteModel);
         }
 
+        List<NoteModel> orderedNotes = orderNotes(noteModels, getNotesRequest.getOrder());
+
         return GetNotesResult.builder()
-                .withNoteList(noteModels)
+                .withNoteList(orderedNotes)
                 .build();
+    }
+
+    /**
+     * Helper function to determine order of notes using the request's query parameter.
+     * @param noteModels the current list of notes retrieved from noteDao. Will be in
+     *              order of newest to oldest by creation date already.
+     * @return the updated order of the notes.
+     */
+    private List<NoteModel> orderNotes(List<NoteModel> noteModels, String noteOrder) {
+        // TODO: make case statement
+        if (noteOrder == null || noteOrder.equals(NoteOrder.DEFAULT)) {
+            return noteModels;
+        } else if (!Arrays.asList(NoteOrder.values()).contains(noteOrder)) {
+            throw new InvalidAttributeValueException(String.format("Unrecognized sort order: '%s'", noteOrder));
+        }
+
+        if (noteOrder.equals(NoteOrder.DEFAULT_REVERSED)) {
+            Collections.reverse(noteModels);
+        }
+
+        return noteModels;
     }
 }

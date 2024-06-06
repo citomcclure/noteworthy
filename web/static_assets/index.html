@@ -18,8 +18,12 @@
                 <div><img src="images/plus-sign.png"> New Note</div>
             </button>
             <div class="note-sort-and-search">
-                <button class="button" id="sort">Sort</button>
-                <button class="button" id="search">Search...</button>
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" id="sort-by">Sort By</button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" id="sort-default" href="#">Newest to Oldest</a></li>
+                  <li><a class="dropdown-item" id="sort-default-reversed" href="#">Oldest to Newest</a></li>
+                </ul>
+              <button class="button" id="search">Search...</button>
             </div>
             <div class="note-previews-container"></div>
           </div>

@@ -10,7 +10,10 @@ import DataStore from "../util/DataStore";
 class ViewNotes extends BindingClass {
     constructor() {
         super();
-        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote', 'createNote', 'updateNote', 'deleteNote'], this);
+        this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote',
+                                'createNote', 'updateNote', 'deleteNote',
+                                'setDefaultNoteOrder', 'setDefaultReversedNoteOrder'
+        ], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
         this.header = new Header(this.dataStore);
@@ -23,6 +26,8 @@ class ViewNotes extends BindingClass {
         document.getElementById('new-note').addEventListener('click', this.createNote);
         document.getElementById('save-note').addEventListener('click', this.updateNote);
         document.getElementById('delete-note').addEventListener('click', this.deleteNote);
+        document.getElementById('sort-default').addEventListener('click', this.setDefaultNoteOrder);
+        document.getElementById('sort-default-reversed').addEventListener('click', this.setDefaultReversedNoteOrder);
 
         this.header.addHeaderToPage();
 
@@ -37,6 +42,7 @@ class ViewNotes extends BindingClass {
         async clientLoaded() {
             const notes = await this.client.getNotes();
             this.dataStore.set('notes', notes);
+            this.dataStore.set('noteOrder', "default");
         }
 
     /**
@@ -156,6 +162,46 @@ class ViewNotes extends BindingClass {
         this.displayNotePreviews();
         this.displayFirstNoteAsPrimaryNote();
     }
+
+    /**
+     * If the note order is not already set to default, reverses the note previews order 
+     * and updates the datastore for notes and noteOrder.
+     * This implementation does not make use of backend to order notes.
+     */
+    async setDefaultNoteOrder() {
+        const notes = await this.dataStore.get('notes');
+        const noteOrder = await this.dataStore.get('noteOrder');
+
+        // If default order is currently shown, do nothing
+        if (noteOrder == 'default') {
+            return;
+        }
+
+        // reverse note order and update datastore
+        notes.reverse();
+        this.dataStore.set('notes', notes);
+        this.dataStore.set('noteOrder', 'default')
+    }
+
+    /**
+    * If the note order is not already set to reverse order, reverses the note previews order 
+    * and updates the datastore for notes and noteOrder.
+    * This implementation does not make use of backend to order notes.
+    */
+   async setDefaultReversedNoteOrder() {
+       const notes = await this.dataStore.get('notes');
+       const noteOrder = await this.dataStore.get('noteOrder');
+
+       // If deafult reversed order is currently shown, do nothing
+       if (noteOrder == 'default-reversed') {
+           return;
+       }
+
+       // reverse note order and update datastore
+       notes.reverse();
+       this.dataStore.set('notes', notes);
+       this.dataStore.set('noteOrder', 'default-reversed')
+   }
 
     /**
      * Helper class to generate the note preview button for the note preview area.

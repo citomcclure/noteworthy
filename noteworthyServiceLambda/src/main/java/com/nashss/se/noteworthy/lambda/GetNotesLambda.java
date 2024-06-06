@@ -20,9 +20,14 @@ public class GetNotesLambda
         log.info("handleRequest");
         return super.runActivity(
             () -> {
+                GetNotesRequest requestWithQuery = input.fromQuery(query ->
+                        GetNotesRequest.builder()
+                                .withOrder(query.get("order"))
+                                .build());
                 return input.fromUserClaims(claims ->
                         GetNotesRequest.builder()
                                 .withEmail(claims.get("email"))
+                                .withOrder(requestWithQuery.getOrder())
                                 .build());
             },
             (request, serviceComponent) ->
