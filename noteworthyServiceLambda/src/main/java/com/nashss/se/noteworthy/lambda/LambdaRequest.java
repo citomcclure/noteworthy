@@ -40,6 +40,23 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
     }
 
     /**
+     * Converts a Base64 encoded string in request body to a byte array. Used for TranscribeAudioLambda
+     * to obtain .wav file.
+     * @return byte array of media.
+     */
+    public byte[] fromBase64EncodedBody() {
+        log.info("Attempting to convert encoded string to byte array from encoded request body");
+        try {
+            byte[] decoded = MAPPER.convertValue(super.getBody(), byte[].class);
+            return decoded;
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    String.format("Unable to convert encoded string to byte array from encoded request body."),
+                    e);
+        }
+    }
+
+    /**
      * Use the given converter to create an instance of T from the request's query string.
      * @param converter Contains the conversion code
      * @return A instance of T that contains data from the request's query string

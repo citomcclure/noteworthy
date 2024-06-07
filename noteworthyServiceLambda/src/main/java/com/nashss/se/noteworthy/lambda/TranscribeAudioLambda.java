@@ -20,10 +20,11 @@ public class TranscribeAudioLambda
         log.info("handleRequest");
         return super.runActivity(
             () -> {
+                byte[] decodedMedia = input.fromBase64EncodedBody();
                 TranscribeAudioRequest unauthenticatedRequest = input.fromBody(TranscribeAudioRequest.class);
                 return input.fromUserClaims(claims ->
                         TranscribeAudioRequest.builder()
-                                .withAudio(unauthenticatedRequest.getAudio())
+                                .withAudio(decodedMedia)
                                 .withDateCreated(unauthenticatedRequest.getDateCreated())
                                 .withEmail(claims.get("email"))
                                 .build());
