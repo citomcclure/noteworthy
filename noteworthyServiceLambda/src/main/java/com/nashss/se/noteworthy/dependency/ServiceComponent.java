@@ -3,6 +3,7 @@ package com.nashss.se.noteworthy.dependency;
 import com.nashss.se.noteworthy.activity.CreateNoteActivity;
 import com.nashss.se.noteworthy.activity.DeleteNoteActivity;
 import com.nashss.se.noteworthy.activity.GetNotesActivity;
+import com.nashss.se.noteworthy.activity.TranscribeAudioActivity;
 import com.nashss.se.noteworthy.activity.UpdateNoteActivity;
 
 import dagger.Component;
@@ -39,4 +40,10 @@ public interface ServiceComponent {
      * @return DeleteNoteActivity
      */
     DeleteNoteActivity provideDeleteNoteActivity();
+
+    /**
+     * Provides the relevant activity.
+     * @return TranscribeAudioActivity
+     */
+    TranscribeAudioActivity provideTranscribeAudioActivity();
 }
