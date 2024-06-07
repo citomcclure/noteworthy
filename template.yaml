@@ -212,16 +212,8 @@ Resources:
             Version: '2012-10-17'
             Statement:
             - Effect: Allow
-              Principal:
-                Service:
-                - transcribe.amazonaws.com
-              Action:
-              - "sts:AssumeRole"
-              Condition:
-                StringEquals:
-                  aws:SourceAccount: "${AWS::AccountId}"
-                StringLike:
-                  aws:SourceArn: "arn:aws:transcribe:${AWS::Region}:${AWS::AccountId}:*"
+              Action: transcribe:*
+              Resource: '*'
 
 
   #-----------------------------------------------------
