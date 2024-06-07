@@ -207,6 +207,22 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/notes"
+        - PolicyName: 'AccessTranscribe'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - transcribe.amazonaws.com
+              Action:
+              - "sts:AssumeRole"
+              Condition:
+                StringEquals:
+                  aws:SourceAccount: "${AWS::AccountId}"
+                StringLike:
+                  aws:SourceArn: "arn:aws:transcribe:${AWS::Region}:${AWS::AccountId}:*"
+
 
   #-----------------------------------------------------
   # Lambda Functions Configuration
