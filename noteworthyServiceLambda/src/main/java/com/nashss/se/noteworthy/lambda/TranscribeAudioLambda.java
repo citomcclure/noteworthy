@@ -21,11 +21,13 @@ public class TranscribeAudioLambda
         return super.runActivity(
             () -> {
                 byte[] decodedMedia = input.fromBase64EncodedBody();
-                TranscribeAudioRequest unauthenticatedRequest = input.fromBody(TranscribeAudioRequest.class);
+                // TODO: creating request object causes deserialization issues with jackson processing encoded
+                //  body in request
+//                TranscribeAudioRequest unauthenticatedRequest = input.fromBody(TranscribeAudioRequest.class);
                 return input.fromUserClaims(claims ->
                         TranscribeAudioRequest.builder()
                                 .withAudio(decodedMedia)
-                                .withDateCreated(unauthenticatedRequest.getDateCreated())
+//                                .withDateCreated(unauthenticatedRequest.getDateCreated())
                                 .withEmail(claims.get("email"))
                                 .build());
             },
