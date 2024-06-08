@@ -23,9 +23,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Implementation of the TranscribeAudioActivity for the NoteworthyService's TranscribeAudio API.
@@ -35,7 +38,7 @@ public class TranscribeAudioActivity {
     private final Logger log = LogManager.getLogger();
     private AmazonTranscribe amazonTranscribeClient;
     private static final String BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure";
-    private static final String KEY = "test_key_for_transcription";
+    private static final String KEY = "key_transcription_gettysburg_4";
 
     /**
      * Instantiates a new TranscribeAudioActivity object.
@@ -57,8 +60,6 @@ public class TranscribeAudioActivity {
         log.info("Received TranscribeAudioRequest");
         log.info("Length of audio in bytes: {}", transcribeAudioRequest.getAudio().length);
 
-        InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
-
         AmazonS3 s3 = AmazonS3ClientBuilder
                 .standard()
                 .withRegion(Regions.US_EAST_2)
@@ -66,14 +67,44 @@ public class TranscribeAudioActivity {
                 .withCredentials(new DefaultAWSCredentialsProviderChain())
                 .build();
 
-        log.info("Attempting to put media file into s3 bucket {} ...", BUCKET);
-        try {
-            s3.putObject(BUCKET, KEY, inputStream, null);
-            log.info("Media file successfully put into s3 bucket.");
-        } catch (AmazonServiceException e) {
-            throw new RuntimeException(
-                    String.format("Unable to upload media file to s3 bucket"), e);
-        }
+//        // TODO: (after manual method works using docker) Trim the decoded header
+//        //  from audio field (convert to string and trim?)
+//        InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
+//        try {
+////            File file2 = File.createTempFile("transcribe_gettysburg_doesnt_matter_", ".wav");
+////            Files.copy(inputStream, file2.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//
+//            File file = File.createTempFile("gettysburg", ".wav");
+//            System.out.println("docker breakpoint");
+//            PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, KEY, file);
+//
+//            s3.putObject(putObjectRequest);
+//            log.info("Media file successfully put into s3 bucket.");
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Could not save file or transcribe.", e);
+//        }
+
+
+//        ByteArrayInputStream bais = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
+//        AudioInputStream stream;
+//        try {
+//            stream = AudioSystem.getAudioInputStream(bais);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Exception during AudioInputStream creation", e);
+//        }
+
+
+
+
+//        log.info("Attempting to put media file into s3 bucket {} ...", BUCKET);
+//        try {
+//            s3.putObject(BUCKET, KEY, file2.toPath());
+//            log.info("Media file successfully put into s3 bucket.");
+//        } catch (AmazonServiceException e) {
+//            throw new RuntimeException(
+//                    String.format("Unable to upload media file to s3 bucket"), e);
+//        }
 
         // TODO: set up media and strings, chain commands together using 'with' methods
         StartTranscriptionJobRequest transcriptionJobRequest = new StartTranscriptionJobRequest();
@@ -83,11 +114,11 @@ public class TranscribeAudioActivity {
         media.setMediaFileUri(s3.getUrl(BUCKET, KEY).toString());
         transcriptionJobRequest.withMedia(media);
 
-        String transcriptionJobName = "testJob";
+        String transcriptionJobName = "job_transcription_gettysburg_5";
         transcriptionJobRequest.setTranscriptionJobName(transcriptionJobName);
 
-        // TODO: fix error with input stream not being correct format for wav upload to s3
         transcriptionJobRequest.withMediaFormat("wav");
+        transcriptionJobRequest.withMediaSampleRateHertz(22050);
 
         log.info("TranscriptionJobRequest sent to client. Starting transcription job.");
         StartTranscriptionJobResult result = amazonTranscribeClient.startTranscriptionJob(transcriptionJobRequest);
