@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.nashss.se.noteworthy.utils.TranscriptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,7 +51,7 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
         try {
             byte[] bodyDecoded = MAPPER.convertValue(super.getBody(), byte[].class);
 
-            byte[] wavFile = removeEncodedHeaders(bodyDecoded);
+            byte[] wavFile = TranscriptionUtils.removeEncodedHeaders(bodyDecoded);
             if (wavFile == null) {
                 throw new RuntimeException("Incorrect format for .wav file.");
             }
@@ -96,16 +97,6 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
         Map<String, String> path = ifNull(super.getPathParameters(), Map.of());
         Map<String, String> query = ifNull(super.getQueryStringParameters(), Map.of());
         return converter.apply(path, query);
-    }
-
-    private byte[] removeEncodedHeaders(byte[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            // byte sequence corresponds to 'RIFF' found at the beginning of every .wav file
-            if (arr[i] == 82 && arr[i+1] == 73 && arr[i+2] == 70 && arr[i+3] == 70) {
-                return Arrays.copyOfRange(arr, i, arr.length-1);
-            }
-        }
-        return null;
     }
 }
 
