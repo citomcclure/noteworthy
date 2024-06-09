@@ -3,27 +3,20 @@ package com.nashss.se.noteworthy.activity.requests;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @JsonDeserialize(builder = TranscribeAudioRequest.Builder.class)
 public class TranscribeAudioRequest {
     private byte[] audio;
-    private LocalDateTime dateCreated;
     private String email;
 
-    private TranscribeAudioRequest(byte[] audio, LocalDateTime dateCreated, String email) {
+    private TranscribeAudioRequest(byte[] audio, String email) {
         this.audio = audio;
-        this.dateCreated = dateCreated;
         this.email = email;
     }
 
     public byte[] getAudio() {
         return audio;
-    }
-
-    public LocalDateTime getDateCreated() {
-        return dateCreated;
     }
 
     public String getEmail() {
@@ -34,7 +27,6 @@ public class TranscribeAudioRequest {
     public String toString() {
         return "TranscribeAudioRequest{" +
                 "audio=" + Arrays.toString(audio) +
-                ", dateCreated=" + dateCreated +
                 ", email='" + email + '\'' +
                 '}';
     }
@@ -47,16 +39,10 @@ public class TranscribeAudioRequest {
     @JsonPOJOBuilder
     public static class Builder {
         private byte[] audio;
-        private LocalDateTime dateCreated;
         private String email;
 
         public Builder withAudio(byte[] audio) {
             this.audio = audio;
-            return this;
-        }
-
-        public Builder withDateCreated(LocalDateTime dateCreated) {
-            this.dateCreated = dateCreated;
             return this;
         }
 
@@ -66,7 +52,7 @@ public class TranscribeAudioRequest {
         }
 
         public TranscribeAudioRequest build() {
-            return new TranscribeAudioRequest(audio, dateCreated, email);
+            return new TranscribeAudioRequest(audio, email);
         }
     }
 }
