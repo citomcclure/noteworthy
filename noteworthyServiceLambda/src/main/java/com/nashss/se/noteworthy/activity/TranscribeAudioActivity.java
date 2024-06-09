@@ -38,7 +38,7 @@ public class TranscribeAudioActivity {
     private final Logger log = LogManager.getLogger();
     private AmazonTranscribe amazonTranscribeClient;
     private static final String BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure";
-    private static final String KEY = "key_transcription_gettysburg_4";
+    private static final String KEY = "key_transcription_gettysburg_new_1";
 
     /**
      * Instantiates a new TranscribeAudioActivity object.
@@ -67,25 +67,23 @@ public class TranscribeAudioActivity {
                 .withCredentials(new DefaultAWSCredentialsProviderChain())
                 .build();
 
-//        // TODO: (after manual method works using docker) Trim the decoded header
-//        //  from audio field (convert to string and trim?)
-//        InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
-//        try {
-////            File file2 = File.createTempFile("transcribe_gettysburg_doesnt_matter_", ".wav");
-////            Files.copy(inputStream, file2.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//
-//            File file = File.createTempFile("gettysburg", ".wav");
-//            System.out.println("docker breakpoint");
-//            PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, KEY, file);
-//
-//            s3.putObject(putObjectRequest);
-//            log.info("Media file successfully put into s3 bucket.");
-//
-//        } catch (Exception e) {
-//            throw new RuntimeException("Could not save file or transcribe.", e);
-//        }
+        // TODO: Update key, file, and job naming structure
+        InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
+        try {
+            File file = File.createTempFile("transcription_gettysburg_new_1", ".wav");
+            Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
+            System.out.println("docker breakpoint");
+            PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, KEY, file);
 
+            s3.putObject(putObjectRequest);
+            log.info("Media file successfully put into s3 bucket.");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Could not save file or upload to s3.", e);
+        }
+
+        // TODO: try to put in S3 as stream instead of file
 //        ByteArrayInputStream bais = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
 //        AudioInputStream stream;
 //        try {
@@ -93,10 +91,7 @@ public class TranscribeAudioActivity {
 //        } catch (Exception e) {
 //            throw new RuntimeException("Exception during AudioInputStream creation", e);
 //        }
-
-
-
-
+        
 //        log.info("Attempting to put media file into s3 bucket {} ...", BUCKET);
 //        try {
 //            s3.putObject(BUCKET, KEY, file2.toPath());
@@ -114,7 +109,7 @@ public class TranscribeAudioActivity {
         media.setMediaFileUri(s3.getUrl(BUCKET, KEY).toString());
         transcriptionJobRequest.withMedia(media);
 
-        String transcriptionJobName = "job_transcription_gettysburg_5";
+        String transcriptionJobName = "job_transcription_gettysburg_new_1";
         transcriptionJobRequest.setTranscriptionJobName(transcriptionJobName);
 
         transcriptionJobRequest.withMediaFormat("wav");

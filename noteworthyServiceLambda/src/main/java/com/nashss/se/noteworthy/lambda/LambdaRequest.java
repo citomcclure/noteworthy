@@ -102,9 +102,7 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
         for (int i = 0; i < arr.length; i++) {
             // byte sequence corresponds to 'RIFF' found at the beginning of every .wav file
             if (arr[i] == 82 && arr[i+1] == 73 && arr[i+2] == 70 && arr[i+3] == 70) {
-                byte[] trimmedArr = Arrays.copyOfRange(arr, i, arr.length-1);
-                System.out.println(Arrays.toString(trimmedArr));
-                return trimmedArr;
+                return Arrays.copyOfRange(arr, i, arr.length-1);
             }
         }
         return null;
