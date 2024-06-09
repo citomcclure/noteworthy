@@ -19,6 +19,7 @@ import com.nashss.se.noteworthy.activity.results.TranscribeAudioResult;
 import com.nashss.se.noteworthy.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.models.NoteModel;
 
+import com.nashss.se.noteworthy.utils.TranscriptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +30,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Implementation of the TranscribeAudioActivity for the NoteworthyService's TranscribeAudio API.
@@ -38,7 +41,6 @@ public class TranscribeAudioActivity {
     private final Logger log = LogManager.getLogger();
     private AmazonTranscribe amazonTranscribeClient;
     private static final String BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure";
-    private static final String KEY = "key_transcription_gettysburg_new_1";
 
     /**
      * Instantiates a new TranscribeAudioActivity object.
@@ -57,9 +59,10 @@ public class TranscribeAudioActivity {
      * @return result object containing the API defined by {@link NoteModel}
      */
     public TranscribeAudioResult handleRequest(TranscribeAudioRequest transcribeAudioRequest) {
-        log.info("Received TranscribeAudioRequest");
-        log.info("Length of audio in bytes: {}", transcribeAudioRequest.getAudio().length);
+        log.info("Received TranscribeAudioRequest for user '{}' with media file of size {} KB.",
+                transcribeAudioRequest.getEmail(), transcribeAudioRequest.getAudio().length / 1_000);
 
+        // TODO: instantiate using Dagger
         AmazonS3 s3 = AmazonS3ClientBuilder
                 .standard()
                 .withRegion(Regions.US_EAST_2)
@@ -67,20 +70,24 @@ public class TranscribeAudioActivity {
                 .withCredentials(new DefaultAWSCredentialsProviderChain())
                 .build();
 
+        // TODO: investigate TTL for bucket and job?
+        String id = TranscriptionUtils.generateID();
+        LocalDateTime currentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        String transcription = id + "_" + currentTime;
+        String transcriptionKey = transcription + "_key";
+        String transcriptionJob = transcription + "_job";
+
         // TODO: Update key, file, and job naming structure
+        // TODO: better exception handling
         InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
         try {
-            File file = File.createTempFile("transcription_gettysburg_new_1", ".wav");
+            File file = File.createTempFile(transcription, ".wav");
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-            System.out.println("docker breakpoint");
-            PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, KEY, file);
-
+            PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, transcriptionKey, file);
             s3.putObject(putObjectRequest);
-            log.info("Media file successfully put into s3 bucket.");
-
+            log.info("Media file {} successfully saved to temp and put into S3 bucket.", transcription);
         } catch (Exception e) {
-            throw new RuntimeException("Could not save file or upload to s3.", e);
+            throw new RuntimeException("Could not upload media file for transcribing.", e);
         }
 
         // TODO: try to put in S3 as stream instead of file
@@ -91,7 +98,7 @@ public class TranscribeAudioActivity {
 //        } catch (Exception e) {
 //            throw new RuntimeException("Exception during AudioInputStream creation", e);
 //        }
-        
+
 //        log.info("Attempting to put media file into s3 bucket {} ...", BUCKET);
 //        try {
 //            s3.putObject(BUCKET, KEY, file2.toPath());
@@ -106,16 +113,15 @@ public class TranscribeAudioActivity {
         transcriptionJobRequest.withLanguageCode(LanguageCode.EnUS);
 
         Media media = new Media();
-        media.setMediaFileUri(s3.getUrl(BUCKET, KEY).toString());
+        media.setMediaFileUri(s3.getUrl(BUCKET, transcriptionKey).toString());
         transcriptionJobRequest.withMedia(media);
 
-        String transcriptionJobName = "job_transcription_gettysburg_new_1";
-        transcriptionJobRequest.setTranscriptionJobName(transcriptionJobName);
+        transcriptionJobRequest.setTranscriptionJobName(transcriptionJob);
 
         transcriptionJobRequest.withMediaFormat("wav");
         transcriptionJobRequest.withMediaSampleRateHertz(22050);
 
-        log.info("TranscriptionJobRequest sent to client. Starting transcription job.");
+        log.info("TranscriptionJobRequest sent to client. Starting transcription job '{}'.", transcriptionJob);
         StartTranscriptionJobResult result = amazonTranscribeClient.startTranscriptionJob(transcriptionJobRequest);
         log.info("Job successful. Output: {}", result.getTranscriptionJob().getTranscript());
 
