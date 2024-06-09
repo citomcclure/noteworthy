@@ -73,21 +73,22 @@ public class TranscribeAudioActivity {
         // TODO: investigate TTL for bucket and job?
         String id = TranscriptionUtils.generateID();
         LocalDateTime currentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        String transcription = id + "_" + currentTime;
-        String transcriptionKey = transcription + "_key";
-        String transcriptionJob = transcription + "_job";
-
-        // TODO: Update key, file, and job naming structure
+        String transcriptionName = id + "_" + currentTime;
+        // transcription jobs do not allow colon character
+        transcriptionName = transcriptionName.replace(":", ".");
+        
         // TODO: better exception handling
         InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
+        String transcriptionKey = transcriptionName + "_key";
         try {
-            File file = File.createTempFile(transcription, ".wav");
+            log.info("Attempting to save wav file to temp and put into S3 bucket as '{}'.", transcriptionKey);
+            File file = File.createTempFile(transcriptionName, ".wav");
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, transcriptionKey, file);
             s3.putObject(putObjectRequest);
-            log.info("Media file {} successfully saved to temp and put into S3 bucket.", transcription);
+            log.info("Media file successfully saved to temp and put into S3 bucket as '{}'.", transcriptionKey);
         } catch (Exception e) {
-            throw new RuntimeException("Could not upload media file for transcribing.", e);
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         // TODO: try to put in S3 as stream instead of file
@@ -109,6 +110,7 @@ public class TranscribeAudioActivity {
 //        }
 
         // TODO: set up media and strings, chain commands together using 'with' methods
+        String transcriptionJob = transcriptionName + "_job";
         StartTranscriptionJobRequest transcriptionJobRequest = new StartTranscriptionJobRequest();
         transcriptionJobRequest.withLanguageCode(LanguageCode.EnUS);
 
@@ -118,6 +120,7 @@ public class TranscribeAudioActivity {
 
         transcriptionJobRequest.setTranscriptionJobName(transcriptionJob);
 
+        // TODO: need way to detect sample rate
         transcriptionJobRequest.withMediaFormat("wav");
         transcriptionJobRequest.withMediaSampleRateHertz(22050);
 
