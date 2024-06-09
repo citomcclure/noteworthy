@@ -20,7 +20,7 @@ public class TranscribeAudioLambda
         log.info("handleRequest");
         return super.runActivity(
             () -> {
-                byte[] decodedMedia = input.fromBase64EncodedBody();
+                byte[] decodedMedia = input.fromBase64EncodedBodyAndParse();
                 // TODO: creating request object causes deserialization issues with jackson processing encoded
                 //  body in request
 //                TranscribeAudioRequest unauthenticatedRequest = input.fromBody(TranscribeAudioRequest.class);

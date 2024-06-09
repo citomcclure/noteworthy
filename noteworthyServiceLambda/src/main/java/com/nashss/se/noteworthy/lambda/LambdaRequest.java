@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -44,14 +45,20 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
      * to obtain .wav file.
      * @return byte array of media.
      */
-    public byte[] fromBase64EncodedBody() {
-        log.info("Attempting to convert encoded string to byte array from encoded request body");
+    public byte[] fromBase64EncodedBodyAndParse() {
+        log.info("Attempting to decode and remove header info from request body");
         try {
-            byte[] decoded = MAPPER.convertValue(super.getBody(), byte[].class);
-            return decoded;
+            byte[] bodyDecoded = MAPPER.convertValue(super.getBody(), byte[].class);
+
+            byte[] wavFile = removeEncodedHeaders(bodyDecoded);
+            if (wavFile == null) {
+                throw new RuntimeException("Incorrect format for .wav file.");
+            }
+
+            return wavFile;
         } catch (Exception e) {
             throw new RuntimeException(
-                    String.format("Unable to convert encoded string to byte array from encoded request body."),
+                    String.format("Unable to convert encoded request body to byte array."),
                     e);
         }
     }
@@ -89,6 +96,18 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
         Map<String, String> path = ifNull(super.getPathParameters(), Map.of());
         Map<String, String> query = ifNull(super.getQueryStringParameters(), Map.of());
         return converter.apply(path, query);
+    }
+
+    private byte[] removeEncodedHeaders(byte[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            // byte sequence corresponds to 'RIFF' found at the beginning of every .wav file
+            if (arr[i] == 82 && arr[i+1] == 73 && arr[i+2] == 70 && arr[i+3] == 70) {
+                byte[] trimmedArr = Arrays.copyOfRange(arr, i, arr.length-1);
+                System.out.println(Arrays.toString(trimmedArr));
+                return trimmedArr;
+            }
+        }
+        return null;
     }
 }
 
