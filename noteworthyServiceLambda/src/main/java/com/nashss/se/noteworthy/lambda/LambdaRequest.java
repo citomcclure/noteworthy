@@ -50,13 +50,7 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
         log.info("Attempting to decode and remove header info from request body");
         try {
             byte[] bodyDecoded = MAPPER.convertValue(super.getBody(), byte[].class);
-
-            byte[] wavFile = TranscriptionUtils.removeEncodedHeaders(bodyDecoded);
-            if (wavFile == null) {
-                throw new RuntimeException("Incorrect format for .wav file.");
-            }
-
-            return wavFile;
+            return TranscriptionUtils.removeEncodedHeaders(bodyDecoded);
         } catch (Exception e) {
             throw new RuntimeException(
                     String.format("Unable to convert encoded request body to byte array."),
