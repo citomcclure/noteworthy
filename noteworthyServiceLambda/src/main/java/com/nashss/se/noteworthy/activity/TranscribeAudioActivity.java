@@ -10,13 +10,11 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.transcribe.AmazonTranscribe;
 import com.amazonaws.services.transcribe.AmazonTranscribeClient;
-import com.amazonaws.services.transcribe.model.LanguageCode;
-import com.amazonaws.services.transcribe.model.Media;
-import com.amazonaws.services.transcribe.model.StartTranscriptionJobRequest;
-import com.amazonaws.services.transcribe.model.StartTranscriptionJobResult;
+import com.amazonaws.services.transcribe.model.*;
 import com.nashss.se.noteworthy.activity.requests.TranscribeAudioRequest;
 import com.nashss.se.noteworthy.activity.results.TranscribeAudioResult;
 import com.nashss.se.noteworthy.dynamodb.NoteDao;
+import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 import com.nashss.se.noteworthy.models.NoteModel;
 
 import com.nashss.se.noteworthy.utils.TranscriptionUtils;
@@ -32,6 +30,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Implementation of the TranscribeAudioActivity for the NoteworthyService's TranscribeAudio API.
@@ -59,7 +59,7 @@ public class TranscribeAudioActivity {
      * @return result object containing the API defined by {@link NoteModel}
      */
     public TranscribeAudioResult handleRequest(TranscribeAudioRequest transcribeAudioRequest) {
-        log.info("Received TranscribeAudioRequest for user '{}' with media file of size {} KB.",
+        log.info("Received TranscribeAudioRequest for user '{}' with media file of size {}KB.",
                 transcribeAudioRequest.getEmail(), transcribeAudioRequest.getAudio().length / 1_000);
 
         // TODO: instantiate using Dagger
@@ -76,7 +76,7 @@ public class TranscribeAudioActivity {
         String transcriptionName = id + "_" + currentTime;
         // transcription jobs do not allow colon character
         transcriptionName = transcriptionName.replace(":", ".");
-        
+
         // TODO: better exception handling
         InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
         String transcriptionKey = transcriptionName + "_key";
@@ -111,33 +111,51 @@ public class TranscribeAudioActivity {
 
         // TODO: set up media and strings, chain commands together using 'with' methods
         String transcriptionJob = transcriptionName + "_job";
-        StartTranscriptionJobRequest transcriptionJobRequest = new StartTranscriptionJobRequest();
-        transcriptionJobRequest.withLanguageCode(LanguageCode.EnUS);
+        StartTranscriptionJobRequest startTranscriptionJobRequest = new StartTranscriptionJobRequest();
+        startTranscriptionJobRequest.withLanguageCode(LanguageCode.EnUS);
 
         Media media = new Media();
         media.setMediaFileUri(s3.getUrl(BUCKET, transcriptionKey).toString());
-        transcriptionJobRequest.withMedia(media);
+        startTranscriptionJobRequest.withMedia(media);
 
-        transcriptionJobRequest.setTranscriptionJobName(transcriptionJob);
+        startTranscriptionJobRequest.setTranscriptionJobName(transcriptionJob);
 
         // TODO: need way to detect sample rate
-        transcriptionJobRequest.withMediaFormat("wav");
-        transcriptionJobRequest.withMediaSampleRateHertz(22050);
+        startTranscriptionJobRequest.withMediaFormat("wav");
+        startTranscriptionJobRequest.withMediaSampleRateHertz(22050);
 
         log.info("TranscriptionJobRequest sent to client. Starting transcription job '{}'.", transcriptionJob);
-        StartTranscriptionJobResult result = amazonTranscribeClient.startTranscriptionJob(transcriptionJobRequest);
-        log.info("Job successful. Output: {}", result.getTranscriptionJob().getTranscript());
+        amazonTranscribeClient.startTranscriptionJob(startTranscriptionJobRequest);
 
-        // TODO: access results of job after some amount of time
-//        while (true) {
-//            try {
-//                this.wait(1000);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(
-//                        String.format("1s wait was interrupted."), e);
-//            }
+        // Poll the transcription job status until it has completed or failed
+        Transcript transcript = new Transcript();
+        boolean continuePolling = true;
+        while (continuePolling) {
+            GetTranscriptionJobRequest transcriptionJobRequest = new GetTranscriptionJobRequest()
+                    .withTranscriptionJobName(transcriptionJob);
+            GetTranscriptionJobResult jobResult = amazonTranscribeClient.getTranscriptionJob(transcriptionJobRequest);
+            String jobStatus = jobResult.getTranscriptionJob().getTranscriptionJobStatus();
+
+            switch (TranscriptionJobStatus.valueOf(jobStatus)) {
+                case COMPLETED:
+                    transcript = jobResult.getTranscriptionJob().getTranscript();
+                    continuePolling = false;
+                    break;
+                case FAILED:
+                    String reason = jobResult.getTranscriptionJob().getFailureReason();
+                    throw new TranscriptionException(reason);
+            }
+
+            // Wait 1s before checking job status again
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Transcription process was interrupted.", e);
+            }
+        }
 
         // TODO: save results to new database table, update note content, and return transcription to FE
+        log.info("Job successful. Transcription output: '{}'.", transcript);
 
         return null;
     }
