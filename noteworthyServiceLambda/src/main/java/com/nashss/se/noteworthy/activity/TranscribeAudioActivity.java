@@ -1,19 +1,16 @@
 package com.nashss.se.noteworthy.activity;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.AmazonS3URI;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.transcribe.AmazonTranscribe;
-import com.amazonaws.services.transcribe.AmazonTranscribeClient;
 import com.amazonaws.services.transcribe.model.*;
 import com.nashss.se.noteworthy.activity.requests.TranscribeAudioRequest;
 import com.nashss.se.noteworthy.activity.results.TranscribeAudioResult;
-import com.nashss.se.noteworthy.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 import com.nashss.se.noteworthy.models.NoteModel;
 
@@ -58,6 +55,7 @@ public class TranscribeAudioActivity {
      * @param transcribeAudioRequest request object containing the note keys and audio..
      * @return result object containing the API defined by {@link NoteModel}
      */
+    // TODO: comment code and add/remove logs
     public TranscribeAudioResult handleRequest(TranscribeAudioRequest transcribeAudioRequest) {
         log.info("Received TranscribeAudioRequest for user '{}' with media file of size {}KB.",
                 transcribeAudioRequest.getEmail(), transcribeAudioRequest.getAudio().length / 1_000);
@@ -77,7 +75,7 @@ public class TranscribeAudioActivity {
         // transcription jobs do not allow colon character
         transcriptionName = transcriptionName.replace(":", ".");
 
-        // TODO: better exception handling
+        // TODO: better exception handling + check notes on when to catch vs. throw
         InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
         String transcriptionKey = transcriptionName + "_key";
         try {
@@ -86,6 +84,8 @@ public class TranscribeAudioActivity {
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, transcriptionKey, file);
             s3.putObject(putObjectRequest);
+
+            inputStream.close();
             log.info("Media file successfully saved to temp and put into S3 bucket as '{}'.", transcriptionKey);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -153,6 +153,25 @@ public class TranscribeAudioActivity {
                 throw new RuntimeException("Transcription process was interrupted.", e);
             }
         }
+
+        // TODO: Retrieve results from output S3 bucket
+        // TODO: Updated todo - create new S3 bucket, set permissions, and parse resulting json data
+        System.out.println(transcript.getTranscriptFileUri());
+        AmazonS3URI uri = new AmazonS3URI(transcript.getTranscriptFileUri());
+        System.out.println(uri);
+        System.out.println(uri.getKey());
+        S3Object object = s3.getObject(uri.getBucket(), uri.getKey());
+
+        String transcriptionResult = null;
+        try {
+            S3ObjectInputStream stream = object.getObjectContent();
+            transcriptionResult = new String(stream.readAllBytes());
+            stream.close();
+        } catch (IOException e) {
+            log.info("IOException.");
+        }
+        System.out.println(transcriptionResult);
+
 
         // TODO: save results to new database table, update note content, and return transcription to FE
         log.info("Job successful. Transcription output: '{}'.", transcript);
