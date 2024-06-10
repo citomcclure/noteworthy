@@ -1,5 +1,6 @@
 import NoteworthyServiceClient from '../api/noteworthyServiceClient';
 import Header from '../components/header';
+import AudioRecording from '../components/audioRecording';
 import BindingClass from "../util/bindingClass";
 import DataStore from "../util/DataStore";
 
@@ -12,11 +13,13 @@ class ViewNotes extends BindingClass {
         super();
         this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote',
                                 'createNote', 'updateNote', 'deleteNote',
-                                'setDefaultNoteOrder', 'setDefaultReversedNoteOrder'
+                                'setDefaultNoteOrder', 'setDefaultReversedNoteOrder',
+                                'transcribeVoiceNote'
         ], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
         this.header = new Header(this.dataStore);
+        this.audioRecording = new AudioRecording(this.dataStore);
     }
 
     /**
@@ -230,6 +233,12 @@ class ViewNotes extends BindingClass {
         });
 
         return notePreviewButton;
+    }
+
+    // ------------------------------------------------------------------------------------------
+
+    async transcribeVoiceNote() {
+        
     }
 }
 
