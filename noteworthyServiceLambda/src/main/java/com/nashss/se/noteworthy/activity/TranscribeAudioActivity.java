@@ -37,7 +37,8 @@ import static java.lang.Thread.sleep;
 public class TranscribeAudioActivity {
     private final Logger log = LogManager.getLogger();
     private AmazonTranscribe amazonTranscribeClient;
-    private static final String BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure";
+    private static final String INPUT_BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure";
+    private static final String OUTPUT_BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure-transcribe-output";
 
     /**
      * Instantiates a new TranscribeAudioActivity object.
@@ -71,7 +72,7 @@ public class TranscribeAudioActivity {
         // TODO: investigate TTL for bucket and job?
         String id = TranscriptionUtils.generateID();
         LocalDateTime currentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        String transcriptionName = id + "_" + currentTime;
+        String transcriptionName = currentTime + "_" + id;
         // transcription jobs do not allow colon character
         transcriptionName = transcriptionName.replace(":", ".");
 
@@ -82,7 +83,7 @@ public class TranscribeAudioActivity {
             log.info("Attempting to save wav file to temp and put into S3 bucket as '{}'.", transcriptionKey);
             File file = File.createTempFile(transcriptionName, ".wav");
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, transcriptionKey, file);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(INPUT_BUCKET, transcriptionKey, file);
             s3.putObject(putObjectRequest);
 
             inputStream.close();
@@ -115,9 +116,9 @@ public class TranscribeAudioActivity {
         startTranscriptionJobRequest.withLanguageCode(LanguageCode.EnUS);
 
         Media media = new Media();
-        media.setMediaFileUri(s3.getUrl(BUCKET, transcriptionKey).toString());
+        media.setMediaFileUri(s3.getUrl(INPUT_BUCKET, transcriptionKey).toString());
         startTranscriptionJobRequest.withMedia(media);
-
+        startTranscriptionJobRequest.withOutputBucketName(OUTPUT_BUCKET);
         startTranscriptionJobRequest.setTranscriptionJobName(transcriptionJob);
 
         // TODO: need way to detect sample rate
@@ -128,17 +129,18 @@ public class TranscribeAudioActivity {
         amazonTranscribeClient.startTranscriptionJob(startTranscriptionJobRequest);
 
         // Poll the transcription job status until it has completed or failed
-        Transcript transcript = new Transcript();
+//        Transcript transcript = new Transcript();
+        GetTranscriptionJobRequest transcriptionJobRequest = new GetTranscriptionJobRequest()
+                .withTranscriptionJobName(transcriptionJob);
         boolean continuePolling = true;
         while (continuePolling) {
-            GetTranscriptionJobRequest transcriptionJobRequest = new GetTranscriptionJobRequest()
-                    .withTranscriptionJobName(transcriptionJob);
             GetTranscriptionJobResult jobResult = amazonTranscribeClient.getTranscriptionJob(transcriptionJobRequest);
             String jobStatus = jobResult.getTranscriptionJob().getTranscriptionJobStatus();
 
+            // TODO: change to if-elif
             switch (TranscriptionJobStatus.valueOf(jobStatus)) {
                 case COMPLETED:
-                    transcript = jobResult.getTranscriptionJob().getTranscript();
+//                    transcript = jobResult.getTranscriptionJob().getTranscript();
                     continuePolling = false;
                     break;
                 case FAILED:
@@ -156,11 +158,7 @@ public class TranscribeAudioActivity {
 
         // TODO: Retrieve results from output S3 bucket
         // TODO: Updated todo - create new S3 bucket, set permissions, and parse resulting json data
-        System.out.println(transcript.getTranscriptFileUri());
-        AmazonS3URI uri = new AmazonS3URI(transcript.getTranscriptFileUri());
-        System.out.println(uri);
-        System.out.println(uri.getKey());
-        S3Object object = s3.getObject(uri.getBucket(), uri.getKey());
+        S3Object object = s3.getObject(OUTPUT_BUCKET, transcriptionJob + ".json");
 
         String transcriptionResult = null;
         try {
@@ -170,11 +168,9 @@ public class TranscribeAudioActivity {
         } catch (IOException e) {
             log.info("IOException.");
         }
-        System.out.println(transcriptionResult);
-
 
         // TODO: save results to new database table, update note content, and return transcription to FE
-        log.info("Job successful. Transcription output: '{}'.", transcript);
+//        log.info("Job successful. Transcription output: '{}'.", transcript);
 
         return null;
     }
