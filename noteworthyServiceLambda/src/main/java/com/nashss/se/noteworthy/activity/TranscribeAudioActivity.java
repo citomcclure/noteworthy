@@ -93,6 +93,7 @@ public class TranscribeAudioActivity {
         }
 
         // TODO: try to put in S3 as stream instead of file
+        // TODO: get sample rate from AudioFormat
 //        ByteArrayInputStream bais = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
 //        AudioInputStream stream;
 //        try {
