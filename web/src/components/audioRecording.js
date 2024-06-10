@@ -15,7 +15,7 @@ export default class audioRecording extends BindingClass {
         super();
 
         const methodsToBind = [
-            'startRecording', 'stopRecording'
+            'connect', 'startRecording', 'stopRecording'
         ];
         this.bindClassMethods(methodsToBind, this);
 
@@ -29,11 +29,9 @@ export default class audioRecording extends BindingClass {
 
     // Starts recording audio
     startRecording() {
-        return navigator.mediaDevices.getUserMedia({
-            audio: {
-            echoCancellation: true,
-            }
-        }).then(stream => {
+        this.connect();
+        return navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
             audioBlobs = [];
             capturedStream = stream;
 
@@ -73,7 +71,12 @@ export default class audioRecording extends BindingClass {
           });
           
           mediaRecorder.stop();
-          
+          debugger
         });
+      }
+
+      // Get wav blob
+      getWavBlob() {
+        return audioBlobs;
       }
 }

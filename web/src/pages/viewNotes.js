@@ -27,6 +27,9 @@ class ViewNotes extends BindingClass {
      */
     async mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
+        document.getElementById('new-voice-note').addEventListener('click', this.audioRecording.startRecording);
+        document.getElementById('stop-recording').addEventListener('click', this.audioRecording.stopRecording);
+        document.getElementById('voice-note-test').addEventListener('click', this.transcribeVoiceNote);
         document.getElementById('save-note').addEventListener('click', this.updateNote);
         document.getElementById('delete-note').addEventListener('click', this.deleteNote);
         document.getElementById('sort-default').addEventListener('click', this.setDefaultNoteOrder);
@@ -238,7 +241,7 @@ class ViewNotes extends BindingClass {
     // ------------------------------------------------------------------------------------------
 
     async transcribeVoiceNote() {
-        
+        const newNote = await this.client.transcribeAudio(this.audioRecording.getWavBlob);
     }
 }
 
