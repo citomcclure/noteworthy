@@ -169,6 +169,7 @@ public class TranscribeAudioActivity {
         } catch (IOException e) {
             log.info("IOException.");
         }
+        System.out.println(transcriptionResult);
 
         // TODO: save results to new database table, update note content, and return transcription to FE
 //        log.info("Job successful. Transcription output: '{}'.", transcript);
