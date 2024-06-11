@@ -1,5 +1,7 @@
 package com.nashss.se.noteworthy.activity;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.nashss.se.noteworthy.activity.requests.TranscribeAudioRequest;
 import com.nashss.se.noteworthy.activity.results.CreateNoteResult;
 import com.nashss.se.noteworthy.activity.results.TranscribeAudioResult;
@@ -188,25 +190,29 @@ public class TranscribeAudioActivity {
         // Retrieve results from output S3 bucket
         S3Object object = s3.getObject(OUTPUT_BUCKET, transcriptionJob + ".json");
 
-        String transcriptionResult = null;
+        String transcriptionResultJson = null;
         try {
             S3ObjectInputStream stream = object.getObjectContent();
-            transcriptionResult = new String(stream.readAllBytes());
+            transcriptionResultJson = new String(stream.readAllBytes());
             stream.close();
         } catch (IOException e) {
             log.info("IOException.");
         }
-        System.out.println(transcriptionResult);
 
-        // TODO: Parse resulting json data
+        // Parse transcription json
+        String transcript;
+        try {
+            transcript = TranscriptionUtils.parseJsonForTranscript(transcriptionResultJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to parse transcription job result json.", e);
+        }
 
         // TODO: save results to new database table, update note content, and return transcription to FE
-//        log.info("Job successful. Transcription output: '{}'.", transcript);
 
         // Create new note using transcription as note content
         Note note = new Note();
         note.setTitle("Untitled");
-        note.setContent("placeholder");
+        note.setContent(transcript);
         note.setDateCreated(currentTime);
         note.setDateUpdated(currentTime);
         note.setEmail(transcribeAudioRequest.getEmail());

@@ -1,5 +1,9 @@
 package com.nashss.se.noteworthy.utils;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Arrays;
@@ -35,5 +39,10 @@ public class TranscriptionUtils {
         }
 
         throw new RuntimeException(".wav file not found in request.");
+    }
+
+    public static String parseJsonForTranscript(String json) throws JsonProcessingException {
+        JsonNode jsonNode = (new ObjectMapper()).readTree(json);
+        return jsonNode.get("results").get("transcripts").get(0).get("transcript").asText();
     }
 }
