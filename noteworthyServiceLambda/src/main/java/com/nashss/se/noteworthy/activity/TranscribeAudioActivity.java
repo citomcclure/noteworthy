@@ -1,7 +1,11 @@
 package com.nashss.se.noteworthy.activity;
 
 import com.nashss.se.noteworthy.activity.requests.TranscribeAudioRequest;
+import com.nashss.se.noteworthy.activity.results.CreateNoteResult;
 import com.nashss.se.noteworthy.activity.results.TranscribeAudioResult;
+import com.nashss.se.noteworthy.converters.ModelConverter;
+import com.nashss.se.noteworthy.dynamodb.NoteDao;
+import com.nashss.se.noteworthy.dynamodb.models.Note;
 import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 import com.nashss.se.noteworthy.models.NoteModel;
 import com.nashss.se.noteworthy.utils.TranscriptionUtils;
@@ -36,7 +40,8 @@ import static java.lang.Thread.sleep;
  */
 public class TranscribeAudioActivity {
     private final Logger log = LogManager.getLogger();
-    private AmazonTranscribe amazonTranscribeClient;
+    private final NoteDao noteDao;
+    private final AmazonTranscribe amazonTranscribeClient;
     private static final String INPUT_BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure";
     private static final String OUTPUT_BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure-transcribe-output";
 
@@ -45,7 +50,8 @@ public class TranscribeAudioActivity {
      * @param amazonTranscribeClient AmazonTranscribe client.
      */
     @Inject
-    public TranscribeAudioActivity(AmazonTranscribe amazonTranscribeClient) {
+    public TranscribeAudioActivity(NoteDao noteDao, AmazonTranscribe amazonTranscribeClient) {
+        this.noteDao = noteDao;
         this.amazonTranscribeClient = amazonTranscribeClient;
     }
 
@@ -197,7 +203,22 @@ public class TranscribeAudioActivity {
         // TODO: save results to new database table, update note content, and return transcription to FE
 //        log.info("Job successful. Transcription output: '{}'.", transcript);
 
-        return null;
+        // Create new note using transcription as note content
+        Note note = new Note();
+        note.setTitle("Untitled");
+        note.setContent("placeholder");
+        note.setDateCreated(currentTime);
+        note.setDateUpdated(currentTime);
+        note.setEmail(transcribeAudioRequest.getEmail());
+
+        // Save to database
+        noteDao.saveNote(note);
+
+        // Convert to note model, build result object and return
+        NoteModel noteModel = ModelConverter.toNoteModel(note);
+        return TranscribeAudioResult.builder()
+                .withNote(noteModel)
+                .build();
     }
 }
 
