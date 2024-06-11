@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.*;
@@ -79,7 +80,11 @@ public class TranscribeAudioActivity {
         // TODO: better exception handling + check notes on when to catch vs. throw
         InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
         String transcriptionKey = transcriptionName + "_key";
+        AudioFormat audioFormat;
         try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(inputStream);
+            audioFormat = audioInputStream.getFormat();
+
             log.info("Attempting to save wav file to temp and put into S3 bucket as '{}'.", transcriptionKey);
             File file = File.createTempFile(transcriptionName, ".wav");
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -87,6 +92,7 @@ public class TranscribeAudioActivity {
             s3.putObject(putObjectRequest);
 
             inputStream.close();
+            audioInputStream.close();
             log.info("Media file successfully saved to temp and put into S3 bucket as '{}'.", transcriptionKey);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -95,9 +101,9 @@ public class TranscribeAudioActivity {
         // TODO: try to put in S3 as stream instead of file
         // TODO: get sample rate from AudioFormat
 //        ByteArrayInputStream bais = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
-//        AudioInputStream stream;
+//        AudioInputStream audioInputStream;
 //        try {
-//            stream = AudioSystem.getAudioInputStream(bais);
+//            audioInputStream = AudioSystem.getAudioInputStream(inputStream);
 //        } catch (Exception e) {
 //            throw new RuntimeException("Exception during AudioInputStream creation", e);
 //        }
@@ -123,8 +129,12 @@ public class TranscribeAudioActivity {
         startTranscriptionJobRequest.setTranscriptionJobName(transcriptionJob);
 
         // TODO: need way to detect sample rate
-        startTranscriptionJobRequest.withMediaFormat("wav");
-        startTranscriptionJobRequest.withMediaSampleRateHertz(22050);
+        startTranscriptionJobRequest.withMediaFormat(MediaFormat.Wav);
+        int sampleRate = 0;
+        if (audioFormat != null) {
+            sampleRate = (int) audioFormat.getSampleRate();
+        }
+        startTranscriptionJobRequest.withMediaSampleRateHertz(sampleRate);
 
         log.info("TranscriptionJobRequest sent to client. Starting transcription job '{}'.", transcriptionJob);
         amazonTranscribeClient.startTranscriptionJob(startTranscriptionJobRequest);
