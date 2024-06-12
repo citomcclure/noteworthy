@@ -211,7 +211,8 @@ public class TranscribeAudioActivity {
 
         // Create new note using transcription as note content
         Note note = new Note();
-        note.setTitle("Untitled");
+        // Different from CreateNote where value is passed from FE. Due to future extensions of each feature.
+        note.setTitle("Untitled Voice Note");
         note.setContent(transcript);
         note.setDateCreated(currentTime);
         note.setDateUpdated(currentTime);
