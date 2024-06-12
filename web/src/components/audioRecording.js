@@ -4,6 +4,8 @@ import {MediaRecorder, register} from 'extendable-media-recorder';
 import {connect} from 'extendable-media-recorder-wav-encoder';
 import NoteUtils from "../util/noteUtils";
 
+let firstTime = true;
+
 /**
  * The audio recording component for the website.
  */
@@ -11,52 +13,69 @@ export default class audioRecording extends BindingClass {
     constructor(dataStore) {
         super();
 
-        const methodsToBind = [ 'transcribeAudio' , 'showVoiceNoteUI', 'hideVoiceNoteUI'];
+        const methodsToBind = [ 'transcribeAudio'];
         this.bindClassMethods(methodsToBind, this);
 
         this.dataStore = dataStore;
         this.client = new NoteworthyServiceClient();
+        this.connect();
 
-        document.getElementById('new-voice-note-start').addEventListener('click', this.showVoiceNoteUI);
+        document.getElementById('new-voice-note-start').addEventListener('click', this.transcribeAudio);
+    }
+
+    async connect() {
+        await register(await connect());
     }
 
     async transcribeAudio() {
-        await register(await connect());
-        
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        NoteUtils.showVoiceNoteUI();
+
+        // Only executed once in order to use the same stream and media player for multiple voice notes in one 
+        // session. Otherwise, we will start to stack event listeners and create duplicate media related instances.
+        if (firstTime) {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true })
             
-        // Add listeners for starting and stopping audio
-        let start = document.getElementById('start-recording');
-        let stop = document.getElementById('stop-recording');
-        let mediaRecorder = new MediaRecorder(stream, {
-            mimeType: 'audio/wav'
-        });
-        let chunks = [];
-        
-        start.addEventListener('click', (ev)=>{
-            mediaRecorder.start();
-            console.log(mediaRecorder.state);
-        });
+            // Add listeners for starting and stopping audio
+            let start = document.getElementById('start-recording');
+            let stop = document.getElementById('stop-recording');
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'audio/wav'
+            });
+            // streamAndMediaPlayerStarted = true;
+            let chunks = [];
 
-        stop.addEventListener('click', (ev)=>{
-            mediaRecorder.stop();
-            console.log(mediaRecorder.state);
-        });
 
-        mediaRecorder.ondataavailable = function(ev) {
-            chunks.push(ev.data);
+            start.addEventListener('click', (ev)=>{
+                mediaRecorder.start();
+                console.log(mediaRecorder.state);
+            });
+    
+            stop.addEventListener('click', (ev)=>{
+                mediaRecorder.stop();
+                console.log(mediaRecorder.state);
+            });
+    
+            mediaRecorder.ondataavailable = function(ev) {
+                chunks.push(ev.data);
+            }
+    
+            mediaRecorder.onstop = (ev)=>{
+                const mimeType = mediaRecorder.mimeType;
+                let blob = new Blob(chunks, { type: mimeType });
+                // Remove data for next use
+                chunks = [];
+                
+                this.createVoiceNote(blob);
+                
+                // Stop getUserMedia stream. Currently causes issues with successive voice notes
+                // stream.getTracks().forEach( track => track.stop());
+    
+                firstTime = false;
         }
 
-        mediaRecorder.onstop = (ev)=>{
-            const mimeType = mediaRecorder.mimeType;
-            let blob = new Blob(chunks, { type: mimeType });
-            chunks = [];
-
-            console.log(blob);
-            
-            this.createVoiceNote(blob);
-
         }
+        
+
     }
 
     async createVoiceNote(blob) {
@@ -82,20 +101,6 @@ export default class audioRecording extends BindingClass {
         this.dataStore.set('notes', notes);
 
         // Hide voice note UI
-        this.hideVoiceNoteUI();
-    }
-
-    showVoiceNoteUI() {
-        // document.getElementById("new-voice-note-start").removeEventListener('click', this.showVoiceNoteUI);
-        // document.getElementById('new-voice-note-start').addEventListener('click', this.hideVoiceNoteUI);
-        document.getElementById("primary-note-default").style.display = "none";
-        document.getElementById("overlay").style.display = "block";
-    }
-      
-    hideVoiceNoteUI() {
-        // document.getElementById("new-voice-note-start").removeEventListener('click', this.hideVoiceNoteUI);
-        // document.getElementById('new-voice-note-start').addEventListener('click', this.showVoiceNoteUI);
-        document.getElementById("overlay").style.display = "none";
-        document.getElementById("primary-note-default").style.display = "flex";
+        NoteUtils.hideVoiceNoteUI();
     }
 }

@@ -21,11 +21,24 @@ export default class NoteUtils {
         const primaryNoteContent = document.querySelector(".primary-note-content");
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
         notePreviewButton.addEventListener("click", function (evt) {
+            // If voice note UI is being displayed, hide it
+            NoteUtils.hideVoiceNoteUI();
+
             primaryNoteTitle.textContent = evt.target.noteTitle;
             primaryNoteContent.textContent = evt.target.noteContent;
             primaryNoteDateCreated.textContent = evt.target.noteDateCreated;
         });
 
         return notePreviewButton;
+    }
+
+    static hideVoiceNoteUI() {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("primary-note-default").style.display = "flex";
+    }
+
+    static showVoiceNoteUI() {
+        document.getElementById("primary-note-default").style.display = "none";
+        document.getElementById("overlay").style.display = "block";
     }
 }

@@ -37,7 +37,6 @@ class ViewNotes extends BindingClass {
         this.client = new NoteworthyServiceClient();
         await this.clientLoaded();
         this.displayFirstNoteAsPrimaryNote();
-        this.audioRecording.transcribeAudio();
     }
 
     /**
