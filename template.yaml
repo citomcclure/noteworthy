@@ -42,7 +42,7 @@ Globals:
         CognitoAuthorizer:
           UserPoolArn: !GetAtt UserPool.Arn
     BinaryMediaTypes:
-      - '*~1*'
+      - 'audio/wav'
 
 Resources:
 
