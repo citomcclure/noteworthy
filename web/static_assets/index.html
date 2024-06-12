@@ -17,11 +17,8 @@
             <button class="button" id="new-note">
                 <div><img src="images/plus-sign.png"> New Note</div>
             </button>
-            <button class="button" id="new-voice-note">
+            <button class="button" id="new-voice-note-start">
               <div><img src="images/recording.png"> Voice Note</div>
-            </button>
-            <button class="button" id="stop-recording">
-              <div><img src="images/plus-sign.png"> Voice Note</div>
             </button>
             <div class="note-sort-and-search">
                 <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" id="sort-by">Sort By</button>
@@ -37,7 +34,7 @@
           <div class="col"></div>
 
           <div class="col-6">
-            <div class="primary-note-container">
+            <div class="primary-note-container" id="primary-note-default">
               <div class="primary-note-title" contenteditable="true">Loading...</div>
               <div class="primary-note-date-created"></div>
               <div class="divider">
@@ -48,6 +45,16 @@
                 <button class="button" id="save-note">Save</button>
                 <button class="button" id="delete-note">
                   <img src="images/trash-can.png">
+                </button>
+              </div>
+            </div>
+            <div class="primary-note-container" id="overlay">
+              <div class="flex-container">
+                <button class="record-voice-note" id="start-recording">
+                  <img class="recording-image" src="images/recording.png">
+                </button>
+                <button class="record-voice-note" id="stop-recording">
+                  <img class="recording-image" src="images/stop-recording.png">
                 </button>
               </div>
             </div>

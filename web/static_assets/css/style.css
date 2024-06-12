@@ -172,3 +172,31 @@ body {
     max-height: 22px;
     object-fit: scale-down;
 }
+
+#overlay {
+    position: relative;
+    display: none;
+    height: 100%;
+    max-height: 600px;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.record-voice-note {
+    height: 100px;
+    width: 100px;
+    border: none;
+    margin: 20px;
+    background: #ffffff;
+}
+
+.recording-image {
+    height: 100px;
+    width: 100px;
+}
+

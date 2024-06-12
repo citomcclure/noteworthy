@@ -10,14 +10,12 @@ export default class audioRecording extends BindingClass {
     constructor() {
         super();
 
-        const methodsToBind = [ 'transcribeAudio' ];
+        const methodsToBind = [ 'transcribeAudio' , 'showVoiceNoteUI', 'hideVoiceNoteUI'];
         this.bindClassMethods(methodsToBind, this);
 
         this.client = new NoteworthyServiceClient();
-    }
 
-    showVoiceNoteUI() {
-        
+        document.getElementById('new-voice-note-start').addEventListener('click', this.showVoiceNoteUI);
     }
 
     async transcribeAudio() {
@@ -26,7 +24,7 @@ export default class audioRecording extends BindingClass {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
             
         // Add listeners for starting and stopping audio
-        let start = document.getElementById('new-voice-note');
+        let start = document.getElementById('start-recording');
         let stop = document.getElementById('stop-recording');
         let mediaRecorder = new MediaRecorder(stream, {
             mimeType: 'audio/wav'
@@ -56,5 +54,19 @@ export default class audioRecording extends BindingClass {
             
             this.client.transcribeAudio(blob);
         }
+    }
+
+    showVoiceNoteUI() {
+        // document.getElementById("new-voice-note-start").removeEventListener('click', this.showVoiceNoteUI);
+        // document.getElementById('new-voice-note-start').addEventListener('click', this.hideVoiceNoteUI);
+        document.getElementById("primary-note-default").style.display = "none";
+        document.getElementById("overlay").style.display = "block";
+    }
+      
+    hideVoiceNoteUI() {
+        // document.getElementById("new-voice-note-start").removeEventListener('click', this.hideVoiceNoteUI);
+        // document.getElementById('new-voice-note-start').addEventListener('click', this.showVoiceNoteUI);
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("primary-note-default").style.display = "block";
     }
 }
