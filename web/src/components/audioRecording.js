@@ -2,17 +2,19 @@ import NoteworthyServiceClient from '../api/noteworthyServiceClient';
 import BindingClass from "../util/bindingClass";
 import {MediaRecorder, register} from 'extendable-media-recorder';
 import {connect} from 'extendable-media-recorder-wav-encoder';
+import NoteUtils from "../util/noteUtils";
 
 /**
  * The audio recording component for the website.
  */
 export default class audioRecording extends BindingClass {
-    constructor() {
+    constructor(dataStore) {
         super();
 
         const methodsToBind = [ 'transcribeAudio' , 'showVoiceNoteUI', 'hideVoiceNoteUI'];
         this.bindClassMethods(methodsToBind, this);
 
+        this.dataStore = dataStore;
         this.client = new NoteworthyServiceClient();
 
         document.getElementById('new-voice-note-start').addEventListener('click', this.showVoiceNoteUI);
@@ -52,8 +54,35 @@ export default class audioRecording extends BindingClass {
 
             console.log(blob);
             
-            this.client.transcribeAudio(blob);
+            this.createVoiceNote(blob);
+
         }
+    }
+
+    async createVoiceNote(blob) {
+        // Create new voice note in database with wav blob
+        const newVoiceNote = await this.client.transcribeAudio(blob);
+        
+        // Set primary note view to new voice note values
+        const primaryNoteTitle = document.querySelector(".primary-note-title");
+        const primaryNoteContent = document.querySelector(".primary-note-content");
+        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
+        primaryNoteTitle.textContent = newVoiceNote.title;
+        primaryNoteContent.textContent = newVoiceNote.content;
+        primaryNoteDateCreated.textContent = newVoiceNote.dateCreated;
+    
+        // add new note preview to preview area
+        const newVoiceNotePreviewButton = NoteUtils.createNotePreviewButton(newVoiceNote);
+        const notePreviews = document.querySelector(".note-previews-container");
+        notePreviews.prepend(newVoiceNotePreviewButton);
+
+        // Add new voice note in datastore
+        const notes = await this.dataStore.get('notes');
+        notes.unshift(newVoiceNote);
+        this.dataStore.set('notes', notes);
+
+        // Hide voice note UI
+        this.hideVoiceNoteUI();
     }
 
     showVoiceNoteUI() {
@@ -67,6 +96,6 @@ export default class audioRecording extends BindingClass {
         // document.getElementById("new-voice-note-start").removeEventListener('click', this.hideVoiceNoteUI);
         // document.getElementById('new-voice-note-start').addEventListener('click', this.showVoiceNoteUI);
         document.getElementById("overlay").style.display = "none";
-        document.getElementById("primary-note-default").style.display = "block";
+        document.getElementById("primary-note-default").style.display = "flex";
     }
 }
