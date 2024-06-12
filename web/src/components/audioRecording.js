@@ -3,10 +3,6 @@ import BindingClass from "../util/bindingClass";
 import {MediaRecorder, register} from 'extendable-media-recorder';
 import {connect} from 'extendable-media-recorder-wav-encoder';
 
-let mediaRecorder = null;
-let audioBlobs = [];
-let capturedStream = null;
-
 /**
  * The audio recording component for the website.
  */
@@ -14,69 +10,51 @@ export default class audioRecording extends BindingClass {
     constructor() {
         super();
 
-        const methodsToBind = [
-            'connect', 'startRecording', 'stopRecording'
-        ];
+        const methodsToBind = [ 'transcribeAudio' ];
         this.bindClassMethods(methodsToBind, this);
 
         this.client = new NoteworthyServiceClient();
     }
 
-    // Register the extendable-media-recorder-wav-encoder
-    async connect() {
+    showVoiceNoteUI() {
+        
+    }
+
+    async transcribeAudio() {
         await register(await connect());
-    }
-
-    // Starts recording audio
-    startRecording() {
-        this.connect();
-        return navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            audioBlobs = [];
-            capturedStream = stream;
-
-            // Use the extended MediaRecorder library
-            mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'audio/wav'
-            });
-
-            // Add audio blobs while recording 
-            mediaRecorder.addEventListener('dataavailable', event => {
-                audioBlobs.push(event.data);
-            });
-
+        
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            
+        // Add listeners for starting and stopping audio
+        let start = document.getElementById('new-voice-note');
+        let stop = document.getElementById('stop-recording');
+        let mediaRecorder = new MediaRecorder(stream, {
+            mimeType: 'audio/wav'
+        });
+        let chunks = [];
+        
+        start.addEventListener('click', (ev)=>{
             mediaRecorder.start();
-        }).catch((e) => {
-            console.error(e);
+            console.log(mediaRecorder.state);
         });
-    }
 
-    // Stops recording audio
-    stopRecording() {
-        return new Promise(resolve => {
-          if (!mediaRecorder) {
-            resolve(null);
-            return;
-          }
-      
-          mediaRecorder.addEventListener('stop', () => {
+        stop.addEventListener('click', (ev)=>{
+            mediaRecorder.stop();
+            console.log(mediaRecorder.state);
+        });
+
+        mediaRecorder.ondataavailable = function(ev) {
+            chunks.push(ev.data);
+        }
+
+        mediaRecorder.onstop = (ev)=>{
             const mimeType = mediaRecorder.mimeType;
-            const audioBlob = new Blob(audioBlobs, { type: mimeType });
-      
-            if (capturedStream) {
-              capturedStream.getTracks().forEach(track => track.stop());
-            }
-      
-            resolve(audioBlob);
-          });
-          
-          mediaRecorder.stop();
-          debugger
-        });
-      }
+            let blob = new Blob(chunks, { type: mimeType });
+            chunks = [];
 
-      // Get wav blob
-      getWavBlob() {
-        return audioBlobs;
-      }
+            console.log(blob);
+            
+            this.client.transcribeAudio(blob);
+        }
+    }
 }

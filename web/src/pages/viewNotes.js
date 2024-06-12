@@ -3,8 +3,6 @@ import Header from '../components/header';
 import AudioRecording from '../components/audioRecording';
 import BindingClass from "../util/bindingClass";
 import DataStore from "../util/DataStore";
-import {MediaRecorder, register} from 'extendable-media-recorder';
-import {connect} from 'extendable-media-recorder-wav-encoder';
 
 /**
  * Logic needed to view main page of the website displaying all notes.
@@ -15,8 +13,7 @@ class ViewNotes extends BindingClass {
         super();
         this.bindClassMethods(['clientLoaded', 'mount', 'displayNotePreviews', 'displayFirstNoteAsPrimaryNote',
                                 'createNote', 'updateNote', 'deleteNote',
-                                'setDefaultNoteOrder', 'setDefaultReversedNoteOrder',
-                                'transcribeVoiceNote', 'testMethod'
+                                'setDefaultNoteOrder', 'setDefaultReversedNoteOrder'
         ], this);
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
@@ -29,9 +26,6 @@ class ViewNotes extends BindingClass {
      */
     async mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
-        // document.getElementById('new-voice-note').addEventListener('click', this.audioRecording.startRecording);
-        // document.getElementById('stop-recording').addEventListener('click', this.audioRecording.stopRecording);
-        // document.getElementById('voice-note-test').addEventListener('click', this.transcribeVoiceNote);
         document.getElementById('save-note').addEventListener('click', this.updateNote);
         document.getElementById('delete-note').addEventListener('click', this.deleteNote);
         document.getElementById('sort-default').addEventListener('click', this.setDefaultNoteOrder);
@@ -42,7 +36,7 @@ class ViewNotes extends BindingClass {
         this.client = new NoteworthyServiceClient();
         await this.clientLoaded();
         this.displayFirstNoteAsPrimaryNote();
-        this.testMethod();
+        this.audioRecording.transcribeAudio();
     }
 
     /**
@@ -239,47 +233,6 @@ class ViewNotes extends BindingClass {
         });
 
         return notePreviewButton;
-    }
-
-    // ------------------------------------------------------------------------------------------
-
-    async transcribeVoiceNote() {
-        const newNote = await this.client.transcribeAudio(this.audioRecording.getWavBlob);
-    }
-
-    async testMethod() {
-        await register(await connect());
-        
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-            
-        //add listeners for saving video/audio
-        let start = document.getElementById('start-recording');
-        let stop = document.getElementById('stop-recording');
-        let mediaRecorder = new MediaRecorder(stream, {
-            mimeType: 'audio/wav'
-        });
-        let chunks = [];
-        
-        start.addEventListener('click', (ev)=>{
-            mediaRecorder.start();
-            console.log(mediaRecorder.state);
-        })
-        stop.addEventListener('click', (ev)=>{
-            mediaRecorder.stop();
-            console.log(mediaRecorder.state);
-        });
-        mediaRecorder.ondataavailable = function(ev) {
-            chunks.push(ev.data);
-        }
-        mediaRecorder.onstop = (ev)=>{
-            const mimeType = mediaRecorder.mimeType;
-            let blob = new Blob(chunks, { type: mimeType });
-            chunks = [];
-
-            console.log(blob);
-            
-            this.client.transcribeAudio(blob);
-        }
     }
 }
 
