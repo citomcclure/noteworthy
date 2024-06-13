@@ -224,6 +224,7 @@ public class TranscribeAudioActivity {
         note.setDateCreated(currentTime);
         note.setDateUpdated(currentTime);
         note.setEmail(transcribeAudioRequest.getEmail());
+        note.setTranscriptionId(transcriptionId);
 
         // Save to database
         noteDao.saveNote(note);
