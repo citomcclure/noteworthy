@@ -40,12 +40,19 @@ public class UpdateNoteActivity {
     public UpdateNoteResult handleRequest(UpdateNoteRequest updateNoteRequest) {
         log.info("Received UpdateNoteRequest {}", updateNoteRequest);
 
+        // If note was created via voice note, keep transcriptionId value
+        String transcriptionId = noteDao.getNote(
+                updateNoteRequest.getEmail(),
+                updateNoteRequest.getDateCreated())
+                .getTranscriptionId();
+
         Note note = new Note();
         note.setTitle(updateNoteRequest.getTitle());
         note.setContent(updateNoteRequest.getContent());
         note.setDateCreated(updateNoteRequest.getDateCreated());
         note.setDateUpdated(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         note.setEmail(updateNoteRequest.getEmail());
+        note.setTranscriptionId(transcriptionId);
 
         noteDao.saveNote(note);
 
