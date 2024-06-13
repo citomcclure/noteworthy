@@ -33,12 +33,12 @@ export default class audioRecording extends BindingClass {
         // Only executed once in order to use the same stream and media player for multiple voice notes in one 
         // session. Otherwise, we will start to stack event listeners and create duplicate media related instances.
         if (firstTime) {
-            stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
             
             // Add listeners for starting and stopping audio
             let start = document.getElementById('start-recording');
             let stop = document.getElementById('stop-recording');
-            mediaRecorder = new MediaRecorder(stream, {
+            let mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'audio/wav'
             });
             // streamAndMediaPlayerStarted = true;
