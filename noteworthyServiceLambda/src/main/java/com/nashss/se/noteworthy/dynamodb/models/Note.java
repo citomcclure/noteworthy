@@ -21,6 +21,7 @@ public class Note {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private String email;
+    private String transcriptionId;
 
     @DynamoDBAttribute(attributeName = "title")
     public String getTitle() {
@@ -69,25 +70,13 @@ public class Note {
         this.email = email;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Note note = (Note) o;
-        return Objects.equals(title, note.title) &&
-                Objects.equals(content, note.content) &&
-                Objects.equals(dateCreated, note.dateCreated) &&
-                Objects.equals(dateUpdated, note.dateUpdated) &&
-                Objects.equals(email, note.email);
+    @DynamoDBAttribute(attributeName = "transcriptionId")
+    public String getTranscriptionId() {
+        return transcriptionId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, content, dateCreated, dateUpdated, email);
+    public void setTranscriptionId(String transcriptionId) {
+        this.transcriptionId = transcriptionId;
     }
 
     @Override
@@ -98,6 +87,20 @@ public class Note {
                 ", dateCreated=" + dateCreated +
                 ", dateUpdated=" + dateUpdated +
                 ", email='" + email + '\'' +
+                ", transcriptionId='" + transcriptionId + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Note note = (Note) o;
+        return Objects.equals(title, note.title) && Objects.equals(content, note.content) && Objects.equals(dateCreated, note.dateCreated) && Objects.equals(dateUpdated, note.dateUpdated) && Objects.equals(email, note.email) && Objects.equals(transcriptionId, note.transcriptionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, content, dateCreated, dateUpdated, email, transcriptionId);
     }
 }
