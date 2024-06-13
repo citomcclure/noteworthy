@@ -7,7 +7,9 @@ import com.nashss.se.noteworthy.activity.results.CreateNoteResult;
 import com.nashss.se.noteworthy.activity.results.TranscribeAudioResult;
 import com.nashss.se.noteworthy.converters.ModelConverter;
 import com.nashss.se.noteworthy.dynamodb.NoteDao;
+import com.nashss.se.noteworthy.dynamodb.TranscriptionDao;
 import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.dynamodb.models.Transcription;
 import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 import com.nashss.se.noteworthy.models.NoteModel;
 import com.nashss.se.noteworthy.utils.TranscriptionUtils;
@@ -43,6 +45,7 @@ import static java.lang.Thread.sleep;
 public class TranscribeAudioActivity {
     private final Logger log = LogManager.getLogger();
     private final NoteDao noteDao;
+    private final TranscriptionDao transcriptionDao;
     private final AmazonTranscribe amazonTranscribeClient;
     private static final String INPUT_BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure";
     private static final String OUTPUT_BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure-transcribe-output";
@@ -52,8 +55,10 @@ public class TranscribeAudioActivity {
      * @param amazonTranscribeClient AmazonTranscribe client.
      */
     @Inject
-    public TranscribeAudioActivity(NoteDao noteDao, AmazonTranscribe amazonTranscribeClient) {
+    public TranscribeAudioActivity(NoteDao noteDao, TranscriptionDao transcriptionDao,
+                                   AmazonTranscribe amazonTranscribeClient) {
         this.noteDao = noteDao;
+        this.transcriptionDao = transcriptionDao;
         this.amazonTranscribeClient = amazonTranscribeClient;
     }
 
@@ -205,7 +210,11 @@ public class TranscribeAudioActivity {
             throw new RuntimeException("Unable to parse transcription job result json.", e);
         }
 
-        // TODO: save results to new database table, update note content, and return transcription to FE
+        // Save transcription data to transcriptions table
+        Transcription transcription = new Transcription();
+        transcription.setTranscriptionId(transcriptionId);
+        transcription.setJson(transcriptionResultJson);
+        transcriptionDao.saveTranscription(transcription);
 
         // Create new note using transcription as note content
         Note note = new Note();
