@@ -1,27 +1,17 @@
 package com.nashss.se.noteworthy.utils;
 
-import com.fasterxml.jackson.core.JsonParseException;
+import java.util.Arrays;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.util.Arrays;
-
 /**
  * Helpful method(s) for TranscribeAudio endpoint.
  */
 public class TranscriptionUtils {
-    static final int ID_LENGTH = 5;
-
-    /**
-     * Generates an alphanumeric string of length 5. Used for unique identification of
-     * transcription keys for S3 objects and transcription job names.
-     * @return an ID of length 5.
-     */
-    public static String generateID() {
-        return RandomStringUtils.randomAlphanumeric(ID_LENGTH);
-    }
+    static final int ID_PREFIX_LENGTH = 5;
 
     /**
      * API Gateway encodes the request body whenever multimedia files are sent via form-data,
@@ -41,8 +31,27 @@ public class TranscriptionUtils {
         throw new RuntimeException(".wav file not found in request.");
     }
 
+    /**
+     * Transcription job results in json string that needs to be parsed to obtain transcription.
+     * @param json of successful transcription job
+     * @return the string result of transcription
+     * @throws JsonProcessingException if there is error processing json
+     */
     public static String parseJsonForTranscript(String json) throws JsonProcessingException {
         JsonNode jsonNode = (new ObjectMapper()).readTree(json);
         return jsonNode.get("results").get("transcripts").get(0).get("transcript").asText();
+    }
+
+    /**
+     * Create unique transcription identifier for bucket keys, transcription job, and transcription output.
+     * @param localDateTime string representation of current time corresponding to dateCreated of new voice note
+     * @return a string combining prefix and current time
+     */
+    public static String generateTranscriptionId(String localDateTime) {
+        String transcriptionId = RandomStringUtils.randomAlphanumeric(ID_PREFIX_LENGTH) +
+                "_" + localDateTime;
+
+        // transcription job names do not allow colon character
+        return transcriptionId.replace(":", "-");
     }
 }

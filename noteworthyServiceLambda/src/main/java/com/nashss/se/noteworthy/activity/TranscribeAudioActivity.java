@@ -78,18 +78,16 @@ public class TranscribeAudioActivity {
                 .build();
 
         // Create unique transcription identifier for bucket keys, transcription job, and transcription output
-        String id = TranscriptionUtils.generateID();
         LocalDateTime currentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        String transcriptionName = id + "_" + currentTime;
-        // transcription job names do not allow colon character
-        transcriptionName = transcriptionName.replace(":", "-");
+        String transcriptionId = TranscriptionUtils.generateTranscriptionId(currentTime.toString());
 
+        // TODO: delete temp file after using to clear up lambda execution environment
         // Stream audio bytes and write to temp file
         InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
-        String transcriptionKey = transcriptionName + "_key";
+        String transcriptionKey = transcriptionId + "_key";
         try {
             log.info("Attempting to save wav file to temp and put into S3 bucket as '{}'.", transcriptionKey);
-            File file = File.createTempFile(transcriptionName, ".wav");
+            File file = File.createTempFile(transcriptionId, ".wav");
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             // Put new temp file into S3 bucket
@@ -121,7 +119,7 @@ public class TranscribeAudioActivity {
 //        }
 
         // TODO: set up media and strings, chain commands together using 'with' methods
-        String transcriptionJob = transcriptionName + "_job";
+        String transcriptionJob = transcriptionId + "_job";
         StartTranscriptionJobRequest startTranscriptionJobRequest = new StartTranscriptionJobRequest();
         startTranscriptionJobRequest.withLanguageCode(LanguageCode.EnUS);
 
