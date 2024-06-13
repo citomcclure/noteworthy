@@ -13,8 +13,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class NoteDaoTest {
     @Mock
@@ -78,5 +80,25 @@ public class NoteDaoTest {
         // THEN
         verify(dynamoDBMapper).delete(note);
         assertEquals(note, result);
+    }
+
+    @Test
+    public void getNote_callsMapperWithCompositeKey() {
+        // GIVEN
+        String expectedEmail = "email";
+        LocalDateTime expectedDateCreated = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
+        Note note = new Note();
+        note.setEmail(expectedEmail);
+        note.setDateCreated(expectedDateCreated);
+
+        when(dynamoDBMapper.load(Note.class, expectedEmail, expectedDateCreated)).thenReturn(note);
+
+        // WHEN
+        Note result = noteDao.getNote(expectedEmail, expectedDateCreated);
+
+        // THEN
+        assertEquals(expectedEmail, result.getEmail(), "Expected emails to match.");
+        assertEquals(expectedDateCreated, result.getDateCreated(), "Expected creation dates to match.");
     }
 }
