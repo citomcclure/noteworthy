@@ -48,8 +48,6 @@ public class CreateNoteActivity {
         note.setDateCreated(currentTime);
         note.setDateUpdated(currentTime);
         note.setEmail(createNoteRequest.getEmail());
-        // If a conventional note is being created, it won't have a transcriptionId
-        note.setTranscriptionId("");
 
         noteDao.saveNote(note);
 

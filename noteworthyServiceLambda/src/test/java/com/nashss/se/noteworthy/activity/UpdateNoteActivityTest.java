@@ -40,7 +40,6 @@ public class UpdateNoteActivityTest {
         // GIVEN
         LocalDateTime dateCreated = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         String email = "email@test.com";
-        String expectedTranscriptionId = "12345";
 
         // Original note
         Note originalNote = new Note();
