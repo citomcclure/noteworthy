@@ -66,8 +66,7 @@ public class TranscribeAudioActivity {
      */
     @Inject
     public TranscribeAudioActivity(NoteDao noteDao, TranscriptionDao transcriptionDao,
-                                   AmazonS3 s3Client,
-                                   AmazonTranscribe transcribeClient) {
+                                   AmazonS3 s3Client, AmazonTranscribe transcribeClient) {
         this.noteDao = noteDao;
         this.transcriptionDao = transcriptionDao;
         this.s3Client = s3Client;
@@ -82,10 +81,10 @@ public class TranscribeAudioActivity {
      * @return result object containing the API defined by {@link NoteModel}
      */
     public TranscribeAudioResult handleRequest(TranscribeAudioRequest transcribeAudioRequest) {
-        log.info("Received TranscribeAudioRequest for email '{}' with media file of size {} KB.",
-                transcribeAudioRequest.getEmail(), transcribeAudioRequest.getAudio().length / 1_000);
-
-        if (transcribeAudioRequest.getAudio() == null) {
+        if (transcribeAudioRequest.getAudio() != null) {
+            log.info("Received TranscribeAudioRequest for email '{}' with media file of size {} KB.",
+                    transcribeAudioRequest.getEmail(), transcribeAudioRequest.getAudio().length / 1_000);
+        } else {
             throw new TranscriptionException("Media cannot be null. Please include WAV file with request.");
         }
 
