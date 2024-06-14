@@ -86,11 +86,11 @@ public class TranscribeAudioActivity {
         LocalDateTime currentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         String transcriptionId = TranscriptionUtils.generateTranscriptionId(currentTime.toString());
 
-        // TODO: delete temp file after using to clear up lambda execution environment
         // Stream audio bytes and write to temp file
         InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
         String transcriptionKey = transcriptionId + "_key";
         try {
+            // TODO: delete temp file after using to clear up lambda execution environment
             log.info("Attempting to save wav file to temp and put into S3 bucket as '{}'.", transcriptionKey);
             File file = File.createTempFile(transcriptionId, ".wav");
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
