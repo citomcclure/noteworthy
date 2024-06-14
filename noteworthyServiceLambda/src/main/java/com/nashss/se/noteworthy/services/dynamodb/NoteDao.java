@@ -1,6 +1,6 @@
-package com.nashss.se.noteworthy.dynamodb;
+package com.nashss.se.noteworthy.services.dynamodb;
 
-import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;

@@ -1,6 +1,6 @@
 package com.nashss.se.noteworthy.converters;
 
-import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import com.nashss.se.noteworthy.models.NoteModel;
 
 /**

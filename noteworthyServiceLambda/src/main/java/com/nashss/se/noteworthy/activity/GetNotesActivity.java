@@ -3,9 +3,9 @@ package com.nashss.se.noteworthy.activity;
 import com.nashss.se.noteworthy.activity.requests.GetNotesRequest;
 import com.nashss.se.noteworthy.activity.results.GetNotesResult;
 import com.nashss.se.noteworthy.converters.ModelConverter;
-import com.nashss.se.noteworthy.dynamodb.NoteDao;
+import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 
-import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import com.nashss.se.noteworthy.exceptions.InvalidAttributeValueException;
 import com.nashss.se.noteworthy.models.NoteModel;
 import com.nashss.se.noteworthy.models.NoteOrder;

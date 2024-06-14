@@ -2,7 +2,8 @@ package com.nashss.se.noteworthy.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
+import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

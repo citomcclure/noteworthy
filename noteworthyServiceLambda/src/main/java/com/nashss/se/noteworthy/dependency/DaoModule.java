@@ -1,7 +1,9 @@
 package com.nashss.se.noteworthy.dependency;
 
-import com.nashss.se.noteworthy.dynamodb.DynamoDbClientProvider;
-import com.nashss.se.noteworthy.transcribe.AmazonTranscribeClientProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import com.nashss.se.noteworthy.services.dynamodb.DynamoDbClientProvider;
+import com.nashss.se.noteworthy.services.s3.S3ClientProvider;
+import com.nashss.se.noteworthy.services.transcribe.TranscribeClientProvider;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -25,7 +27,7 @@ public class DaoModule {
     @Singleton
     @Provides
     public DynamoDBMapper provideDynamoDBMapper() {
-        return new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient(Regions.US_EAST_2));
+        return new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
     }
 
     /**
@@ -34,7 +36,17 @@ public class DaoModule {
      */
     @Singleton
     @Provides
-    public AmazonTranscribe provideAmazonTranscribeClient() {
-        return AmazonTranscribeClientProvider.getAmazonTranscribeClient();
+    public AmazonTranscribe provideTranscribeClient() {
+        return TranscribeClientProvider.getTranscribeClient();
+    }
+
+    /**
+     * Provides an AmazonS3 singleton instance.
+     * @return AmazonS3 object
+     */
+    @Singleton
+    @Provides
+    public AmazonS3 provideAmazonS3Client() {
+        return S3ClientProvider.getS3Client();
     }
 }

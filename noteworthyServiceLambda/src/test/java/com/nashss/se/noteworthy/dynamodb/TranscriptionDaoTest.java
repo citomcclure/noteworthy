@@ -1,8 +1,8 @@
 package com.nashss.se.noteworthy.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.nashss.se.noteworthy.dynamodb.models.Note;
-import com.nashss.se.noteworthy.dynamodb.models.Transcription;
+import com.nashss.se.noteworthy.services.dynamodb.TranscriptionDao;
+import com.nashss.se.noteworthy.services.dynamodb.models.Transcription;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -1,4 +1,4 @@
-package com.nashss.se.noteworthy.dynamodb.models;
+package com.nashss.se.noteworthy.services.dynamodb.models;
 
 import com.nashss.se.noteworthy.converters.NoteDateTimeConverter;
 

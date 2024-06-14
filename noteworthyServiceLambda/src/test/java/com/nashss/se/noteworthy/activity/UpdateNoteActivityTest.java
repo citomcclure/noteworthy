@@ -1,16 +1,14 @@
 package com.nashss.se.noteworthy.activity;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.nashss.se.noteworthy.activity.requests.UpdateNoteRequest;
 import com.nashss.se.noteworthy.activity.results.UpdateNoteResult;
-import com.nashss.se.noteworthy.dynamodb.NoteDao;
-import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
+import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import com.nashss.se.noteworthy.models.NoteModel;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 

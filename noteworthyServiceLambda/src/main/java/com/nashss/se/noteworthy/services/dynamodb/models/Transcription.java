@@ -1,4 +1,4 @@
-package com.nashss.se.noteworthy.dynamodb.models;
+package com.nashss.se.noteworthy.services.dynamodb.models;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
