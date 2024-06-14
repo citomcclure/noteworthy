@@ -3,9 +3,9 @@ package com.nashss.se.noteworthy.activity;
 import com.nashss.se.noteworthy.activity.requests.DeleteNoteRequest;
 import com.nashss.se.noteworthy.activity.results.DeleteNoteResult;
 import com.nashss.se.noteworthy.converters.ModelConverter;
+import com.nashss.se.noteworthy.models.NoteModel;
 import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.services.dynamodb.models.Note;
-import com.nashss.se.noteworthy.models.NoteModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

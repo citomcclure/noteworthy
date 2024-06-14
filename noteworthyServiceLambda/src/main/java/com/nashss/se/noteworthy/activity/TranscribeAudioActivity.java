@@ -1,36 +1,48 @@
 package com.nashss.se.noteworthy.activity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nashss.se.noteworthy.activity.requests.TranscribeAudioRequest;
 import com.nashss.se.noteworthy.activity.results.TranscribeAudioResult;
 import com.nashss.se.noteworthy.converters.ModelConverter;
+import com.nashss.se.noteworthy.exceptions.TranscriptionException;
+import com.nashss.se.noteworthy.models.NoteModel;
 import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.services.dynamodb.TranscriptionDao;
 import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import com.nashss.se.noteworthy.services.dynamodb.models.Transcription;
-import com.nashss.se.noteworthy.exceptions.TranscriptionException;
-import com.nashss.se.noteworthy.models.NoteModel;
 import com.nashss.se.noteworthy.utils.S3Utils;
 import com.nashss.se.noteworthy.utils.TranscriptionUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.transcribe.AmazonTranscribe;
-import com.amazonaws.services.transcribe.model.*;
+import com.amazonaws.services.transcribe.model.GetTranscriptionJobRequest;
+import com.amazonaws.services.transcribe.model.GetTranscriptionJobResult;
+import com.amazonaws.services.transcribe.model.LanguageCode;
+import com.amazonaws.services.transcribe.model.Media;
+import com.amazonaws.services.transcribe.model.MediaFormat;
+import com.amazonaws.services.transcribe.model.StartTranscriptionJobRequest;
+import com.amazonaws.services.transcribe.model.TranscriptionJobStatus;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import javax.inject.Inject;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static java.lang.Thread.sleep;
 
@@ -47,7 +59,10 @@ public class TranscribeAudioActivity {
 
     /**
      * Instantiates a new TranscribeAudioActivity object.
-     * @param transcribeClient AmazonTranscribe client.
+     * @param noteDao NoteDao used to access notes table
+     * @param transcriptionDao TranscriptionDao used to access transcriptions table
+     * @param s3Client AmazonS3 client
+     * @param transcribeClient AmazonTranscribe client
      */
     @Inject
     public TranscribeAudioActivity(NoteDao noteDao, TranscriptionDao transcriptionDao,
@@ -96,8 +111,7 @@ public class TranscribeAudioActivity {
             if (audioFormat.getSampleRate() != AudioSystem.NOT_SPECIFIED) {
                 sampleRate = (int) audioFormat.getSampleRate();
                 log.info("Sample rate correctly identified as {} Hz.", sampleRate);
-            }
-            else {
+            } else {
                 // If sampleRate is not specified, we will default to 48 kHz sample rate expected from the frontend
                 sampleRate = 48_000;
                 log.info("Could not identify sample rate, setting to default.");

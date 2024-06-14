@@ -1,11 +1,13 @@
 package com.nashss.se.noteworthy.utils;
 
-import java.util.Arrays;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.Arrays;
 
 // TODO: unit tests
 /**
@@ -24,8 +26,8 @@ public class TranscriptionUtils {
     public static byte[] removeEncodedHeaders(byte[] encodedArr) {
         for (int i = 0; i < encodedArr.length; i++) {
             // byte sequence corresponds to 'RIFF' found at the beginning of every .wav file
-            if (encodedArr[i] == 82 && encodedArr[i+1] == 73 && encodedArr[i+2] == 70 && encodedArr[i+3] == 70) {
-                return Arrays.copyOfRange(encodedArr, i, encodedArr.length-1);
+            if (encodedArr[i] == 82 && encodedArr[i + 1] == 73 && encodedArr[i + 2] == 70 && encodedArr[i + 3] == 70) {
+                return Arrays.copyOfRange(encodedArr, i, encodedArr.length - 1);
             }
         }
 

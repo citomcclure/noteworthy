@@ -1,12 +1,11 @@
 package com.nashss.se.noteworthy.dependency;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.nashss.se.noteworthy.services.dynamodb.DynamoDbClientProvider;
 import com.nashss.se.noteworthy.services.s3.S3ClientProvider;
 import com.nashss.se.noteworthy.services.transcribe.TranscribeClientProvider;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.transcribe.AmazonTranscribe;
 
 import dagger.Module;

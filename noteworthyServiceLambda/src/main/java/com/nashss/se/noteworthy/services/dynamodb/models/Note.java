@@ -93,10 +93,16 @@ public class Note {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Note note = (Note) o;
-        return Objects.equals(title, note.title) && Objects.equals(content, note.content) && Objects.equals(dateCreated, note.dateCreated) && Objects.equals(dateUpdated, note.dateUpdated) && Objects.equals(email, note.email) && Objects.equals(transcriptionId, note.transcriptionId);
+        return Objects.equals(title, note.title) && Objects.equals(content, note.content) &&
+                Objects.equals(dateCreated, note.dateCreated) && Objects.equals(dateUpdated, note.dateUpdated) &&
+                Objects.equals(email, note.email) && Objects.equals(transcriptionId, note.transcriptionId);
     }
 
     @Override

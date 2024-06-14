@@ -39,8 +39,12 @@ public class Transcription {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Transcription that = (Transcription) o;
         return Objects.equals(transcriptionId, that.transcriptionId) && Objects.equals(json, that.json);
     }
