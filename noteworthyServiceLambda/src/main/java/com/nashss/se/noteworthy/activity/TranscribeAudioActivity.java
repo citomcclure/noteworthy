@@ -154,16 +154,18 @@ public class TranscribeAudioActivity {
         // Create a getTranscriptionJobRequest, and poll the transcription job until it has completed or failed
         GetTranscriptionJobRequest getTranscriptionJobRequest = new GetTranscriptionJobRequest()
                 .withTranscriptionJobName(transcriptionJob);
+        int pollCount = 0;
         int pollFrequency = 1_000;
-        log.info("Polling job for status every {} ms.", pollFrequency);
+        log.info("Polling job for job status every {} ms...", pollFrequency);
         while (true) {
             // Get current job status
             GetTranscriptionJobResult jobResult = transcribeClient.getTranscriptionJob(getTranscriptionJobRequest);
             String jobStatus = jobResult.getTranscriptionJob().getTranscriptionJobStatus();
+            pollCount++;
 
             // If job is in progress or queued, continue to loop until completed or failed
             if (jobStatus.equals(TranscriptionJobStatus.COMPLETED.toString())) {
-                log.info("Job '{}' completed.", transcriptionJob);
+                log.info("Job '{}' completed. Took {} seconds.", transcriptionJob, pollCount);
                 break;
             } else if (jobStatus.equals(TranscriptionJobStatus.FAILED.toString())) {
                 throw new TranscriptionException(String.format(
