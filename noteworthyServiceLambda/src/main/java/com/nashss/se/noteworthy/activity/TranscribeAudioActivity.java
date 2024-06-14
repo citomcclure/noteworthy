@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -65,9 +66,9 @@ public class TranscribeAudioActivity {
      * @param transcribeAudioRequest request object containing the note keys and audio..
      * @return result object containing the API defined by {@link NoteModel}
      */
-    // TODO: comment code and add/remove logs
+    // TODO: NPEs like input streams
     public TranscribeAudioResult handleRequest(TranscribeAudioRequest transcribeAudioRequest) {
-        log.info("Received TranscribeAudioRequest for user '{}' with media file of size {}KB.",
+        log.info("Received TranscribeAudioRequest for email '{}' with media file of size {} KB.",
                 transcribeAudioRequest.getEmail(), transcribeAudioRequest.getAudio().length / 1_000);
 
         // Create unique transcription identifier for bucket keys, transcription job, and transcription output
@@ -78,7 +79,7 @@ public class TranscribeAudioActivity {
         InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
         String transcriptionKey = transcriptionId + "_key";
         try {
-            log.info("Attempting to save wav file to temp and put into S3 bucket as '{}'.", transcriptionKey);
+            log.info("Attempting to save wav file to temp and put into S3 bucket as '{}'...", transcriptionKey);
             File file = File.createTempFile(transcriptionId, ".wav");
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
@@ -89,17 +90,19 @@ public class TranscribeAudioActivity {
             // Close stream and cleanup lambda execution environment
             inputStream.close();
             Files.delete(file.toPath());
-            log.info("Media file successfully saved to temp and put into S3 bucket as '{}'.", transcriptionKey);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            log.info("Wav file put into S3 bucket as '{}'.", transcriptionKey);
+        } catch (IOException e) {
+            throw new TranscriptionException("Issue streaming wav file.", e);
         }
 
         Media media = new Media();
         media.setMediaFileUri(s3Client.getUrl(S3Utils.INPUT_BUCKET, transcriptionKey).toString());
 
+        // TODO: move to before s3 upload since it will detect if valid wav file
         // Identify sample rate of wav file
         AudioFormat audioFormat;
         int sampleRate = 0;
+        log.info("Attempting to identify sample rate...");
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
                     new ByteArrayInputStream(transcribeAudioRequest.getAudio()
@@ -111,17 +114,22 @@ public class TranscribeAudioActivity {
 
             if (audioFormat.getSampleRate() != AudioSystem.NOT_SPECIFIED) {
                 sampleRate = (int) audioFormat.getSampleRate();
+                log.info("Sample rate correctly identified as '{}'.", sampleRate);
             }
             else {
                 // If sampleRate is not specified, we will default to 48 kHz sample rate expected from the frontend
                 sampleRate = 48_000;
+                log.info("Could not identify sample rate, setting to default.");
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        } catch (IOException e) {
+            throw new TranscriptionException("Issue streaming wav file.", e);
+        } catch (UnsupportedAudioFileException e) {
+            throw new TranscriptionException("Media file not recognized as valid wav file.", e);
         }
 
         // Create transcription job request with media, media details, model language, and output location
         // and start transcription job
+        log.info("Creating StartTranscriptionJobRequest...");
         StartTranscriptionJobRequest startTranscriptionJobRequest = new StartTranscriptionJobRequest();
         String transcriptionJob = transcriptionId + "_job";
         startTranscriptionJobRequest.setTranscriptionJobName(transcriptionJob);
@@ -133,13 +141,18 @@ public class TranscribeAudioActivity {
                 .withOutputBucketName(S3Utils.OUTPUT_BUCKET);
 
         transcribeClient.startTranscriptionJob(startTranscriptionJobRequest);
-        log.info("TranscriptionJobRequest sent to client. Starting transcription job '{}'.", transcriptionJob);
+        log.info("StartTranscriptionJobRequest sent to transcribe client. Starting transcription job '{}'" +
+                "with the following settings:" +
+                        "Media format: '{}', Sample rate: '{} Hz', Language code: '{}', S3 output bucket: '{}',",
+                        transcriptionJob, MediaFormat.Wav, sampleRate, LanguageCode.EnUS, S3Utils.OUTPUT_BUCKET);
 
         // Create a getTranscriptionJobRequest, which is used to check ongoing or finished job
         GetTranscriptionJobRequest getTranscriptionJobRequest = new GetTranscriptionJobRequest()
                 .withTranscriptionJobName(transcriptionJob);
 
         // Poll the transcription job until it has completed or failed
+        int pollFrequency = 1_000;
+        log.info("Polling job for status every {} ms.", pollFrequency);
         while (true) {
             // Get current job status
             GetTranscriptionJobResult jobResult = transcribeClient.getTranscriptionJob(getTranscriptionJobRequest);
@@ -147,21 +160,24 @@ public class TranscribeAudioActivity {
 
             // If job is in progress or queued, continue to loop until completed or failed
             if (jobStatus.equals(TranscriptionJobStatus.COMPLETED.toString())) {
+                log.info("Job '{}' completed.", jobResult);
                 break;
             } else if (jobStatus.equals(TranscriptionJobStatus.FAILED.toString())) {
-                String reason = jobResult.getTranscriptionJob().getFailureReason();
-                throw new TranscriptionException(reason);
+                throw new TranscriptionException(String.format(
+                        "Transcription failed due to the following reason: '%s'",
+                        jobResult.getTranscriptionJob().getFailureReason()));
             }
 
             // Wait one second before polling job again
             try {
-                sleep(1000);
+                sleep(pollFrequency);
             } catch (InterruptedException e) {
-                throw new RuntimeException("Transcription process was interrupted.", e);
+                throw new TranscriptionException("Thread was interrupted while waiting for next poll.", e);
             }
         }
 
         // Stream transcription json from output S3 bucket
+        log.info("Obtaining transcription json from completed job...");
         S3Object object = s3Client.getObject(S3Utils.OUTPUT_BUCKET, transcriptionJob + ".json");
         String transcriptionResultJson = null;
         try {
@@ -169,15 +185,16 @@ public class TranscribeAudioActivity {
             transcriptionResultJson = new String(stream.readAllBytes());
             stream.close();
         } catch (IOException e) {
-            log.info("IOException.");
+            throw new TranscriptionException("Issue streaming transcription results.", e);
         }
 
         // Parse transcription json
         String transcript;
         try {
             transcript = TranscriptionUtils.parseJsonForTranscript(transcriptionResultJson);
+            log.info("Transcription json successfully obtained and parsed. Transcript: '{}'.", transcript);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to parse transcription job result json.", e);
+            throw new TranscriptionException("Unable to parse transcription job result json.", e);
         }
 
         // Save transcription data to transcriptions table
@@ -185,9 +202,11 @@ public class TranscribeAudioActivity {
         transcription.setTranscriptionId(transcriptionId);
         transcription.setJson(transcriptionResultJson);
         transcriptionDao.saveTranscription(transcription);
+        log.info("Transcription json saved to transcripts table.");
 
         // Create new note using transcript as note content
         Note note = new Note();
+
         // Different from CreateNote where value is passed from FE. Due to future extensions of each feature.
         note.setTitle("Untitled Voice Note");
         note.setContent(transcript);
@@ -195,6 +214,7 @@ public class TranscribeAudioActivity {
         note.setDateUpdated(currentTime);
         note.setEmail(transcribeAudioRequest.getEmail());
         note.setTranscriptionId(transcriptionId);
+        log.info("New voice note with transcript as note content saved to notes table.");
 
         // Save new voice note to notes table
         noteDao.saveNote(note);
