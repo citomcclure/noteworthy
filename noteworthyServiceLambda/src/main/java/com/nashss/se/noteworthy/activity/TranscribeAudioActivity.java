@@ -168,18 +168,16 @@ public class TranscribeAudioActivity {
         GetTranscriptionJobRequest transcriptionJobRequest = new GetTranscriptionJobRequest()
                 .withTranscriptionJobName(transcriptionJob);
         boolean continuePolling = true;
-        while (continuePolling) {
+        while (true) {
             GetTranscriptionJobResult jobResult = amazonTranscribeClient.getTranscriptionJob(transcriptionJobRequest);
             String jobStatus = jobResult.getTranscriptionJob().getTranscriptionJobStatus();
 
-            // TODO: change to if-elif
-            switch (TranscriptionJobStatus.valueOf(jobStatus)) {
-                case COMPLETED:
-                    continuePolling = false;
-                    break;
-                case FAILED:
-                    String reason = jobResult.getTranscriptionJob().getFailureReason();
-                    throw new TranscriptionException(reason);
+            // If job is in progress or queued, continue to loop until completed or failed
+            if (jobStatus.equals(TranscriptionJobStatus.COMPLETED.toString())) {
+                break;
+            } else if (jobStatus.equals(TranscriptionJobStatus.FAILED.toString())) {
+                String reason = jobResult.getTranscriptionJob().getFailureReason();
+                throw new TranscriptionException(reason);
             }
 
             // Wait one second before checking job status again
