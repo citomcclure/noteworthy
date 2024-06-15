@@ -81,7 +81,8 @@ class ViewNotes extends BindingClass {
 
         // Get first note preview if there is one
         const notes = await this.dataStore.get('notes');
-        if (notes == null) {
+        if (notes == null || notes.length == 0) {
+            console.log("No notes to display.")
             return;
         }
         let firstNote = notes[0];
@@ -160,6 +161,16 @@ class ViewNotes extends BindingClass {
         let notes = await this.dataStore.get('notes');
         notes = notes.filter(note => note.dateCreated != deletedNote.dateCreated);
         this.dataStore.set('notes', notes);
+
+        // If last note, remove contents from primary note view
+        if (notes.length == 0) {
+            const primaryNoteTitle = document.querySelector(".primary-note-title");
+            const primaryNoteContent = document.querySelector(".primary-note-content");
+            const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
+            primaryNoteTitle.textContent = null;
+            primaryNoteContent.textContent = null;
+            primaryNoteDateCreated.textContent = null;
+        }
 
         // Repaint note preview area and show first note preview as primary note
         this.displayNotePreviews();
