@@ -25,11 +25,20 @@ export default class audioRecording extends BindingClass {
         document.getElementById('playback-stop-recording-container').addEventListener('click', NoteUtils.swapStopWithTranscribing);
     }
 
+    /**
+     * Must be called to register additional dependency for creating media with audio/wav MIME type
+     */
     async connect() {
         await register(await connect());
     }
 
+    /**
+     * Attaches event listeners to our start and stop recording playback buttons. On click, these start
+     * and stop the recording. The media recorder makes 'dataavailable' after stop, which is added to our 
+     * chunks array. This is passed to createVoiceNote as 'blob'.
+     */
     async transcribeAudio() {
+        // Show voice note playback UI, with start recording button shown
         NoteUtils.showVoiceNoteUI();
 
         // Only executed once in order to use the same stream and media player for multiple voice notes in one 
@@ -64,22 +73,20 @@ export default class audioRecording extends BindingClass {
             mediaRecorder.onstop = (ev)=>{
                 const mimeType = mediaRecorder.mimeType;
                 let blob = new Blob(chunks, { type: mimeType });
-                // Remove data for next use
-                chunks = [];
                 
                 this.createVoiceNote(blob);
-                
-                // Stop getUserMedia stream. Currently causes issues with successive voice notes
-                // stream.getTracks().forEach( track => track.stop());
     
                 firstTime = false;
+            }
         }
-
-        }
-        
-
     }
 
+    /**
+     * Passes audio blob to client to send request. After retrieving new voice note, switch to 
+     * primary note view and paint with new voice note values. Add the note to the datastore and
+     * hide voice note playback UI.
+     * @param {Array} blob The valid WAV audio blob.
+     */
     async createVoiceNote(blob) {
         // Create new voice note in database with wav blob
         const newVoiceNote = await this.client.transcribeAudio(blob);

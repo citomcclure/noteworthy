@@ -2,7 +2,7 @@ export default class NoteUtils {
     
     /**
      * static utility method to generate the note preview button for the note preview area.
-     * @param {*} note the note a button is being made for.
+     * @param {Object} note the note a button is being made for.
      * @returns the note preview button with attached event listener.
      */
     static createNotePreviewButton(note) {
@@ -32,6 +32,8 @@ export default class NoteUtils {
         return notePreviewButton;
     }
 
+    // Methods for showing/hiding different elements on page using CSS display field
+
     static hideVoiceNoteUI() {
         document.getElementById("overlay").style.display = "none";
         document.getElementById("primary-note-default").style.display = "flex";
@@ -40,13 +42,6 @@ export default class NoteUtils {
     static showVoiceNoteUI() {
         document.getElementById("primary-note-default").style.display = "none";
         document.getElementById("overlay").style.display = "block";
-    }
-
-    static swapPlaybacks() {
-        event
-
-        document.getElementById(hideId).style.display = "none";  
-        document.getElementById(showId).style.display = "flex";
     }
 
     static swapStartWithStop() {
