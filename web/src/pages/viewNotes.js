@@ -81,7 +81,8 @@ class ViewNotes extends BindingClass {
 
         // Get first note preview if there is one
         const notes = await this.dataStore.get('notes');
-        if (notes == null) {
+        if (notes == null || notes.length == 0) {
+            console.log("No notes to display.")
             return;
         }
         let firstNote = notes[0];
