@@ -1,10 +1,11 @@
-package com.nashss.se.noteworthy.dynamodb;
+package com.nashss.se.noteworthy.services.dynamodb;
 
-import com.nashss.se.noteworthy.dynamodb.models.Note;
+import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,6 +36,17 @@ public class NoteDao {
     public Note saveNote(Note note) {
         this.dynamoDBMapper.save(note);
         return note;
+    }
+
+    /**
+     * Retrieves a single note, as specified by the email and dateCreated.
+     *
+     * @param email the user's email.
+     * @param dateCreated the datetime of the note when it was created.
+     * @return the requested note.
+     */
+    public Note getNote(String email, LocalDateTime dateCreated) {
+        return dynamoDBMapper.load(Note.class, email, dateCreated);
     }
 
     /**

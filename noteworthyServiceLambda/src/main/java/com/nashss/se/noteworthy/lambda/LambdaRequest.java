@@ -1,5 +1,7 @@
 package com.nashss.se.noteworthy.lambda;
 
+import com.nashss.se.noteworthy.utils.TranscriptionUtils;
+
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,6 +37,23 @@ public class LambdaRequest<T> extends APIGatewayProxyRequestEvent {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(
                     String.format("Unable to deserialize object from request body (%s).", requestClass.getSimpleName()),
+                    e);
+        }
+    }
+
+    /**
+     * Converts a Base64 encoded string in request body to a byte array. Used for TranscribeAudioLambda
+     * to obtain .wav file.
+     * @return byte array of media.
+     */
+    public byte[] fromBase64EncodedBodyAndParse() {
+        log.info("Attempting to decode and remove header info from request body");
+        try {
+            byte[] bodyDecoded = MAPPER.convertValue(super.getBody(), byte[].class);
+            return TranscriptionUtils.removeEncodedHeaders(bodyDecoded);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    String.format("Unable to convert encoded request body to byte array."),
                     e);
         }
     }

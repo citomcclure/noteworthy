@@ -135,6 +135,21 @@ export default class NoteworthyService extends BindingClass {
         return response.data.note;
     }
 
+    async transcribeAudio(wavBlob) {
+        const token = await this.getTokenOrThrow("Only authenticated users can create notes.");
+        const formData = new FormData();
+        formData.append('file', wavBlob);
+
+        const response = await this.axiosClient.post(`notes/voice`, formData, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'audio/wav'
+            }
+        });
+        return response.data.note;
+}
+
     /**
      * Helper method to log the error and run any error functions.
      * @param error The error received from the server.

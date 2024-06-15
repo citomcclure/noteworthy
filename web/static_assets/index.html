@@ -17,13 +17,16 @@
             <button class="button" id="new-note">
                 <div><img src="images/plus-sign.png"> New Note</div>
             </button>
+            <button class="button" id="new-voice-note-start">
+              <div><img src="images/recording.png"> Voice Note</div>
+            </button>
             <div class="note-sort-and-search">
                 <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" id="sort-by">Sort By</button>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" id="sort-default" href="#">Newest to Oldest</a></li>
                   <li><a class="dropdown-item" id="sort-default-reversed" href="#">Oldest to Newest</a></li>
                 </ul>
-              <button class="button" id="search">Search...</button>
+              <!-- <button class="button" id="search">Search...</button> -->
             </div>
             <div class="note-previews-container"></div>
           </div>
@@ -31,8 +34,8 @@
           <div class="col"></div>
 
           <div class="col-6">
-            <div class="primary-note-container">
-              <div class="primary-note-title" contenteditable="true">Loading...</div>
+            <div class="primary-note-container" id="primary-note-default">
+              <div class="primary-note-title" contenteditable="true"></div>
               <div class="primary-note-date-created"></div>
               <div class="divider">
                 <hr>
@@ -43,6 +46,32 @@
                 <button class="button" id="delete-note">
                   <img src="images/trash-can.png">
                 </button>
+              </div>
+            </div>
+            <div class="primary-note-container" id="overlay">
+              <div class="flex-container-playback">
+
+                <div class="voice-note-playback-container" id="playback-start-recording-container">
+                  <button class="playback-button" id="button-start-recording">
+                    <img class="playback-image" src="images/recording.png">
+                  </button>
+                  <div class="playback-text">Click to start recording</div>
+                </div>
+
+                <div class="voice-note-playback-container" id="playback-stop-recording-container">
+                  <button class="playback-button" id="button-stop-recording">
+                    <img class="playback-image" src="images/stop-recording.png">
+                  </button>
+                  <div class="playback-text">Stop recording</div>
+                </div>
+
+                <div class="voice-note-playback-container" id="playback-transcribing-container">
+                  <button class="playback-button" id="sound-waves-equalizer">
+                    <img class="playback-image" id="sound-waves-equalizer-image" src="images/sound-waves-equalizer.png">
+                  </button>
+                  <div class="playback-text">Generating voice note</div>
+                </div>
+
               </div>
             </div>
           </div>

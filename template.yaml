@@ -41,6 +41,8 @@ Globals:
       Authorizers:
         CognitoAuthorizer:
           UserPoolArn: !GetAtt UserPool.Arn
+    BinaryMediaTypes:
+      - 'multipart/form-data'
 
 Resources:
 
@@ -207,6 +209,28 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/notes"
+        - PolicyName: 'AccessTranscriptionsTable'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/transcriptions"
+        - PolicyName: 'AccessTranscribe'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action: transcribe:*
+              Resource: '*'
+        - PolicyName: 'AccessS3BucketTranscribeOutputs'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: s3:*
+                Resource: '*'
+
 
   #-----------------------------------------------------
   # Lambda Functions Configuration
@@ -292,6 +316,37 @@ Resources:
             Path: /notes
             Method: delete
 
+  TranscribeAudioLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt AccessRole.Arn
+      CodeUri: noteworthyServiceLambda
+      Handler: com.nashss.se.noteworthy.lambda.TranscribeAudioLambda::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Timeout: 300
+      Environment:
+        Variables:
+          JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+      Events:
+        Noteworthy:
+          Type: Api
+          Properties:
+            Path: /notes/voice
+            Method: post
+
+  #-----------------------------------------------------
+  # S3 Bucket for Transcribe Outputs
+  #-----------------------------------------------------
+
+  TranscribeOutputBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "nss-s3-c04-u7-noteworthy-cito.mcclure-transcribe-output"
+
+
   #-----------------------------------------------------
   # DynamoDB Configuration
   #-----------------------------------------------------
@@ -311,6 +366,18 @@ Resources:
           KeyType: "RANGE"
       BillingMode: "PAY_PER_REQUEST"
       TableName: "notes"
+
+  TranscriptionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "transcriptionId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "transcriptionId"
+          KeyType: "HASH"
+      BillingMode: "PAY_PER_REQUEST"
+      TableName: "transcriptions"
 
 #-----------------------------------------------------
 # The outputs defined below will be printed

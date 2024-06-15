@@ -2,7 +2,7 @@ package com.nashss.se.noteworthy.activity;
 
 import com.nashss.se.noteworthy.activity.requests.DeleteNoteRequest;
 import com.nashss.se.noteworthy.activity.results.DeleteNoteResult;
-import com.nashss.se.noteworthy.dynamodb.NoteDao;
+import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.models.NoteModel;
 
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package com.nashss.se.noteworthy.dynamodb;
+package com.nashss.se.noteworthy.services.dynamodb;
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;

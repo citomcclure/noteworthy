@@ -1,7 +1,9 @@
 import NoteworthyServiceClient from '../api/noteworthyServiceClient';
 import Header from '../components/header';
+import AudioRecording from '../components/audioRecording';
 import BindingClass from "../util/bindingClass";
 import DataStore from "../util/DataStore";
+import NoteUtils from "../util/noteUtils";
 
 /**
  * Logic needed to view main page of the website displaying all notes.
@@ -17,6 +19,7 @@ class ViewNotes extends BindingClass {
         this.dataStore = new DataStore();
         this.dataStore.addChangeListener(this.displayNotePreviews);
         this.header = new Header(this.dataStore);
+        this.audioRecording = new AudioRecording(this.dataStore);
     }
 
     /**
@@ -63,7 +66,7 @@ class ViewNotes extends BindingClass {
         // Paints note preview area with all note previews
         let note;
         for (note of notes) {
-            notePreviewsContainer.appendChild(this.createNotePreviewButtonHelper(note));
+            notePreviewsContainer.appendChild(NoteUtils.createNotePreviewButton(note));
         }
     }
 
@@ -108,7 +111,7 @@ class ViewNotes extends BindingClass {
         primaryNoteDateCreated.textContent = newNote.dateCreated;
     
         // add new note preview to preview area
-        const newNotePreviewButton = this.createNotePreviewButtonHelper(newNote);
+        const newNotePreviewButton = NoteUtils.createNotePreviewButton(newNote);
         const notePreviews = document.querySelector(".note-previews-container");
         notePreviews.prepend(newNotePreviewButton);
 
@@ -202,35 +205,6 @@ class ViewNotes extends BindingClass {
        this.dataStore.set('notes', notes);
        this.dataStore.set('noteOrder', 'default-reversed')
    }
-
-    /**
-     * Helper class to generate the note preview button for the note preview area.
-     * @param {*} note the note a button is being made for.
-     * @returns the note preview button with attached event listener.
-     */
-    createNotePreviewButtonHelper(note) {
-        // Create button element, set button text to note title, and set values
-        let notePreviewButton = document.createElement("button");
-        notePreviewButton.className = "button";
-        notePreviewButton.id = "note-preview-button";
-        notePreviewButton.type = "button";
-        notePreviewButton.textContent = note.title;
-        notePreviewButton.noteTitle = note.title;
-        notePreviewButton.noteContent = note.content;
-        notePreviewButton.noteDateCreated = note.dateCreated;
-
-        // Create listener. When note preview is clicked, update primary note with note values
-        const primaryNoteTitle = document.querySelector(".primary-note-title");
-        const primaryNoteContent = document.querySelector(".primary-note-content");
-        const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
-        notePreviewButton.addEventListener("click", function (evt) {
-            primaryNoteTitle.textContent = evt.target.noteTitle;
-            primaryNoteContent.textContent = evt.target.noteContent;
-            primaryNoteDateCreated.textContent = evt.target.noteDateCreated;
-        });
-
-        return notePreviewButton;
-    }
 }
 
 /**

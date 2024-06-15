@@ -3,9 +3,9 @@ package com.nashss.se.noteworthy.activity;
 import com.nashss.se.noteworthy.activity.requests.UpdateNoteRequest;
 import com.nashss.se.noteworthy.activity.results.UpdateNoteResult;
 import com.nashss.se.noteworthy.converters.ModelConverter;
-import com.nashss.se.noteworthy.dynamodb.NoteDao;
-import com.nashss.se.noteworthy.dynamodb.models.Note;
 import com.nashss.se.noteworthy.models.NoteModel;
+import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
+import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,12 +40,19 @@ public class UpdateNoteActivity {
     public UpdateNoteResult handleRequest(UpdateNoteRequest updateNoteRequest) {
         log.info("Received UpdateNoteRequest {}", updateNoteRequest);
 
+        // If note was created via voice note, keep transcriptionId value
+        String transcriptionId = noteDao.getNote(
+                updateNoteRequest.getEmail(),
+                updateNoteRequest.getDateCreated())
+                .getTranscriptionId();
+
         Note note = new Note();
         note.setTitle(updateNoteRequest.getTitle());
         note.setContent(updateNoteRequest.getContent());
         note.setDateCreated(updateNoteRequest.getDateCreated());
         note.setDateUpdated(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         note.setEmail(updateNoteRequest.getEmail());
+        note.setTranscriptionId(transcriptionId);
 
         noteDao.saveNote(note);
 
