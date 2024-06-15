@@ -173,6 +173,8 @@ body {
     object-fit: scale-down;
 }
 
+/* ------------------ Voice Note related styling ------------------ */
+
 #overlay {
     position: relative;
     display: none;
@@ -180,23 +182,53 @@ body {
     max-height: 600px;
 }
 
-.flex-container {
+.flex-container-playback {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
 }
 
-.record-voice-note {
+.voice-note-playback-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#playback-stop-recording-container {
+    display: none;
+}
+
+#playback-transcribing-container {
+    display: none;
+}
+
+.playback-button {
     height: 100px;
     width: 100px;
     border: none;
-    margin: 20px;
     background: #ffffff;
+    padding: 0;
+    margin-bottom: 15px;
 }
 
-.recording-image {
+.playback-image {
     height: 100px;
     width: 100px;
+}
+
+.playback-text {
+    font-size: 25px;
+    font-weight: 500;
+    margin-top: 15px;
+}
+
+#sound-waves-equalizer {
+    width: 300px;
+}
+
+#sound-waves-equalizer-image {
+    width: 100%;
 }
 

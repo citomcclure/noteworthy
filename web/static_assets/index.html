@@ -35,7 +35,7 @@
 
           <div class="col-6">
             <div class="primary-note-container" id="primary-note-default">
-              <div class="primary-note-title" contenteditable="true">Loading...</div>
+              <div class="primary-note-title" contenteditable="true"></div>
               <div class="primary-note-date-created"></div>
               <div class="divider">
                 <hr>
@@ -49,13 +49,29 @@
               </div>
             </div>
             <div class="primary-note-container" id="overlay">
-              <div class="flex-container">
-                <button class="record-voice-note" id="start-recording">
-                  <img class="recording-image" src="images/recording.png">
-                </button>
-                <button class="record-voice-note" id="stop-recording">
-                  <img class="recording-image" src="images/stop-recording.png">
-                </button>
+              <div class="flex-container-playback">
+
+                <div class="voice-note-playback-container" id="playback-start-recording-container">
+                  <button class="playback-button" id="button-start-recording">
+                    <img class="playback-image" src="images/recording.png">
+                  </button>
+                  <div class="playback-text">Click to start recording</div>
+                </div>
+
+                <div class="voice-note-playback-container" id="playback-stop-recording-container">
+                  <button class="playback-button" id="button-stop-recording">
+                    <img class="playback-image" src="images/stop-recording.png">
+                  </button>
+                  <div class="playback-text">Stop recording</div>
+                </div>
+
+                <div class="voice-note-playback-container" id="playback-transcribing-container">
+                  <button class="playback-button" id="sound-waves-equalizer">
+                    <img class="playback-image" id="sound-waves-equalizer-image" src="images/sound-waves-equalizer.png">
+                  </button>
+                  <div class="playback-text">Generating voice note</div>
+                </div>
+
               </div>
             </div>
           </div>

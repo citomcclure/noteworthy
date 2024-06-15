@@ -77,7 +77,7 @@ public class TranscribeAudioActivity {
      * This method handles the incoming request by putting the audio into an
      * S3 bucket and running a transcription job on it. It then accesses the output file
      * and stores in the database before return the result.
-     * @param transcribeAudioRequest request object containing the note keys and audio..
+     * @param transcribeAudioRequest request object containing the note keys and audio
      * @return result object containing the API defined by {@link NoteModel}
      */
     public TranscribeAudioResult handleRequest(TranscribeAudioRequest transcribeAudioRequest) {

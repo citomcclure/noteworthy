@@ -21,6 +21,8 @@ export default class audioRecording extends BindingClass {
         this.connect();
 
         document.getElementById('new-voice-note-start').addEventListener('click', this.transcribeAudio);
+        document.getElementById('playback-start-recording-container').addEventListener('click', NoteUtils.swapStartWithStop);
+        document.getElementById('playback-stop-recording-container').addEventListener('click', NoteUtils.swapStopWithTranscribing);
     }
 
     async connect() {
@@ -36,8 +38,8 @@ export default class audioRecording extends BindingClass {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
             
             // Add listeners for starting and stopping audio
-            let start = document.getElementById('start-recording');
-            let stop = document.getElementById('stop-recording');
+            let start = document.getElementById('playback-start-recording-container');
+            let stop = document.getElementById('playback-stop-recording-container');
             let mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'audio/wav'
             });
@@ -100,7 +102,8 @@ export default class audioRecording extends BindingClass {
         notes.unshift(newVoiceNote);
         this.dataStore.set('notes', notes);
 
-        // Hide voice note UI
+        // Hide voice note UI and show start recording UI for next voice note
         NoteUtils.hideVoiceNoteUI();
+        NoteUtils.swapTranscribingWithStart();
     }
 }

@@ -41,4 +41,26 @@ export default class NoteUtils {
         document.getElementById("primary-note-default").style.display = "none";
         document.getElementById("overlay").style.display = "block";
     }
+
+    static swapPlaybacks() {
+        event
+
+        document.getElementById(hideId).style.display = "none";  
+        document.getElementById(showId).style.display = "flex";
+    }
+
+    static swapStartWithStop() {
+        document.getElementById("playback-start-recording-container").style.display = "none";  
+        document.getElementById("playback-stop-recording-container").style.display = "flex";
+    }
+
+    static swapStopWithTranscribing() {
+        document.getElementById("playback-stop-recording-container").style.display = "none";  
+        document.getElementById("playback-transcribing-container").style.display = "flex";
+    }
+
+    static swapTranscribingWithStart() {
+        document.getElementById("playback-transcribing-container").style.display = "none";  
+        document.getElementById("playback-start-recording-container").style.display = "flex";
+    }
 }
