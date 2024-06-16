@@ -102,7 +102,7 @@ class ViewNotes extends BindingClass {
         let newTitle = "Untitled";
         let newContent = "";
         const newNote = await this.client.createNote(newTitle, newContent);
-        
+
         // Set primary note view to new note values
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
@@ -110,7 +110,7 @@ class ViewNotes extends BindingClass {
         primaryNoteTitle.textContent = newTitle;
         primaryNoteContent.textContent = newContent;
         primaryNoteDateCreated.textContent = newNote.dateCreated;
-    
+
         // add new note preview to preview area
         const newNotePreviewButton = NoteUtils.createNotePreviewButton(newNote);
         const notePreviews = document.querySelector(".note-previews-container");
@@ -178,7 +178,7 @@ class ViewNotes extends BindingClass {
     }
 
     /**
-     * If the note order is not already set to default, reverses the note previews order 
+     * If the note order is not already set to default, reverses the note previews order
      * and updates the datastore for notes and noteOrder.
      * This implementation does not make use of backend to order notes.
      */
@@ -191,30 +191,38 @@ class ViewNotes extends BindingClass {
             return;
         }
 
+        // Change active selector, which is distinguished by bold font weight
+        document.getElementById("sort-default-reversed").style.fontWeight = "normal";
+        document.getElementById("sort-default").style.fontWeight = "bold";
+
         // reverse note order and update datastore
         notes.reverse();
         this.dataStore.set('notes', notes);
-        this.dataStore.set('noteOrder', 'default')
+        this.dataStore.set('noteOrder', 'default');
     }
 
     /**
-    * If the note order is not already set to reverse order, reverses the note previews order 
+    * If the note order is not already set to reverse order, reverses the note previews order
     * and updates the datastore for notes and noteOrder.
     * This implementation does not make use of backend to order notes.
     */
    async setDefaultReversedNoteOrder() {
-       const notes = await this.dataStore.get('notes');
-       const noteOrder = await this.dataStore.get('noteOrder');
+        const notes = await this.dataStore.get('notes');
+        const noteOrder = await this.dataStore.get('noteOrder');
 
-       // If deafult reversed order is currently shown, do nothing
-       if (noteOrder == 'default-reversed') {
-           return;
-       }
+        // If deafult reversed order is currently shown, do nothing
+        if (noteOrder == 'default-reversed') {
+            return;
+        }
 
-       // reverse note order and update datastore
-       notes.reverse();
-       this.dataStore.set('notes', notes);
-       this.dataStore.set('noteOrder', 'default-reversed')
+        // Change active selector, which is distinguished by bold font weight
+        document.getElementById("sort-default").style.fontWeight = "normal";
+        document.getElementById("sort-default-reversed").style.fontWeight = "bold";
+        
+        // reverse note order and update datastore
+        notes.reverse();
+        this.dataStore.set('notes', notes);
+        this.dataStore.set('noteOrder', 'default-reversed');
    }
 }
 

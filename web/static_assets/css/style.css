@@ -92,6 +92,10 @@ body {
     background-color: white;
 }
 
+#sort-default {
+    font-weight: bold;
+}
+
 #search {
     width: 70%;
     text-align: left;
