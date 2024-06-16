@@ -14,6 +14,7 @@ body {
     margin: 0;
     background-repeat:round;
     background-attachment: scroll;
+    overflow-y: hidden;
 }
 
 .background {
@@ -75,6 +76,7 @@ body {
 
 .note-sort-and-search {
     padding-top: 10px;
+    margin-bottom: 20px;
 }
 
 .dropdown-toggle {
@@ -106,12 +108,34 @@ body {
 
 /* ----------------------- Note Preview Area ----------------------- */
 .note-previews-container {
-    padding-top: 25px;
     display: flex;
     flex-direction: column;
     gap: 15px;
     align-items: center;
     margin-bottom: 15px;
+    height: 490px;
+    max-height: 490px;
+    overflow-y: scroll;
+    scrollbar-color: white transparent;
+    direction: rtl;
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+    /* mini scroll area fade */
+    -webkit-mask:
+        linear-gradient(to top,  transparent 10%, #fff 15% 90%, transparent 95%),
+        linear-gradient(to bottom, transparent 10%, #fff 15% 90%, transparent 95%);
+    -webkit-mask-size: 130% 130%;
+    -webkit-mask-position:center;
+    -webkit-mask-repeat:no-repeat;
+    -webkit-mask-composite: source-in;
+    mask:
+        linear-gradient(to top,  transparent 10%, #fff 15% 90%, transparent 95%),
+        linear-gradient(to bottom, transparent 10%, #fff 15% 90%, transparent 95%);
+    mask-size: 130% 130%;
+    mask-position: center;
+    mask-repeat:no-repeat;
+    mask-composite: intersect;
 }
 
 .note-previews-container .button {
@@ -119,8 +143,9 @@ body {
 }
 
 #note-preview-button {
+    min-height: 100px;
     height: 100px;
-    width: 100%;
+    width: 90%;
 }
 
 /* ----------------------- Primary Note View ----------------------- */
