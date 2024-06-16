@@ -15,6 +15,7 @@
     <div class="container text-center">
         <div class="row">
 
+          <!-- ************************ Note Preview Area ************************ -->
           <div class="col-4">
             <button class="button" id="new-note">
                 <div><img src="images/plus-sign.png"> New Note</div>
@@ -37,6 +38,7 @@
 
           <div class="col"></div>
 
+          <!-- ************************ Primary Note View ************************ -->
           <div class="col-6">
             <div class="primary-note-container" id="primary-note-default">
               <div class="primary-note-title" contenteditable="true"></div>
@@ -46,12 +48,22 @@
               </div>
               <div class="primary-note-content" contenteditable="true"></div>
               <div class="space-after-content">
-                <button class="button" id="save-note">Save</button>
+                <button class="button" id="save-note">
+                  <div id="save-text">Save</div>
+                  <div id="saving-spinner-container">
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status"> Saving...</span>
+                  </div>
+                </button>
                 <button class="button" id="delete-note">
-                  <img src="images/trash-can.png">
+                  <img src="images/trash-can.png" id="trash-can-image">
+                  <div id="deleting-spinner-container">
+                    <span class="spinner-border" style="width: 1.37rem; height: 1.37rem;" aria-hidden="true"></span>
+                  </div>
                 </button>
               </div>
             </div>
+            <!-- ****************** Voice Note UI ****************** -->
             <div class="primary-note-container" id="overlay">
               <div class="flex-container-playback">
 

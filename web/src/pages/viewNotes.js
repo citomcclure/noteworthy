@@ -127,6 +127,11 @@ class ViewNotes extends BindingClass {
      * The note preview will reflect the new title, if any.
      */
     async updateNote() {
+        // Show spinner
+        document.getElementById("save-text").style.display = "none";
+        document.getElementById("saving-spinner-container").style.display = "block";
+
+
         // Update note using primary note values
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
@@ -146,6 +151,10 @@ class ViewNotes extends BindingClass {
 
         // Repaint note preview area
         this.displayNotePreviews();
+
+        // Remove spinner
+        document.getElementById("saving-spinner-container").style.display = "none";
+        document.getElementById("save-text").style.display = "block";
     }
 
     /**
@@ -153,6 +162,10 @@ class ViewNotes extends BindingClass {
      * preview area and the first note will now be displayed as the primary note.
      */
     async deleteNote() {
+        // Show spinner
+        document.getElementById("trash-can-image").style.display = "none";
+        document.getElementById("deleting-spinner-container").style.display = "block";
+
         // Delete note from backend using primary note dateCreated
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
         const deletedNote = await this.client.deleteNote(primaryNoteDateCreated.textContent);
@@ -175,6 +188,10 @@ class ViewNotes extends BindingClass {
         // Repaint note preview area and show first note preview as primary note
         this.displayNotePreviews();
         this.displayFirstNoteAsPrimaryNote();
+
+        // Hide spinner
+        document.getElementById("deleting-spinner-container").style.display = "none";
+        document.getElementById("trash-can-image").style.display = "block";
     }
 
     /**
@@ -218,7 +235,7 @@ class ViewNotes extends BindingClass {
         // Change active selector, which is distinguished by bold font weight
         document.getElementById("sort-default").style.fontWeight = "normal";
         document.getElementById("sort-default-reversed").style.fontWeight = "bold";
-        
+
         // reverse note order and update datastore
         notes.reverse();
         this.dataStore.set('notes', notes);

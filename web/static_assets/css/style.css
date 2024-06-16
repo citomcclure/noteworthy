@@ -156,7 +156,7 @@ body {
     margin-bottom: 25px;
 }
 
-.space-after-content{
+.space-after-content {
     display: flex;
     flex-direction: row;
     justify-content: right;
@@ -168,6 +168,10 @@ body {
     padding-bottom: 25px;
 }
 
+#saving-spinner-container {
+    display: none;
+}
+
 #delete-note {
     margin-left: 10px;
 }
@@ -175,6 +179,10 @@ body {
 .col-6 .button img {
     max-height: 22px;
     object-fit: scale-down;
+}
+
+#deleting-spinner-container {
+    display: none;
 }
 
 /* ------------------ Voice Note related styling ------------------ */
