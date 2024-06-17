@@ -47,6 +47,23 @@ body {
     padding-top: 50px;
 }
 
+/* ----------------------- Logged Out UX ----------------------- */
+#app-container {
+    display: none;
+}
+
+#app-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80%;
+    width: 100%;
+}
+
+#app-overlay-button {
+    cursor: default;
+}
+
 /* ----------------------- Actions (e.g., New Note) ----------------------- */
 .button {
   background-color: var(--primary-color);
@@ -215,7 +232,7 @@ body {
 }
 
 /* ----------------------- Voice Note UI ----------------------- */
-#overlay {
+#primary-note-overlay {
     position: relative;
     display: none;
     height: 100%;

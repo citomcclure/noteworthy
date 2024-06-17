@@ -35,13 +35,13 @@ export default class NoteUtils {
     // Methods for showing/hiding different elements on page using CSS display field
 
     static hideVoiceNoteUI() {
-        document.getElementById("overlay").style.display = "none";
+        document.getElementById("primary-note-overlay").style.display = "none";
         document.getElementById("primary-note-default").style.display = "flex";
     }
 
     static showVoiceNoteUI() {
         document.getElementById("primary-note-default").style.display = "none";
-        document.getElementById("overlay").style.display = "block";
+        document.getElementById("primary-note-overlay").style.display = "block";
     }
 
     static swapStartWithStop() {

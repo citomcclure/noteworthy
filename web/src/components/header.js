@@ -10,7 +10,8 @@ export default class Header extends BindingClass {
 
         const methodsToBind = [
             'addHeaderToPage', 'createSiteTitle', 'createUserInfoForHeader',
-            'createLoginButton', 'createLoginButton', 'createLogoutButton'
+            'createLoginButton', 'createLoginButton', 'createLogoutButton',
+            'removeAppOverlay'
         ];
         this.bindClassMethods(methodsToBind, this);
 
@@ -58,10 +59,12 @@ export default class Header extends BindingClass {
     }
 
     createLoginButton() {
+        this.addAppOverlay();
         return this.createButton('Login', this.client.login);
     }
 
     createLogoutButton(currentUser) {
+        this.removeAppOverlay();
         return this.createButton(`Logout: ${currentUser.name}`, this.client.logout);
     }
 
@@ -76,5 +79,15 @@ export default class Header extends BindingClass {
         });
 
         return button;
+    }
+
+    addAppOverlay() {
+        document.getElementById('app-container').style.display = "none";
+        document.getElementById('app-overlay').style.display = "flex";
+    }
+
+    removeAppOverlay() {
+        document.getElementById('app-overlay').style.display = "none";
+        document.getElementById('app-container').style.display = "block";
     }
 }

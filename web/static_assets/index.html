@@ -12,7 +12,12 @@
 
 <body class="background">
     <header class="header" id="header"></header>
-    <div class="container text-center">
+
+    <div id="app-overlay">
+      <div class="button" id="app-overlay-button">Log in to use Noteworthy</div>
+    </div>
+
+    <div class="container text-center" id="app-container">
         <div class="row">
 
           <!-- ************************ Actions & Note Preview Area ************************ -->
@@ -63,7 +68,7 @@
               </div>
             </div>
             <!-- ****************** Voice Note UI ****************** -->
-            <div class="primary-note-container" id="overlay">
+            <div class="primary-note-container" id="primary-note-overlay">
               <div class="flex-container-playback">
 
                 <div class="voice-note-playback-container" id="playback-start-recording-container">
