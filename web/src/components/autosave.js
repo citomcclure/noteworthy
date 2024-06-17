@@ -4,7 +4,7 @@
  */
 export default class Autosave {
 constructor(viewNotes) {
-        // resets if 3 seconds without user input is not reached
+        // resets if 2 seconds without user input is not reached
         function debounce(func, timeout = 2000){
             let timer;
             return (...args) => {
