@@ -140,7 +140,7 @@ export default class NoteworthyService extends BindingClass {
         const formData = new FormData();
         formData.append('file', wavBlob);
 
-        const response = await this.axiosClient.post(`notes/voice`, formData, 
+        const response = await this.axiosClient.post(`notes/voice`, formData,
         {
             headers: {
                 Authorization: `Bearer ${token}`,
