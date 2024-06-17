@@ -28,10 +28,10 @@ class ViewNotes extends BindingClass {
      */
     async mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
-        document.getElementById('save-note').addEventListener('click', this.updateNote);
-        document.getElementById('delete-note').addEventListener('click', this.deleteNote);
         document.getElementById('sort-default').addEventListener('click', this.setDefaultNoteOrder);
         document.getElementById('sort-default-reversed').addEventListener('click', this.setDefaultReversedNoteOrder);
+        document.getElementById('autosave-saving').addEventListener('click', this.updateNote);
+        document.getElementById('delete-note').addEventListener('click', this.deleteNote);
 
         this.header.addHeaderToPage();
 
@@ -128,9 +128,8 @@ class ViewNotes extends BindingClass {
      * The note preview will reflect the new title, if any.
      */
     async updateNote() {
-        // Show spinner
-        document.getElementById("save-text").style.display = "none";
-        document.getElementById("saving-spinner-container").style.display = "block";
+        // Show autosave button with spinner
+        document.getElementById("autosave-saving").style.display = "block";
 
 
         // Update note using primary note values
@@ -153,9 +152,8 @@ class ViewNotes extends BindingClass {
         // Repaint note preview area
         this.displayNotePreviews();
 
-        // Remove spinner
-        document.getElementById("saving-spinner-container").style.display = "none";
-        document.getElementById("save-text").style.display = "block";
+        // Hide autosave button with spinner
+        document.getElementById("autosave-saving").style.display = "none";
     }
 
     /**
