@@ -32,8 +32,7 @@ export default class NoteUtils {
         return notePreviewButton;
     }
 
-    // Methods for showing/hiding different elements on page using CSS display field
-
+    // Methods for hiding/showing elements in audioRecording.js
     static hideVoiceNoteUI() {
         document.getElementById("primary-note-overlay").style.display = "none";
         document.getElementById("primary-note-default").style.display = "flex";
@@ -58,4 +57,29 @@ export default class NoteUtils {
         document.getElementById("playback-transcribing-container").style.display = "none";
         document.getElementById("playback-start-recording-container").style.display = "flex";
     }
+
+    // Methods for hiding/showing elements in header.js
+    static createButton(text, clickHandler) {
+        const button = document.createElement('a');
+        button.classList.add('button');
+        button.href = '#';
+        button.innerText = text;
+
+        button.addEventListener('click', async () => {
+            await clickHandler();
+        });
+
+        return button;
+    }
+
+    static addAppOverlay() {
+        document.getElementById('app-container').style.display = "none";
+        document.getElementById('app-overlay').style.display = "flex";
+    }
+
+    static removeAppOverlay() {
+        document.getElementById('app-overlay').style.display = "none";
+        document.getElementById('app-container').style.display = "block";
+    }
+
 }

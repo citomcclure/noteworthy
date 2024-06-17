@@ -1,5 +1,7 @@
 import NoteworthyServiceClient from '../api/noteworthyServiceClient';
 import BindingClass from "../util/bindingClass";
+import NoteUtils from "../util/noteUtils";
+
 
 /**
  * The header component for the website.
@@ -10,8 +12,7 @@ export default class Header extends BindingClass {
 
         const methodsToBind = [
             'addHeaderToPage', 'createSiteTitle', 'createUserInfoForHeader',
-            'createLoginButton', 'createLoginButton', 'createLogoutButton',
-            'removeAppOverlay'
+            'createLoginButton', 'createLogoutButton'
         ];
         this.bindClassMethods(methodsToBind, this);
 
@@ -59,35 +60,12 @@ export default class Header extends BindingClass {
     }
 
     createLoginButton() {
-        this.addAppOverlay();
-        return this.createButton('Login', this.client.login);
+        NoteUtils.addAppOverlay();
+        return NoteUtils.createButton('Login', this.client.login);
     }
 
     createLogoutButton(currentUser) {
-        this.removeAppOverlay();
-        return this.createButton(`Logout: ${currentUser.name}`, this.client.logout);
-    }
-
-    createButton(text, clickHandler) {
-        const button = document.createElement('a');
-        button.classList.add('button');
-        button.href = '#';
-        button.innerText = text;
-
-        button.addEventListener('click', async () => {
-            await clickHandler();
-        });
-
-        return button;
-    }
-
-    addAppOverlay() {
-        document.getElementById('app-container').style.display = "none";
-        document.getElementById('app-overlay').style.display = "flex";
-    }
-
-    removeAppOverlay() {
-        document.getElementById('app-overlay').style.display = "none";
-        document.getElementById('app-container').style.display = "block";
+        NoteUtils.removeAppOverlay();
+        return NoteUtils.createButton(`Logout: ${currentUser.name}`, this.client.logout);
     }
 }
