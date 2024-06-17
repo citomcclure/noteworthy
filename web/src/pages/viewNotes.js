@@ -30,7 +30,6 @@ class ViewNotes extends BindingClass {
         document.getElementById('new-note').addEventListener('click', this.createNote);
         document.getElementById('sort-default').addEventListener('click', this.setDefaultNoteOrder);
         document.getElementById('sort-default-reversed').addEventListener('click', this.setDefaultReversedNoteOrder);
-        document.getElementById('autosave-saving').addEventListener('click', this.updateNote);
         document.getElementById('delete-note').addEventListener('click', this.deleteNote);
 
         this.header.addHeaderToPage();
