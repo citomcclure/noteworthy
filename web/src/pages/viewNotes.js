@@ -4,6 +4,7 @@ import AudioRecording from '../components/audioRecording';
 import BindingClass from "../util/bindingClass";
 import DataStore from "../util/DataStore";
 import NoteUtils from "../util/noteUtils";
+import Autosave from "../components/autosave";
 
 /**
  * Logic needed to view main page of the website displaying all notes.
@@ -42,11 +43,11 @@ class ViewNotes extends BindingClass {
     /**
      * Once the client is loaded, get the note data.
      */
-        async clientLoaded() {
-            const notes = await this.client.getNotes();
-            this.dataStore.set('notes', notes);
-            this.dataStore.set('noteOrder', "default");
-        }
+    async clientLoaded() {
+        const notes = await this.client.getNotes();
+        this.dataStore.set('notes', notes);
+        this.dataStore.set('noteOrder', "default");
+    }
 
     /**
      * When the notes are updated in the datastore, update the notes metadata on the page.
@@ -248,7 +249,9 @@ class ViewNotes extends BindingClass {
  */
 const main = async () => {
     const viewNotes = new ViewNotes();
-    viewNotes.mount();
+    await viewNotes.mount();
+
+    const autosave = new Autosave(viewNotes);
 };
 
 window.addEventListener('DOMContentLoaded', main);
