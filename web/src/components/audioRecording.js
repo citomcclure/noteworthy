@@ -2,7 +2,7 @@ import NoteworthyServiceClient from '../api/noteworthyServiceClient';
 import BindingClass from "../util/bindingClass";
 import {MediaRecorder, register} from 'extendable-media-recorder';
 import {connect} from 'extendable-media-recorder-wav-encoder';
-import NoteUtils from "../util/noteUtils";
+import NoteworthyUtils from "../util/noteworthyUtils";
 
 let firstTime = true;
 
@@ -21,8 +21,8 @@ export default class audioRecording extends BindingClass {
         this.connect();
 
         document.getElementById('new-voice-note-start').addEventListener('click', this.transcribeAudio);
-        document.getElementById('playback-start-recording-container').addEventListener('click', NoteUtils.swapStartWithStop);
-        document.getElementById('playback-stop-recording-container').addEventListener('click', NoteUtils.swapStopWithTranscribing);
+        document.getElementById('playback-start-recording-container').addEventListener('click', NoteworthyUtils.swapStartWithStop);
+        document.getElementById('playback-stop-recording-container').addEventListener('click', NoteworthyUtils.swapStopWithTranscribing);
     }
 
     /**
@@ -39,7 +39,7 @@ export default class audioRecording extends BindingClass {
      */
     async transcribeAudio() {
         // Show voice note playback UI, with start recording button shown
-        NoteUtils.showVoiceNoteUI();
+        NoteworthyUtils.showVoiceNoteUI();
 
         // Only executed once in order to use the same stream and media player for multiple voice notes in one
         // session. Otherwise, we will start to stack event listeners and create duplicate media related instances.
@@ -100,7 +100,7 @@ export default class audioRecording extends BindingClass {
         primaryNoteDateCreated.textContent = newVoiceNote.dateCreated;
 
         // add new note preview to preview area
-        const newVoiceNotePreviewButton = NoteUtils.createNotePreviewButton(newVoiceNote);
+        const newVoiceNotePreviewButton = NoteworthyUtils.createNotePreviewButton(newVoiceNote);
         const notePreviews = document.querySelector(".note-previews-container");
         notePreviews.prepend(newVoiceNotePreviewButton);
 
@@ -110,7 +110,7 @@ export default class audioRecording extends BindingClass {
         this.dataStore.set('notes', notes);
 
         // Hide voice note UI and show start recording UI for next voice note
-        NoteUtils.hideVoiceNoteUI();
-        NoteUtils.swapTranscribingWithStart();
+        NoteworthyUtils.hideVoiceNoteUI();
+        NoteworthyUtils.swapTranscribingWithStart();
     }
 }

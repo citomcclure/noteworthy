@@ -3,7 +3,7 @@ import Header from '../components/header';
 import AudioRecording from '../components/audioRecording';
 import BindingClass from "../util/bindingClass";
 import DataStore from "../util/DataStore";
-import NoteUtils from "../util/noteUtils";
+import NoteworthyUtils from "../util/noteworthyUtils";
 import Autosave from "../components/autosave";
 
 /**
@@ -66,7 +66,7 @@ class ViewNotes extends BindingClass {
         // Paints note preview area with all note previews
         let note;
         for (note of notes) {
-            notePreviewsContainer.appendChild(NoteUtils.createNotePreviewButton(note));
+            notePreviewsContainer.appendChild(NoteworthyUtils.createNotePreviewButton(note));
         }
     }
 
@@ -112,7 +112,7 @@ class ViewNotes extends BindingClass {
         primaryNoteDateCreated.textContent = newNote.dateCreated;
 
         // add new note preview to preview area
-        const newNotePreviewButton = NoteUtils.createNotePreviewButton(newNote);
+        const newNotePreviewButton = NoteworthyUtils.createNotePreviewButton(newNote);
         const notePreviews = document.querySelector(".note-previews-container");
         notePreviews.prepend(newNotePreviewButton);
 

@@ -1,4 +1,4 @@
-export default class NoteUtils {
+export default class NoteworthyUtils {
 
     /**
      * static utility method to generate the note preview button for the note preview area.
@@ -22,7 +22,7 @@ export default class NoteUtils {
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
         notePreviewButton.addEventListener("click", function (evt) {
             // If voice note UI is being displayed, hide it
-            NoteUtils.hideVoiceNoteUI();
+            NoteworthyUtils.hideVoiceNoteUI();
 
             primaryNoteTitle.textContent = evt.target.noteTitle;
             primaryNoteContent.textContent = evt.target.noteContent;

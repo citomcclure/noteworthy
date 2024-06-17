@@ -1,6 +1,6 @@
 import NoteworthyServiceClient from '../api/noteworthyServiceClient';
 import BindingClass from "../util/bindingClass";
-import NoteUtils from "../util/noteUtils";
+import NoteworthyUtils from "../util/noteworthyUtils";
 
 
 /**
@@ -60,12 +60,12 @@ export default class Header extends BindingClass {
     }
 
     createLoginButton() {
-        NoteUtils.addAppOverlay();
-        return NoteUtils.createButton('Login', this.client.login);
+        NoteworthyUtils.addAppOverlay();
+        return NoteworthyUtils.createButton('Login', this.client.login);
     }
 
     createLogoutButton(currentUser) {
-        NoteUtils.removeAppOverlay();
-        return NoteUtils.createButton(`Logout: ${currentUser.name}`, this.client.logout);
+        NoteworthyUtils.removeAppOverlay();
+        return NoteworthyUtils.createButton(`Logout: ${currentUser.name}`, this.client.logout);
     }
 }
