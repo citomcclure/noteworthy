@@ -1,5 +1,10 @@
+/**
+ * Autosave logic for primary note view. When title or content area receives input, autosave
+ * will occur after 3 seconds of input timeout by calling ViewNotes.updateNote()
+ */
 export default class Autosave {
     constructor(viewNotes) {
+        // resets if 3 seconds without user input is not reached
         function debounce(func, timeout = 3000){
             let timer;
             return (...args) => {
@@ -13,6 +18,8 @@ export default class Autosave {
         }
 
         const processChanges = debounce(() => saveInput());
+
+        document.getElementById('primary-note-title').addEventListener('input', processChanges);
         document.getElementById('primary-note-content').addEventListener('input', processChanges);
     }
 }
