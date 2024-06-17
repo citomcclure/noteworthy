@@ -79,13 +79,17 @@ class ViewNotes extends BindingClass {
         const primaryNoteContent = document.querySelector(".primary-note-content");
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
 
-        // Get first note preview if there is one
+        // Check if any notes, hide/show onboarding
         const notes = await this.dataStore.get('notes');
+        let firstNote;
         if (notes == null || notes.length == 0) {
-            console.log("No notes to display.")
+            // Prompt user to make first note
+            NoteworthyUtils.showOnboarding();
             return;
+        } else {
+            NoteworthyUtils.hideOnboarding();
+            firstNote = notes[0];
         }
-        let firstNote = notes[0];
 
         // Set primary note elements to first note preview values
         primaryNoteTitle.textContent = firstNote.title;
@@ -110,6 +114,10 @@ class ViewNotes extends BindingClass {
         primaryNoteTitle.textContent = newTitle;
         primaryNoteContent.textContent = newContent;
         primaryNoteDateCreated.textContent = newNote.dateCreated;
+
+        // Remove onboarding UI and show primary note container
+        NoteworthyUtils.hideVoiceNoteUI();
+        NoteworthyUtils.hideOnboarding();
 
         // add new note preview to preview area
         const newNotePreviewButton = NoteworthyUtils.createNotePreviewButton(newNote);

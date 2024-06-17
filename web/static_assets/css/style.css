@@ -94,6 +94,7 @@ body {
 .note-sort-and-search {
     padding-top: 10px;
     margin-bottom: 20px;
+    display: none;
 }
 
 .dropdown-toggle {
@@ -165,8 +166,24 @@ body {
     width: 90%;
 }
 
+/* ----------------------- Onboarding ----------------------- */
+#onboard-user {
+    /* display: flex; */
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    height: 80%;
+    width: 100%;
+}
+
+#onboard-user-button {
+    cursor: default;
+}
+
 /* ----------------------- Primary Note View ----------------------- */
 .primary-note-container {
+    display: none;
+
     width: 100%;
     height: auto;
     min-height: 600px;
@@ -174,7 +191,7 @@ body {
     padding-top: 15px;
     border: solid;
     border-radius: 60px;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     align-items: center;
     gap: 10px;

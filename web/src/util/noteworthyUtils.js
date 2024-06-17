@@ -35,11 +35,11 @@ export default class NoteworthyUtils {
     // Methods for hiding/showing elements in audioRecording.js
     static hideVoiceNoteUI() {
         document.getElementById("primary-note-overlay").style.display = "none";
-        document.getElementById("primary-note-default").style.display = "flex";
+        document.getElementById("primary-note-container").style.display = "flex";
     }
 
     static showVoiceNoteUI() {
-        document.getElementById("primary-note-default").style.display = "none";
+        document.getElementById("primary-note-container").style.display = "none";
         document.getElementById("primary-note-overlay").style.display = "block";
     }
 
@@ -82,4 +82,19 @@ export default class NoteworthyUtils {
         document.getElementById('app-container').style.display = "block";
     }
 
+    // Methods for onboarding user in viewNotes.js
+    static showOnboarding() {
+        document.getElementById('note-sort-and-search').style.display = "none";
+        document.getElementById('primary-note-container').style.display = "none";
+        document.getElementById('primary-note-overlay').style.display = "none";
+
+        document.getElementById('onboard-user').style.display = "flex";
+    }
+
+    static hideOnboarding() {
+        document.getElementById('onboard-user').style.display = "none";
+        
+        document.getElementById('note-sort-and-search').style.display = "block";
+        document.getElementById('primary-note-container').style.display = "flex";
+    }
 }

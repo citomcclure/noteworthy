@@ -28,7 +28,7 @@
             <button class="button" id="new-voice-note-start">
               <div><img src="images/recording.png"> Voice Note</div>
             </button>
-            <div class="note-sort-and-search">
+            <div class="note-sort-and-search" id="note-sort-and-search">
               <div class="dropdown-center">
                 <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" id="sort-by">Sort By</button>
                   <ul class="dropdown-menu">
@@ -45,7 +45,23 @@
 
           <!-- ************************ Primary Note View ************************ -->
           <div class="col-6">
-            <div class="primary-note-container" id="primary-note-default">
+
+            <div id="onboard-user">
+              <svg width="800" height="300">
+                <defs>
+                    <marker id="arrow" markerWidth="13" markerHeight="13" refx="5" refy="6" orient="auto">
+                        <path d="M3,3 L3,9 L9,6 L3,3" style="fill:black;" />
+                    </marker>
+                </defs>
+                <path d="M 391 266 C 371 189 242 71 209 110 A 1 1 0 0 0 241 139 C 275 95 155 33 28 21"
+                      style="stroke:black; stroke-width: 2px; fill: none;
+                             marker-end: url(#arrow);"
+                />
+            </svg>
+              <div class="button" id="onboard-user-button">Make your first note!</div>
+            </div>
+
+            <div class="primary-note-container" id="primary-note-container">
               <div class="primary-note-title" id="primary-note-title" contenteditable="true"></div>
               <div class="primary-note-date-created"></div>
               <div class="divider">

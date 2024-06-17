@@ -38,6 +38,9 @@ export default class audioRecording extends BindingClass {
      * chunks array. This is passed to createVoiceNote as 'blob'.
      */
     async transcribeAudio() {
+        // Remove onboarding UI and show primary note container
+        NoteworthyUtils.hideOnboarding();
+
         // Show voice note playback UI, with start recording button shown
         NoteworthyUtils.showVoiceNoteUI();
 
