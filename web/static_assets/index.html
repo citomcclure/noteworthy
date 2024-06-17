@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <title>Noteworthy</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <script type="text/javascript" src="assets/viewNotes.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +15,7 @@
     <div class="container text-center">
         <div class="row">
 
+          <!-- ************************ Actions & Note Preview Area ************************ -->
           <div class="col-4">
             <button class="button" id="new-note">
                 <div><img src="images/plus-sign.png"> New Note</div>
@@ -21,11 +24,13 @@
               <div><img src="images/recording.png"> Voice Note</div>
             </button>
             <div class="note-sort-and-search">
+              <div class="dropdown-center">
                 <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" id="sort-by">Sort By</button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" id="sort-default" href="#">Newest to Oldest</a></li>
-                  <li><a class="dropdown-item" id="sort-default-reversed" href="#">Oldest to Newest</a></li>
-                </ul>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" id="sort-default" href="#">Newest First</a></li>
+                    <li><a class="dropdown-item" id="sort-default-reversed" href="#">Oldest First</a></li>
+                  </ul>
+              </div>
               <!-- <button class="button" id="search">Search...</button> -->
             </div>
             <div class="note-previews-container"></div>
@@ -33,21 +38,31 @@
 
           <div class="col"></div>
 
+          <!-- ************************ Primary Note View ************************ -->
           <div class="col-6">
             <div class="primary-note-container" id="primary-note-default">
-              <div class="primary-note-title" contenteditable="true"></div>
+              <div class="primary-note-title" id="primary-note-title" contenteditable="true"></div>
               <div class="primary-note-date-created"></div>
               <div class="divider">
                 <hr>
               </div>
-              <div class="primary-note-content" contenteditable="true"></div>
+
+              <div class="primary-note-content" id="primary-note-content" contenteditable="true"></div>
+
               <div class="space-after-content">
-                <button class="button" id="save-note">Save</button>
+                <button class="button" id="autosave-saving">
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  <span role="status"> Autosaving...</span>
+                </button>
                 <button class="button" id="delete-note">
-                  <img src="images/trash-can.png">
+                  <img src="images/trash-can.png" id="trash-can-image">
+                  <div id="deleting-spinner-container">
+                    <span class="spinner-border" style="width: 1.37rem; height: 1.37rem;" aria-hidden="true"></span>
+                  </div>
                 </button>
               </div>
             </div>
+            <!-- ****************** Voice Note UI ****************** -->
             <div class="primary-note-container" id="overlay">
               <div class="flex-container-playback">
 

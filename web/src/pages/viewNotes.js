@@ -4,6 +4,7 @@ import AudioRecording from '../components/audioRecording';
 import BindingClass from "../util/bindingClass";
 import DataStore from "../util/DataStore";
 import NoteUtils from "../util/noteUtils";
+import Autosave from "../components/autosave";
 
 /**
  * Logic needed to view main page of the website displaying all notes.
@@ -27,10 +28,9 @@ class ViewNotes extends BindingClass {
      */
     async mount() {
         document.getElementById('new-note').addEventListener('click', this.createNote);
-        document.getElementById('save-note').addEventListener('click', this.updateNote);
-        document.getElementById('delete-note').addEventListener('click', this.deleteNote);
         document.getElementById('sort-default').addEventListener('click', this.setDefaultNoteOrder);
         document.getElementById('sort-default-reversed').addEventListener('click', this.setDefaultReversedNoteOrder);
+        document.getElementById('delete-note').addEventListener('click', this.deleteNote);
 
         this.header.addHeaderToPage();
 
@@ -42,11 +42,11 @@ class ViewNotes extends BindingClass {
     /**
      * Once the client is loaded, get the note data.
      */
-        async clientLoaded() {
-            const notes = await this.client.getNotes();
-            this.dataStore.set('notes', notes);
-            this.dataStore.set('noteOrder', "default");
-        }
+    async clientLoaded() {
+        const notes = await this.client.getNotes();
+        this.dataStore.set('notes', notes);
+        this.dataStore.set('noteOrder', "default");
+    }
 
     /**
      * When the notes are updated in the datastore, update the notes metadata on the page.
@@ -102,7 +102,7 @@ class ViewNotes extends BindingClass {
         let newTitle = "Untitled";
         let newContent = "";
         const newNote = await this.client.createNote(newTitle, newContent);
-        
+
         // Set primary note view to new note values
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
@@ -110,7 +110,7 @@ class ViewNotes extends BindingClass {
         primaryNoteTitle.textContent = newTitle;
         primaryNoteContent.textContent = newContent;
         primaryNoteDateCreated.textContent = newNote.dateCreated;
-    
+
         // add new note preview to preview area
         const newNotePreviewButton = NoteUtils.createNotePreviewButton(newNote);
         const notePreviews = document.querySelector(".note-previews-container");
@@ -127,6 +127,10 @@ class ViewNotes extends BindingClass {
      * The note preview will reflect the new title, if any.
      */
     async updateNote() {
+        // Show autosave button with spinner
+        document.getElementById("autosave-saving").style.display = "block";
+
+
         // Update note using primary note values
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
@@ -146,6 +150,9 @@ class ViewNotes extends BindingClass {
 
         // Repaint note preview area
         this.displayNotePreviews();
+
+        // Hide autosave button with spinner
+        document.getElementById("autosave-saving").style.display = "none";
     }
 
     /**
@@ -153,6 +160,10 @@ class ViewNotes extends BindingClass {
      * preview area and the first note will now be displayed as the primary note.
      */
     async deleteNote() {
+        // Show spinner
+        document.getElementById("trash-can-image").style.display = "none";
+        document.getElementById("deleting-spinner-container").style.display = "block";
+
         // Delete note from backend using primary note dateCreated
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
         const deletedNote = await this.client.deleteNote(primaryNoteDateCreated.textContent);
@@ -175,10 +186,14 @@ class ViewNotes extends BindingClass {
         // Repaint note preview area and show first note preview as primary note
         this.displayNotePreviews();
         this.displayFirstNoteAsPrimaryNote();
+
+        // Hide spinner
+        document.getElementById("deleting-spinner-container").style.display = "none";
+        document.getElementById("trash-can-image").style.display = "block";
     }
 
     /**
-     * If the note order is not already set to default, reverses the note previews order 
+     * If the note order is not already set to default, reverses the note previews order
      * and updates the datastore for notes and noteOrder.
      * This implementation does not make use of backend to order notes.
      */
@@ -191,30 +206,38 @@ class ViewNotes extends BindingClass {
             return;
         }
 
+        // Change active selector, which is distinguished by bold font weight
+        document.getElementById("sort-default-reversed").style.fontWeight = "normal";
+        document.getElementById("sort-default").style.fontWeight = "bold";
+
         // reverse note order and update datastore
         notes.reverse();
         this.dataStore.set('notes', notes);
-        this.dataStore.set('noteOrder', 'default')
+        this.dataStore.set('noteOrder', 'default');
     }
 
     /**
-    * If the note order is not already set to reverse order, reverses the note previews order 
+    * If the note order is not already set to reverse order, reverses the note previews order
     * and updates the datastore for notes and noteOrder.
     * This implementation does not make use of backend to order notes.
     */
    async setDefaultReversedNoteOrder() {
-       const notes = await this.dataStore.get('notes');
-       const noteOrder = await this.dataStore.get('noteOrder');
+        const notes = await this.dataStore.get('notes');
+        const noteOrder = await this.dataStore.get('noteOrder');
 
-       // If deafult reversed order is currently shown, do nothing
-       if (noteOrder == 'default-reversed') {
-           return;
-       }
+        // If deafult reversed order is currently shown, do nothing
+        if (noteOrder == 'default-reversed') {
+            return;
+        }
 
-       // reverse note order and update datastore
-       notes.reverse();
-       this.dataStore.set('notes', notes);
-       this.dataStore.set('noteOrder', 'default-reversed')
+        // Change active selector, which is distinguished by bold font weight
+        document.getElementById("sort-default").style.fontWeight = "normal";
+        document.getElementById("sort-default-reversed").style.fontWeight = "bold";
+
+        // reverse note order and update datastore
+        notes.reverse();
+        this.dataStore.set('notes', notes);
+        this.dataStore.set('noteOrder', 'default-reversed');
    }
 }
 
@@ -223,7 +246,9 @@ class ViewNotes extends BindingClass {
  */
 const main = async () => {
     const viewNotes = new ViewNotes();
-    viewNotes.mount();
+    await viewNotes.mount();
+
+    const autosave = new Autosave(viewNotes);
 };
 
 window.addEventListener('DOMContentLoaded', main);

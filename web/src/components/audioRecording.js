@@ -13,7 +13,7 @@ export default class audioRecording extends BindingClass {
     constructor(dataStore) {
         super();
 
-        const methodsToBind = [ 'transcribeAudio'];
+        const methodsToBind = ['transcribeAudio'];
         this.bindClassMethods(methodsToBind, this);
 
         this.dataStore = dataStore;
@@ -34,18 +34,18 @@ export default class audioRecording extends BindingClass {
 
     /**
      * Attaches event listeners to our start and stop recording playback buttons. On click, these start
-     * and stop the recording. The media recorder makes 'dataavailable' after stop, which is added to our 
+     * and stop the recording. The media recorder makes 'dataavailable' after stop, which is added to our
      * chunks array. This is passed to createVoiceNote as 'blob'.
      */
     async transcribeAudio() {
         // Show voice note playback UI, with start recording button shown
         NoteUtils.showVoiceNoteUI();
 
-        // Only executed once in order to use the same stream and media player for multiple voice notes in one 
+        // Only executed once in order to use the same stream and media player for multiple voice notes in one
         // session. Otherwise, we will start to stack event listeners and create duplicate media related instances.
         if (firstTime) {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-            
+
             // Add listeners for starting and stopping audio
             let start = document.getElementById('playback-start-recording-container');
             let stop = document.getElementById('playback-stop-recording-container');
@@ -60,29 +60,29 @@ export default class audioRecording extends BindingClass {
                 mediaRecorder.start();
                 console.log(mediaRecorder.state);
             });
-    
+
             stop.addEventListener('click', (ev)=>{
                 mediaRecorder.stop();
                 console.log(mediaRecorder.state);
             });
-    
+
             mediaRecorder.ondataavailable = function(ev) {
                 chunks.push(ev.data);
             }
-    
+
             mediaRecorder.onstop = (ev)=>{
                 const mimeType = mediaRecorder.mimeType;
                 let blob = new Blob(chunks, { type: mimeType });
-                
+
                 this.createVoiceNote(blob);
-    
+
                 firstTime = false;
             }
         }
     }
 
     /**
-     * Passes audio blob to client to send request. After retrieving new voice note, switch to 
+     * Passes audio blob to client to send request. After retrieving new voice note, switch to
      * primary note view and paint with new voice note values. Add the note to the datastore and
      * hide voice note playback UI.
      * @param {Array} blob The valid WAV audio blob.
@@ -90,7 +90,7 @@ export default class audioRecording extends BindingClass {
     async createVoiceNote(blob) {
         // Create new voice note in database with wav blob
         const newVoiceNote = await this.client.transcribeAudio(blob);
-        
+
         // Set primary note view to new voice note values
         const primaryNoteTitle = document.querySelector(".primary-note-title");
         const primaryNoteContent = document.querySelector(".primary-note-content");
@@ -98,7 +98,7 @@ export default class audioRecording extends BindingClass {
         primaryNoteTitle.textContent = newVoiceNote.title;
         primaryNoteContent.textContent = newVoiceNote.content;
         primaryNoteDateCreated.textContent = newVoiceNote.dateCreated;
-    
+
         // add new note preview to preview area
         const newVoiceNotePreviewButton = NoteUtils.createNotePreviewButton(newVoiceNote);
         const notePreviews = document.querySelector(".note-previews-container");

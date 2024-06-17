@@ -1,5 +1,5 @@
 export default class NoteUtils {
-    
+
     /**
      * static utility method to generate the note preview button for the note preview area.
      * @param {Object} note the note a button is being made for.
@@ -45,17 +45,17 @@ export default class NoteUtils {
     }
 
     static swapStartWithStop() {
-        document.getElementById("playback-start-recording-container").style.display = "none";  
+        document.getElementById("playback-start-recording-container").style.display = "none";
         document.getElementById("playback-stop-recording-container").style.display = "flex";
     }
 
     static swapStopWithTranscribing() {
-        document.getElementById("playback-stop-recording-container").style.display = "none";  
+        document.getElementById("playback-stop-recording-container").style.display = "none";
         document.getElementById("playback-transcribing-container").style.display = "flex";
     }
 
     static swapTranscribingWithStart() {
-        document.getElementById("playback-transcribing-container").style.display = "none";  
+        document.getElementById("playback-transcribing-container").style.display = "none";
         document.getElementById("playback-start-recording-container").style.display = "flex";
     }
 }
