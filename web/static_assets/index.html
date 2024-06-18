@@ -20,7 +20,7 @@
     <div class="container text-center" id="app-container">
         <div class="row">
 
-          <!-- ************************ Actions & Note Preview Area ************************ -->
+          <!-- ********************* New Note and Other Actions ********************* -->
           <div class="col-4">
             <button class="button" id="new-note">
                 <div><img src="images/plus-sign.png"> New Note</div>
@@ -36,16 +36,17 @@
                     <li><a class="dropdown-item" id="sort-default-reversed" href="#">Oldest First</a></li>
                   </ul>
               </div>
-              <!-- <button class="button" id="search">Search...</button> -->
             </div>
+            
+            <!-- ************************ Primary Note View ************************ -->
             <div class="note-previews-container"></div>
           </div>
 
           <div class="col"></div>
 
-          <!-- ************************ Primary Note View ************************ -->
           <div class="col-6">
 
+            <!-- ************************ Onboarding ************************ -->
             <div id="onboard-user">
               <svg width="800" height="300">
                 <defs>
@@ -61,6 +62,7 @@
               <div class="button" id="onboard-user-button">Make your first note!</div>
             </div>
 
+            <!-- ************************ Primary Note View ************************ -->
             <div class="primary-note-container" id="primary-note-container">
               <div class="primary-note-title" id="primary-note-title" contenteditable="true"></div>
               <div class="primary-note-date-created"></div>
@@ -83,6 +85,7 @@
                 </button>
               </div>
             </div>
+
             <!-- ****************** Voice Note UI ****************** -->
             <div class="primary-note-container" id="primary-note-overlay">
               <div class="flex-container-playback">

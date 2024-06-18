@@ -12,16 +12,16 @@ html {
 body {
     height: 100%;
     margin: 0;
-    background-repeat:round;
+    background-repeat: round;
     background-attachment: scroll;
     overflow-y: hidden;
 }
 
 .background {
-    background: linear-gradient(90deg, #ff9f50, #fcbbff);
+    background: linear-gradient(45deg, #ffc491, #ffffff);
     margin: 0;
     counter-reset: section;
-    font-family: "Helvetica Neue",Helvetica,sans-serif;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', "Helvetica Neue", Helvetica, sans-serif;
 }
 
 .header {
@@ -32,10 +32,11 @@ body {
     color: var(--secondary-color);
     padding: 4px 20px;
     border: solid;
+    box-shadow: 0 0 3px black;
 }
 
 .header_home {
-    font-size: 36px;
+    font-size: xx-large;
     font-weight: 600;
     line-height: 40px;
     height: 100px;
@@ -66,22 +67,23 @@ body {
 
 /* ----------------------- Actions (e.g., New Note) ----------------------- */
 .button {
-  background-color: var(--primary-color);
-  border: solid;
-  border-radius: 5px;
-  color: var(--secondary-color);
-  padding: 6px 8px 6px 8px;
-  line-height: 100%;
-  font-weight: bold;
-  text-decoration: none;
-  cursor: pointer;
+    background-color: var(--primary-color);
+    border: solid;
+    border-radius: 5px;
+    color: var(--secondary-color);
+    padding: 6px 8px 6px 8px;
+    line-height: 100%;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 0 2px grey;
+    font-weight: 450;
 }
 
 .col-4 .button div {
     display: flex;
     align-items: center;
     font-size: x-large;
-    font-weight: 500;
+    font-weight: 600;
     padding: 5px 10px;
 }
 
@@ -103,13 +105,12 @@ body {
     border-radius: 5px;
     padding: 6px 8px 6px 8px;
     line-height: 100%;
-    font-weight: bold;
+    font-weight: normal;
     text-decoration: none;
     cursor: pointer;
 }
 
 #sort-by {
-    font-weight: 400;
     background-color: white;
 }
 
@@ -120,7 +121,7 @@ body {
 #search {
     width: 70%;
     text-align: left;
-    font-weight: 400;
+    font-weight: normal;
     color: rgb(108, 108, 108);
 }
 
@@ -164,11 +165,12 @@ body {
     min-height: 100px;
     height: 100px;
     width: 90%;
+    font-size: large;
+    font-weight: 450;
 }
 
 /* ----------------------- Onboarding ----------------------- */
 #onboard-user {
-    /* display: flex; */
     display: none;
     flex-direction: column;
     align-items: center;
@@ -182,8 +184,6 @@ body {
 
 /* ----------------------- Primary Note View ----------------------- */
 .primary-note-container {
-    display: none;
-
     width: 100%;
     height: auto;
     min-height: 600px;
@@ -191,16 +191,17 @@ body {
     padding-top: 15px;
     border: solid;
     border-radius: 60px;
-    /* display: flex; */
+    display: none;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     position: relative;
+    box-shadow: 0 0 2px grey;
 }
 
 .primary-note-title {
     font-size: xx-large;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .primary-note-date-created {
@@ -216,6 +217,8 @@ body {
     width: 90%;
     padding-bottom: 50px;
     margin-bottom: 25px;
+    font-size: large;
+    font-weight: 450;
 }
 
 .space-after-content {
