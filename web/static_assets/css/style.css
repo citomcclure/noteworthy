@@ -200,6 +200,7 @@ body {
 }
 
 .primary-note-title {
+    min-width: 80%;
     font-size: xx-large;
     font-weight: 600;
 }
