@@ -78,9 +78,9 @@ export default class audioRecording extends BindingClass {
                 let blob = new Blob(chunks, { type: mimeType });
 
                 this.createVoiceNote(blob);
-
-                firstTime = false;
             }
+
+            firstTime = false;
         }
     }
 
