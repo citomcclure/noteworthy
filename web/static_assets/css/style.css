@@ -215,11 +215,16 @@ body {
 .primary-note-content {
     text-align: left;
     width: 90%;
+    min-height: 400px;
     padding-bottom: 50px;
     margin-bottom: 25px;
     font-size: large;
     font-weight: 450;
 }
+
+[contenteditable] {
+    outline: 0px solid transparent;
+  }
 
 .space-after-content {
     display: flex;
