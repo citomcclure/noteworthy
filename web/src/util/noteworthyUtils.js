@@ -84,17 +84,16 @@ export default class NoteworthyUtils {
 
     // Methods for onboarding user in viewNotes.js
     static showOnboarding() {
+        // Hides all elements just in case (besides new note buttons)
         document.getElementById('note-sort-and-search').style.display = "none";
         document.getElementById('primary-note-container').style.display = "none";
         document.getElementById('primary-note-overlay').style.display = "none";
-
         document.getElementById('onboard-user').style.display = "flex";
     }
 
     static hideOnboarding() {
+        // Note: showing Sort By button is handled by calling method
         document.getElementById('onboard-user').style.display = "none";
-        
-        document.getElementById('note-sort-and-search').style.display = "block";
         document.getElementById('primary-note-container').style.display = "flex";
     }
 }

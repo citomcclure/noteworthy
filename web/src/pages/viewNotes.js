@@ -55,8 +55,16 @@ class ViewNotes extends BindingClass {
     async displayNotePreviews() {
         const notes = await this.dataStore.get('notes');
 
+        // Check how many notes there are. 0: show onboarding, 1: remove onboarding and show Sort By
         if (notes == null) {
             return;
+        } else if (notes.length == 0) {
+            // Prompt user to make first note and stop painting
+            NoteworthyUtils.showOnboarding();
+        } else if (notes.length >= 1) {
+            // Hide onboarding and show Sort By button
+            NoteworthyUtils.hideOnboarding();
+            document.getElementById('note-sort-and-search').style.display = "block";
         }
 
         // Empties all current note previews
@@ -79,19 +87,14 @@ class ViewNotes extends BindingClass {
         const primaryNoteContent = document.querySelector(".primary-note-content");
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
 
-        // Check if any notes, hide/show onboarding
         const notes = await this.dataStore.get('notes');
-        let firstNote;
+
         if (notes == null || notes.length == 0) {
-            // Prompt user to make first note
-            NoteworthyUtils.showOnboarding();
             return;
-        } else {
-            NoteworthyUtils.hideOnboarding();
-            firstNote = notes[0];
         }
 
         // Set primary note elements to first note preview values
+        let firstNote = notes[0];
         primaryNoteTitle.textContent = firstNote.title;
         primaryNoteContent.textContent = firstNote.content;
         primaryNoteDateCreated.textContent = firstNote.dateCreated;

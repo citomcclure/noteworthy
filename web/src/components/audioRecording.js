@@ -43,7 +43,7 @@ export default class audioRecording extends BindingClass {
 
         // Show voice note playback UI, with start recording button shown
         NoteworthyUtils.showVoiceNoteUI();
-
+        debugger;
         // Only executed once in order to use the same stream and media player for multiple voice notes in one
         // session. Otherwise, we will start to stack event listeners and create duplicate media related instances.
         if (firstTime) {
@@ -102,10 +102,13 @@ export default class audioRecording extends BindingClass {
         primaryNoteContent.textContent = newVoiceNote.content;
         primaryNoteDateCreated.textContent = newVoiceNote.dateCreated;
 
-        // add new note preview to preview area
+        // Add new note preview to preview area
         const newVoiceNotePreviewButton = NoteworthyUtils.createNotePreviewButton(newVoiceNote);
         const notePreviews = document.querySelector(".note-previews-container");
         notePreviews.prepend(newVoiceNotePreviewButton);
+
+        // Display Sort By button in case this was first note
+        document.getElementById('note-sort-and-search').style.display = "block";
 
         // Add new voice note in datastore
         const notes = await this.dataStore.get('notes');
