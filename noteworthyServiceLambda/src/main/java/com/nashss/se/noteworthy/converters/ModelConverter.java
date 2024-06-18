@@ -13,7 +13,6 @@ public class ModelConverter {
      * @param note the note to convert
      * @return the converted note
      */
-    //TODO: make unit test
     public static NoteModel toNoteModel(Note note) {
         return NoteModel.builder()
                 .withTitle(note.getTitle())

@@ -63,8 +63,6 @@ public class NoteDaoTest {
         assertEquals(note, result);
     }
 
-    // TODO: add unit test for update?
-
     @Test
     public void deleteNote_callsMapperWithNote() {
         // GIVEN
