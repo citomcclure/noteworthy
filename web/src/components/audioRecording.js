@@ -2,7 +2,7 @@ import NoteworthyServiceClient from '../api/noteworthyServiceClient';
 import BindingClass from "../util/bindingClass";
 import {MediaRecorder, register} from 'extendable-media-recorder';
 import {connect} from 'extendable-media-recorder-wav-encoder';
-import NoteUtils from "../util/noteUtils";
+import NoteworthyUtils from "../util/noteworthyUtils";
 
 let firstTime = true;
 
@@ -21,8 +21,8 @@ export default class audioRecording extends BindingClass {
         this.connect();
 
         document.getElementById('new-voice-note-start').addEventListener('click', this.transcribeAudio);
-        document.getElementById('playback-start-recording-container').addEventListener('click', NoteUtils.swapStartWithStop);
-        document.getElementById('playback-stop-recording-container').addEventListener('click', NoteUtils.swapStopWithTranscribing);
+        document.getElementById('playback-start-recording-container').addEventListener('click', NoteworthyUtils.swapStartWithStop);
+        document.getElementById('playback-stop-recording-container').addEventListener('click', NoteworthyUtils.swapStopWithTranscribing);
     }
 
     /**
@@ -38,9 +38,12 @@ export default class audioRecording extends BindingClass {
      * chunks array. This is passed to createVoiceNote as 'blob'.
      */
     async transcribeAudio() {
-        // Show voice note playback UI, with start recording button shown
-        NoteUtils.showVoiceNoteUI();
+        // Remove onboarding UI and show primary note container
+        NoteworthyUtils.hideOnboarding();
 
+        // Show voice note playback UI, with start recording button shown
+        NoteworthyUtils.showVoiceNoteUI();
+        debugger;
         // Only executed once in order to use the same stream and media player for multiple voice notes in one
         // session. Otherwise, we will start to stack event listeners and create duplicate media related instances.
         if (firstTime) {
@@ -75,9 +78,9 @@ export default class audioRecording extends BindingClass {
                 let blob = new Blob(chunks, { type: mimeType });
 
                 this.createVoiceNote(blob);
-
-                firstTime = false;
             }
+
+            firstTime = false;
         }
     }
 
@@ -99,10 +102,13 @@ export default class audioRecording extends BindingClass {
         primaryNoteContent.textContent = newVoiceNote.content;
         primaryNoteDateCreated.textContent = newVoiceNote.dateCreated;
 
-        // add new note preview to preview area
-        const newVoiceNotePreviewButton = NoteUtils.createNotePreviewButton(newVoiceNote);
+        // Add new note preview to preview area
+        const newVoiceNotePreviewButton = NoteworthyUtils.createNotePreviewButton(newVoiceNote);
         const notePreviews = document.querySelector(".note-previews-container");
         notePreviews.prepend(newVoiceNotePreviewButton);
+
+        // Display Sort By button in case this was first note
+        document.getElementById('note-sort-and-search').style.display = "block";
 
         // Add new voice note in datastore
         const notes = await this.dataStore.get('notes');
@@ -110,7 +116,7 @@ export default class audioRecording extends BindingClass {
         this.dataStore.set('notes', notes);
 
         // Hide voice note UI and show start recording UI for next voice note
-        NoteUtils.hideVoiceNoteUI();
-        NoteUtils.swapTranscribingWithStart();
+        NoteworthyUtils.hideVoiceNoteUI();
+        NoteworthyUtils.swapTranscribingWithStart();
     }
 }

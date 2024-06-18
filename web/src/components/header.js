@@ -1,5 +1,7 @@
 import NoteworthyServiceClient from '../api/noteworthyServiceClient';
 import BindingClass from "../util/bindingClass";
+import NoteworthyUtils from "../util/noteworthyUtils";
+
 
 /**
  * The header component for the website.
@@ -10,7 +12,7 @@ export default class Header extends BindingClass {
 
         const methodsToBind = [
             'addHeaderToPage', 'createSiteTitle', 'createUserInfoForHeader',
-            'createLoginButton', 'createLoginButton', 'createLogoutButton'
+            'createLoginButton', 'createLogoutButton'
         ];
         this.bindClassMethods(methodsToBind, this);
 
@@ -58,23 +60,12 @@ export default class Header extends BindingClass {
     }
 
     createLoginButton() {
-        return this.createButton('Login', this.client.login);
+        NoteworthyUtils.addAppOverlay();
+        return NoteworthyUtils.createButton('Login', this.client.login);
     }
 
     createLogoutButton(currentUser) {
-        return this.createButton(`Logout: ${currentUser.name}`, this.client.logout);
-    }
-
-    createButton(text, clickHandler) {
-        const button = document.createElement('a');
-        button.classList.add('button');
-        button.href = '#';
-        button.innerText = text;
-
-        button.addEventListener('click', async () => {
-            await clickHandler();
-        });
-
-        return button;
+        NoteworthyUtils.removeAppOverlay();
+        return NoteworthyUtils.createButton(`Logout: ${currentUser.name}`, this.client.logout);
     }
 }

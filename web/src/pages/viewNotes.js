@@ -3,7 +3,7 @@ import Header from '../components/header';
 import AudioRecording from '../components/audioRecording';
 import BindingClass from "../util/bindingClass";
 import DataStore from "../util/DataStore";
-import NoteUtils from "../util/noteUtils";
+import NoteworthyUtils from "../util/noteworthyUtils";
 import Autosave from "../components/autosave";
 
 /**
@@ -55,8 +55,16 @@ class ViewNotes extends BindingClass {
     async displayNotePreviews() {
         const notes = await this.dataStore.get('notes');
 
+        // Check how many notes there are. 0: show onboarding, 1: remove onboarding and show Sort By
         if (notes == null) {
             return;
+        } else if (notes.length == 0) {
+            // Prompt user to make first note and stop painting
+            NoteworthyUtils.showOnboarding();
+        } else if (notes.length >= 1) {
+            // Hide onboarding and show Sort By button
+            NoteworthyUtils.hideOnboarding();
+            document.getElementById('note-sort-and-search').style.display = "block";
         }
 
         // Empties all current note previews
@@ -66,7 +74,7 @@ class ViewNotes extends BindingClass {
         // Paints note preview area with all note previews
         let note;
         for (note of notes) {
-            notePreviewsContainer.appendChild(NoteUtils.createNotePreviewButton(note));
+            notePreviewsContainer.appendChild(NoteworthyUtils.createNotePreviewButton(note));
         }
     }
 
@@ -79,15 +87,14 @@ class ViewNotes extends BindingClass {
         const primaryNoteContent = document.querySelector(".primary-note-content");
         const primaryNoteDateCreated = document.querySelector(".primary-note-date-created");
 
-        // Get first note preview if there is one
         const notes = await this.dataStore.get('notes');
+
         if (notes == null || notes.length == 0) {
-            console.log("No notes to display.")
             return;
         }
-        let firstNote = notes[0];
 
         // Set primary note elements to first note preview values
+        let firstNote = notes[0];
         primaryNoteTitle.textContent = firstNote.title;
         primaryNoteContent.textContent = firstNote.content;
         primaryNoteDateCreated.textContent = firstNote.dateCreated;
@@ -111,8 +118,12 @@ class ViewNotes extends BindingClass {
         primaryNoteContent.textContent = newContent;
         primaryNoteDateCreated.textContent = newNote.dateCreated;
 
+        // Remove onboarding UI and show primary note container
+        NoteworthyUtils.hideVoiceNoteUI();
+        NoteworthyUtils.hideOnboarding();
+
         // add new note preview to preview area
-        const newNotePreviewButton = NoteUtils.createNotePreviewButton(newNote);
+        const newNotePreviewButton = NoteworthyUtils.createNotePreviewButton(newNote);
         const notePreviews = document.querySelector(".note-previews-container");
         notePreviews.prepend(newNotePreviewButton);
 
