@@ -1,10 +1,21 @@
 package com.nashss.se.noteworthy.services.transcribe;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TranscriptionUtilsTest {
     @Test
@@ -87,5 +98,64 @@ public class TranscriptionUtilsTest {
         // THEN
         assertEquals(expectedLength, result.length());
         assertFalse(result.matches(":"));
+    }
+
+    @Test
+    public void getSampleRate_invalidAudioFile_throwsTranscriptionException() {
+        // GIVEN
+        byte[] invalidAudio = new byte[] {0, 0, 0, 0};
+
+        // WHEN + THEN
+        assertThrows(TranscriptionException.class, () -> TranscriptionUtils.getSampleRate(invalidAudio));
+    }
+
+    @Test
+    public void getSampleRate_validAudio_returnsSampleRate() throws IOException {
+        // GIVEN
+        byte[] audio = new byte[] {0, 0, 0, 0};
+        InputStream inputStream = new ByteArrayInputStream(audio);
+        int expectedSampleRate = 42_000;
+        AudioFormat audioFormat = new AudioFormat((float) expectedSampleRate, 16, 1, true, false);
+        AudioInputStream audioInputStream = new AudioInputStream(inputStream, audioFormat, 10);
+
+        // WHEN
+        int result;
+        try (MockedStatic<AudioSystem> mockedAudioSystem = Mockito.mockStatic(AudioSystem.class)) {
+            mockedAudioSystem.when(() -> AudioSystem.getAudioInputStream(ArgumentMatchers.any(InputStream.class)))
+                    .thenReturn(audioInputStream);
+
+            result = TranscriptionUtils.getSampleRate(audio);
+        }
+
+        inputStream.close();
+        audioInputStream.close();
+
+        // THEN
+        assertEquals(expectedSampleRate, result);
+    }
+
+    @Test
+    public void getSampleRate_sampleRateNoteSpecified_returnsSampleRate() throws IOException {
+        // GIVEN
+        byte[] audio = new byte[] {0, 0, 0, 0};
+        InputStream inputStream = new ByteArrayInputStream(audio);
+        int sampleRate = AudioSystem.NOT_SPECIFIED;
+        AudioFormat audioFormat = new AudioFormat(sampleRate, 16, 1, true, false);
+        AudioInputStream audioInputStream = new AudioInputStream(inputStream, audioFormat, 10);
+
+        // WHEN
+        int result;
+        try (MockedStatic<AudioSystem> mockedAudioSystem = Mockito.mockStatic(AudioSystem.class)) {
+            mockedAudioSystem.when(() -> AudioSystem.getAudioInputStream(ArgumentMatchers.any(InputStream.class)))
+                    .thenReturn(audioInputStream);
+
+            result = TranscriptionUtils.getSampleRate(audio);
+        }
+
+        inputStream.close();
+        audioInputStream.close();
+
+        // THEN
+        assertEquals(48_000, result);
     }
 }
