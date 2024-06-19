@@ -10,6 +10,7 @@ import com.nashss.se.noteworthy.services.dynamodb.TranscriptionDao;
 import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import com.nashss.se.noteworthy.services.dynamodb.models.Transcription;
 import com.nashss.se.noteworthy.services.s3.S3Utils;
+import com.nashss.se.noteworthy.services.s3.S3Wrapper;
 import com.nashss.se.noteworthy.services.transcribe.TranscriptionUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -54,22 +55,22 @@ public class TranscribeAudioActivity {
     private final Logger log = LogManager.getLogger();
     private final NoteDao noteDao;
     private final TranscriptionDao transcriptionDao;
-    private final AmazonS3 s3Client;
+    private final S3Wrapper s3Wrapper;
     private final AmazonTranscribe transcribeClient;
 
     /**
      * Instantiates a new TranscribeAudioActivity object.
      * @param noteDao NoteDao used to access notes table
      * @param transcriptionDao TranscriptionDao used to access transcriptions table
-     * @param s3Client AmazonS3 client
+     * @param s3Wrapper AmazonS3 client
      * @param transcribeClient AmazonTranscribe client
      */
     @Inject
     public TranscribeAudioActivity(NoteDao noteDao, TranscriptionDao transcriptionDao,
-                                   AmazonS3 s3Client, AmazonTranscribe transcribeClient) {
+                                   S3Wrapper s3Wrapper, AmazonTranscribe transcribeClient) {
         this.noteDao = noteDao;
         this.transcriptionDao = transcriptionDao;
-        this.s3Client = s3Client;
+        this.s3Wrapper = s3Wrapper;
         this.transcribeClient = transcribeClient;
     }
 
@@ -124,30 +125,15 @@ public class TranscribeAudioActivity {
         // Stream audio to temp file and store in S3
         String transcriptionKey = transcriptionId + "_key";
         log.info("Attempting to save WAV file to temp and put into S3 bucket as '{}'...", transcriptionKey);
-        try {
-            // Create I/O stream of audio and save to temp directory
-            InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
-            File file = File.createTempFile(transcriptionId, ".wav");
-            Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-            // Put new temp file into S3 bucket
-            PutObjectRequest putObjectRequest = new PutObjectRequest(S3Utils.INPUT_BUCKET, transcriptionKey, file);
-            s3Client.putObject(putObjectRequest);
-            log.info("Wav file put into S3 bucket as '{}'.", transcriptionKey);
-
-            // Close stream and cleanup lambda execution environment
-            inputStream.close();
-            Files.delete(file.toPath());
-        } catch (IOException e) {
-            throw new TranscriptionException("Issue streaming WAV file.", e);
-        }
+        s3Wrapper.putAudioInS3(transcriptionKey, transcribeAudioRequest.getAudio());
+        log.info("Wav file put into S3 bucket as '{}'.", transcriptionKey);
 
         // Create transcription job request with media, media details, model language, and output location
         // and start transcription job
         log.info("Creating StartTranscriptionJobRequest...");
 
         Media media = new Media();
-        media.setMediaFileUri(s3Client.getUrl(S3Utils.INPUT_BUCKET, transcriptionKey).toString());
+        media.setMediaFileUri(s3Wrapper.getAudioLocation(transcriptionKey));
 
         StartTranscriptionJobRequest startTranscriptionJobRequest = new StartTranscriptionJobRequest();
         String transcriptionJob = transcriptionId + "_job";
@@ -197,7 +183,7 @@ public class TranscribeAudioActivity {
         // Stream transcription json from output S3 bucket
         log.info("Obtaining transcription json from completed job at output S3 bucket: '{}' ...",
                 S3Utils.OUTPUT_BUCKET);
-        S3Object object = s3Client.getObject(S3Utils.OUTPUT_BUCKET, transcriptionJob + ".json");
+        S3Object object = s3Wrapper.getTranscriptionJobResult(transcriptionJob);
         String transcriptionResultJson = null;
         try {
             S3ObjectInputStream stream = object.getObjectContent();
