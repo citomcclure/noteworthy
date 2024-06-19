@@ -6,6 +6,7 @@ import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.services.dynamodb.TranscriptionDao;
 import com.nashss.se.noteworthy.services.s3.S3Wrapper;
+import com.nashss.se.noteworthy.services.transcribe.TranscribeWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,14 +25,14 @@ public class TranscribeAudioActivityTest {
     private S3Wrapper s3Wrapper;
 
     @Mock
-    private AmazonTranscribe transcribeClient;
+    private TranscribeWrapper transcribeWrapper;
 
     private TranscribeAudioActivity transcribeAudioActivity;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        transcribeAudioActivity = new TranscribeAudioActivity(noteDao, transcriptionDao, s3Wrapper, transcribeClient);
+        transcribeAudioActivity = new TranscribeAudioActivity(noteDao, transcriptionDao, s3Wrapper, transcribeWrapper);
     }
 
     @Test

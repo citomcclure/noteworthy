@@ -10,16 +10,8 @@ import com.nashss.se.noteworthy.services.dynamodb.TranscriptionDao;
 import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import com.nashss.se.noteworthy.services.dynamodb.models.Transcription;
 import com.nashss.se.noteworthy.services.s3.S3Wrapper;
+import com.nashss.se.noteworthy.services.transcribe.TranscribeWrapper;
 import com.nashss.se.noteworthy.services.transcribe.TranscriptionUtils;
-
-import com.amazonaws.services.transcribe.AmazonTranscribe;
-import com.amazonaws.services.transcribe.model.GetTranscriptionJobRequest;
-import com.amazonaws.services.transcribe.model.GetTranscriptionJobResult;
-import com.amazonaws.services.transcribe.model.LanguageCode;
-import com.amazonaws.services.transcribe.model.Media;
-import com.amazonaws.services.transcribe.model.MediaFormat;
-import com.amazonaws.services.transcribe.model.StartTranscriptionJobRequest;
-import com.amazonaws.services.transcribe.model.TranscriptionJobStatus;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,8 +19,6 @@ import org.apache.logging.log4j.Logger;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import javax.inject.Inject;
-
-import static java.lang.Thread.sleep;
 
 /**
  * Implementation of the TranscribeAudioActivity for the NoteworthyService's TranscribeAudio API.
@@ -39,7 +29,7 @@ public class TranscribeAudioActivity {
     private final NoteDao noteDao;
     private final TranscriptionDao transcriptionDao;
     private final S3Wrapper s3Wrapper;
-    private final AmazonTranscribe transcribeClient;
+    private final TranscribeWrapper transcribeWrapper;
     private String transcriptionId;
 
     /**
@@ -47,15 +37,15 @@ public class TranscribeAudioActivity {
      * @param noteDao NoteDao used to access notes table
      * @param transcriptionDao TranscriptionDao used to access transcriptions table
      * @param s3Wrapper AmazonS3 client
-     * @param transcribeClient AmazonTranscribe client
+     * @param transcribeWrapper AmazonTranscribe client
      */
     @Inject
     public TranscribeAudioActivity(NoteDao noteDao, TranscriptionDao transcriptionDao,
-                                   S3Wrapper s3Wrapper, AmazonTranscribe transcribeClient) {
+                                   S3Wrapper s3Wrapper, TranscribeWrapper transcribeWrapper) {
         this.noteDao = noteDao;
         this.transcriptionDao = transcriptionDao;
         this.s3Wrapper = s3Wrapper;
-        this.transcribeClient = transcribeClient;
+        this.transcribeWrapper = transcribeWrapper;
     }
 
     /**
@@ -80,63 +70,21 @@ public class TranscribeAudioActivity {
         // Put audio file into S3 input bucket
         s3Wrapper.putAudioInS3(transcriptionId, transcribeAudioRequest.getAudio());
 
-        // Create transcription job request with parameters and start transcription job
-        log.info("Creating StartTranscriptionJobRequest...");
-        StartTranscriptionJobRequest startTranscriptionJobRequest = new StartTranscriptionJobRequest();
-        startTranscriptionJobRequest.setTranscriptionJobName(transcriptionId);
-
         // Get sample rate
-        log.info("Attempting to identify sample rate...");
         int sampleRate = TranscriptionUtils.getSampleRate(transcribeAudioRequest.getAudio());
         log.info("Using sample rate {} Hz.", sampleRate);
 
-        // Point media object to S3 input object location
-        Media media = new Media();
-        media.setMediaFileUri(s3Wrapper.getAudioLocation(transcriptionId));
+        // Start transcription batch job
+        String audioLocation = s3Wrapper.getAudioLocation(transcriptionId);
+        transcribeWrapper.startTranscriptionJob(transcriptionId, audioLocation, sampleRate);
 
-        startTranscriptionJobRequest.withMedia(media)
-                .withMediaFormat(MediaFormat.Wav)
-                .withMediaSampleRateHertz(sampleRate)
-                .withLanguageCode(LanguageCode.EnUS)
-                .withOutputBucketName(S3Wrapper.OUTPUT_BUCKET);
+        // Check the job status until it is completed or failed
+        transcribeWrapper.pollTranscriptionJob(transcriptionId);
 
-        transcribeClient.startTranscriptionJob(startTranscriptionJobRequest);
-        log.info("Job sent as StartTranscriptionJobRequest to transcribe client. Job request details: " +
-                        "Job name: '{}', Media format: '{}', Sample rate: '{} Hz', Language code: '{}'.",
-                transcriptionId, MediaFormat.Wav, sampleRate, LanguageCode.EnUS);
-
-        // Create a getTranscriptionJobRequest, and poll the transcription job until it has completed or failed
-        GetTranscriptionJobRequest getTranscriptionJobRequest = new GetTranscriptionJobRequest()
-                .withTranscriptionJobName(transcriptionId);
-        int pollCount = 0;
-        int pollFrequency = 1_000;
-        log.info("Polling job for job status every {} ms...", pollFrequency);
-        while (true) {
-            // Get current job status
-            GetTranscriptionJobResult jobResult = transcribeClient.getTranscriptionJob(getTranscriptionJobRequest);
-            String jobStatus = jobResult.getTranscriptionJob().getTranscriptionJobStatus();
-            pollCount++;
-
-            // If job is in progress or queued, continue to loop until completed or failed
-            if (jobStatus.equals(TranscriptionJobStatus.COMPLETED.toString())) {
-                log.info("Job '{}' completed. Took {} seconds.", transcriptionId, pollCount);
-                break;
-            } else if (jobStatus.equals(TranscriptionJobStatus.FAILED.toString())) {
-                throw new TranscriptionException(String.format(
-                        "Transcription failed due to the following reason: '%s'",
-                        jobResult.getTranscriptionJob().getFailureReason()));
-            }
-
-            // Wait one second before polling job again
-            try {
-                sleep(pollFrequency);
-            } catch (InterruptedException e) {
-                throw new TranscriptionException("Thread was interrupted while waiting for next poll.", e);
-            }
-        }
-
-        // Stream transcription json from output S3 bucket
+        // Stream transcription json from output S3 bucket and parse
         String transcriptionResultJson = s3Wrapper.getTranscriptionJobResult(transcriptionId);
+        String transcript = TranscriptionUtils.parseJsonForTranscript(transcriptionResultJson);
+        log.info("Transcription json successfully obtained and parsed. Transcript: '{}'", transcript);
 
         // Save transcription data to transcriptions table
         Transcription transcription = new Transcription();
@@ -146,10 +94,6 @@ public class TranscribeAudioActivity {
 
         // Create new note using transcript as note content
         Note note = new Note();
-
-        // Parse transcription json
-        String transcript = TranscriptionUtils.parseJsonForTranscript(transcriptionResultJson);
-        log.info("Transcription json successfully obtained and parsed. Transcript: '{}'", transcript);
 
         // Different from CreateNote where value is passed from FE. Due to future extensions of each feature.
         note.setTitle("Untitled Voice Note");
