@@ -76,6 +76,9 @@ export default class audioRecording extends BindingClass {
             mediaRecorder.onstop = (ev)=>{
                 const mimeType = mediaRecorder.mimeType;
                 let blob = new Blob(chunks, { type: mimeType });
+                
+                // Remove data for next use
+                chunks = [];
 
                 this.createVoiceNote(blob);
             }
