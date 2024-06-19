@@ -1,5 +1,6 @@
 package com.nashss.se.noteworthy.services.s3;
 
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.nashss.se.noteworthy.activity.TranscribeAudioActivity;
 import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 
@@ -82,7 +83,23 @@ public class S3Wrapper {
      * @param transcriptionId transcriptionId
      * @return the S3Object representation, which will be the json response of the transcription job
      */
-    public S3Object getTranscriptionJobResult(String transcriptionId) {
-        return s3Client.getObject(OUTPUT_BUCKET, transcriptionId + ".json");
+    public String getTranscriptionJobResult(String transcriptionId) {
+        log.info("Obtaining transcription json from completed job at output S3 bucket: '{}' ...",
+                OUTPUT_BUCKET);
+
+        // Get object from S3
+        S3Object s3Object = s3Client.getObject(OUTPUT_BUCKET, transcriptionId + ".json");
+
+        // Stream json from S3 object
+        String transcriptionResultJson = null;
+        try {
+            S3ObjectInputStream stream = s3Object.getObjectContent();
+            transcriptionResultJson = new String(stream.readAllBytes());
+            stream.close();
+        } catch (IOException e) {
+            throw new TranscriptionException("Issue streaming transcription results.", e);
+        }
+
+        return transcriptionResultJson;
     }
 }

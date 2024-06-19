@@ -78,7 +78,7 @@ public class TranscribeAudioActivity {
             throw new TranscriptionException("Media cannot be null. Please include WAV file with request.");
         }
 
-        // Create unique transcription identifier for bucket keys, transcription job, and transcription output
+        // Create unique transcription identifier for input bucket key, transcription job, and output bucket key
         LocalDateTime currentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         transcriptionId = TranscriptionUtils.generateTranscriptionId(currentTime.toString());
 
@@ -139,17 +139,7 @@ public class TranscribeAudioActivity {
         }
 
         // Stream transcription json from output S3 bucket
-        log.info("Obtaining transcription json from completed job at output S3 bucket: '{}' ...",
-                S3Wrapper.OUTPUT_BUCKET);
-        S3Object object = s3Wrapper.getTranscriptionJobResult(transcriptionId);
-        String transcriptionResultJson = null;
-        try {
-            S3ObjectInputStream stream = object.getObjectContent();
-            transcriptionResultJson = new String(stream.readAllBytes());
-            stream.close();
-        } catch (IOException e) {
-            throw new TranscriptionException("Issue streaming transcription results.", e);
-        }
+        String transcriptionResultJson = s3Wrapper.getTranscriptionJobResult(transcriptionId);
 
         // Parse transcription json
         String transcript;
