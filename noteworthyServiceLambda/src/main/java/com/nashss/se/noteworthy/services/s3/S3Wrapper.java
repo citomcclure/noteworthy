@@ -1,12 +1,12 @@
 package com.nashss.se.noteworthy.services.s3;
 
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.nashss.se.noteworthy.activity.TranscribeAudioActivity;
 import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,7 +81,7 @@ public class S3Wrapper {
     /**
      * After transcription job is finished, retrieve the transcription job results.
      * @param transcriptionId transcriptionId
-     * @return the S3Object representation, which will be the json response of the transcription job
+     * @return the String representation of the resulting json
      */
     public String getTranscriptionJobResult(String transcriptionId) {
         log.info("Obtaining transcription json from completed job at output S3 bucket: '{}' ...",

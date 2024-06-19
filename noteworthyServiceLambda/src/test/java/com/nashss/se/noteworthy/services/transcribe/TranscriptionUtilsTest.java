@@ -1,7 +1,7 @@
 package com.nashss.se.noteworthy.services.transcribe;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nashss.se.noteworthy.services.transcribe.TranscriptionUtils;
+import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +49,7 @@ public class TranscriptionUtilsTest {
     }
 
     @Test
-    public void parseJsonForTranscript_validJsonString_returnsResult() throws JsonProcessingException {
+    public void parseJsonForTranscript_validJsonString_returnsResult() {
         // GIVEN
         String expectedTranscript = "Test";
         String validTranscriptionJson = "{\"jobName\":\"transcription_job\"," +
@@ -64,7 +64,7 @@ public class TranscriptionUtilsTest {
     }
 
     @Test
-    public void parseJsonForTranscript_invalidJsonString_throwsException() throws JsonProcessingException {
+    public void parseJsonForTranscript_invalidJsonString_throwsException() {
         // GIVEN
         String invalidJson = "Test";
         String validTranscriptionJson = "{\"jobName\":\"transcription_job\"," +
@@ -72,7 +72,7 @@ public class TranscriptionUtilsTest {
                 "\"WRONG_KEY\":{\"transcripts\":[{\"transcript\":\"Test\"}]}}";
 
         // WHEN + THEN
-        assertThrows(JsonProcessingException.class, () -> TranscriptionUtils.parseJsonForTranscript(invalidJson));
+        assertThrows(TranscriptionException.class, () -> TranscriptionUtils.parseJsonForTranscript(invalidJson));
     }
 
     @Test

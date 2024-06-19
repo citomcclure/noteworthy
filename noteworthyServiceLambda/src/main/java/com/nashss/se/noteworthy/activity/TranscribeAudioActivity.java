@@ -12,8 +12,6 @@ import com.nashss.se.noteworthy.services.dynamodb.models.Transcription;
 import com.nashss.se.noteworthy.services.s3.S3Wrapper;
 import com.nashss.se.noteworthy.services.transcribe.TranscriptionUtils;
 
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.transcribe.AmazonTranscribe;
 import com.amazonaws.services.transcribe.model.GetTranscriptionJobRequest;
 import com.amazonaws.services.transcribe.model.GetTranscriptionJobResult;
@@ -23,12 +21,9 @@ import com.amazonaws.services.transcribe.model.MediaFormat;
 import com.amazonaws.services.transcribe.model.StartTranscriptionJobRequest;
 import com.amazonaws.services.transcribe.model.TranscriptionJobStatus;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import javax.inject.Inject;
@@ -91,7 +86,9 @@ public class TranscribeAudioActivity {
         startTranscriptionJobRequest.setTranscriptionJobName(transcriptionId);
 
         // Get sample rate
-        int sampleRate = TranscriptionUtils.getSampleRate(transcribeAudioRequest.getAudio(), log);
+        log.info("Attempting to identify sample rate...");
+        int sampleRate = TranscriptionUtils.getSampleRate(transcribeAudioRequest.getAudio());
+        log.info("Using sample rate {} Hz.", sampleRate);
 
         // Point media object to S3 input object location
         Media media = new Media();
@@ -141,15 +138,6 @@ public class TranscribeAudioActivity {
         // Stream transcription json from output S3 bucket
         String transcriptionResultJson = s3Wrapper.getTranscriptionJobResult(transcriptionId);
 
-        // Parse transcription json
-        String transcript;
-        try {
-            transcript = TranscriptionUtils.parseJsonForTranscript(transcriptionResultJson);
-            log.info("Transcription json successfully obtained and parsed. Transcript: '{}'", transcript);
-        } catch (JsonProcessingException e) {
-            throw new TranscriptionException("Unable to parse transcription job result json.", e);
-        }
-
         // Save transcription data to transcriptions table
         Transcription transcription = new Transcription();
         transcription.setTranscriptionId(transcriptionId);
@@ -158,6 +146,10 @@ public class TranscribeAudioActivity {
 
         // Create new note using transcript as note content
         Note note = new Note();
+
+        // Parse transcription json
+        String transcript = TranscriptionUtils.parseJsonForTranscript(transcriptionResultJson);
+        log.info("Transcription json successfully obtained and parsed. Transcript: '{}'", transcript);
 
         // Different from CreateNote where value is passed from FE. Due to future extensions of each feature.
         note.setTitle("Untitled Voice Note");

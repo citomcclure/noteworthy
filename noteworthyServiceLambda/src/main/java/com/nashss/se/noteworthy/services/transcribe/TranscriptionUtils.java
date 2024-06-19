@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -46,11 +45,17 @@ public class TranscriptionUtils {
      * Transcription job results in json string that needs to be parsed to obtain transcription.
      * @param json of successful transcription job
      * @return the string result of transcription
-     * @throws JsonProcessingException if there is error processing json
      */
-    public static String parseJsonForTranscript(String json) throws JsonProcessingException {
-        JsonNode jsonNode = (new ObjectMapper()).readTree(json);
-        return jsonNode.get("results").get("transcripts").get(0).get("transcript").asText();
+    public static String parseJsonForTranscript(String json) {
+        String transcript;
+        try {
+            JsonNode jsonNode = (new ObjectMapper()).readTree(json);
+            transcript = jsonNode.get("results").get("transcripts").get(0).get("transcript").asText();
+        } catch (JsonProcessingException e) {
+            throw new TranscriptionException("Unable to parse transcription job result json.", e);
+        }
+
+        return transcript;
     }
 
     /**
@@ -69,14 +74,12 @@ public class TranscriptionUtils {
     /**
      * Using AudioInputStream, we are making sure the audio is a valid WAV file and obtaining the sample rate.
      * @param audio byte array of audio
-     * @param log logger
      * @return the sample rate in Hz
      */
-    public static int getSampleRate(byte[] audio, Logger log) {
+    public static int getSampleRate(byte[] audio) {
         // Ensure media file is valid WAV file and identify sample rate
         AudioFormat audioFormat;
         int sampleRate = 0;
-        log.info("Attempting to identify sample rate...");
         try {
             // Create I/O stream of audio
             InputStream inputStream = new ByteArrayInputStream(audio);
@@ -90,11 +93,9 @@ public class TranscriptionUtils {
 
             if (audioFormat.getSampleRate() != AudioSystem.NOT_SPECIFIED) {
                 sampleRate = (int) audioFormat.getSampleRate();
-                log.info("Sample rate correctly identified as {} Hz.", sampleRate);
             } else {
                 // If sampleRate is not specified, we will default to 48 kHz sample rate expected from the frontend
                 sampleRate = 48_000;
-                log.info("Could not identify sample rate, setting to default.");
             }
         } catch (IOException e) {
             throw new TranscriptionException("Issue streaming WAV file.", e);
