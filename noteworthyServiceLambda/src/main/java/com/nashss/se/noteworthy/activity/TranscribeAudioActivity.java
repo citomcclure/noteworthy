@@ -9,8 +9,8 @@ import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.services.dynamodb.TranscriptionDao;
 import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import com.nashss.se.noteworthy.services.dynamodb.models.Transcription;
-import com.nashss.se.noteworthy.utils.S3Utils;
-import com.nashss.se.noteworthy.utils.TranscriptionUtils;
+import com.nashss.se.noteworthy.services.s3.S3Utils;
+import com.nashss.se.noteworthy.services.transcribe.TranscriptionUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;

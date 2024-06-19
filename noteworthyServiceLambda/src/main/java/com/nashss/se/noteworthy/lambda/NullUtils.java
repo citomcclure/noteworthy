@@ -1,4 +1,4 @@
-package com.nashss.se.noteworthy.utils;
+package com.nashss.se.noteworthy.lambda;
 
 import java.util.function.Supplier;
 

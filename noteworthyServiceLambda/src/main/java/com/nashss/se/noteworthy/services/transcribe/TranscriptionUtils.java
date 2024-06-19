@@ -1,4 +1,4 @@
-package com.nashss.se.noteworthy.utils;
+package com.nashss.se.noteworthy.services.transcribe;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -9,7 +9,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Arrays;
 
-// TODO: unit tests (expecting 6)
 /**
  * Helpful method(s) for TranscribeAudio endpoint.
  */

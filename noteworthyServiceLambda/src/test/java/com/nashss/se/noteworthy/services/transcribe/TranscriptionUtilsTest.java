@@ -1,6 +1,7 @@
-package com.nashss.se.noteworthy.utils;
+package com.nashss.se.noteworthy.services.transcribe;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nashss.se.noteworthy.services.transcribe.TranscriptionUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
