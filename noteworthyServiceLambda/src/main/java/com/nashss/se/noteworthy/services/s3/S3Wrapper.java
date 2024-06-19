@@ -1,15 +1,15 @@
 package com.nashss.se.noteworthy.services.s3;
 
+import com.nashss.se.noteworthy.activity.TranscribeAudioActivity;
+import com.nashss.se.noteworthy.exceptions.TranscriptionException;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.nashss.se.noteworthy.activity.TranscribeAudioActivity;
-import com.nashss.se.noteworthy.exceptions.TranscriptionException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +17,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
- * Wrapper class for S3 Client to abstract S3 related operations away from {@link TranscribeAudioActivity}
+ * Wrapper class for S3 Client to abstract S3 related operations away from {@link TranscribeAudioActivity}.
  */
 @Singleton
 public class S3Wrapper {
@@ -27,6 +30,10 @@ public class S3Wrapper {
     private final Logger log = LogManager.getLogger();
     private final AmazonS3 s3Client;
 
+    /**
+     * Instantiates a new S3Wrapper.
+     * @param s3Client the Amazon S3 Client
+     */
     @Inject
     public S3Wrapper(AmazonS3 s3Client) {
         this.s3Client = s3Client;

@@ -28,16 +28,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import javax.inject.Inject;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import static java.lang.Thread.sleep;
 
@@ -88,45 +82,20 @@ public class TranscribeAudioActivity {
         LocalDateTime currentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         transcriptionId = TranscriptionUtils.generateTranscriptionId(currentTime.toString());
 
-        // Ensure media file is valid WAV file and identify sample rate
-        AudioFormat audioFormat;
-        int sampleRate = 0;
-        log.info("Attempting to identify sample rate...");
-        try {
-            // Create I/O stream of audio
-            InputStream inputStream = new ByteArrayInputStream(transcribeAudioRequest.getAudio());
-
-            // Stream as AudioInputStream to get audio format
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(inputStream);
-            audioFormat = audioInputStream.getFormat();
-
-            inputStream.close();
-            audioInputStream.close();
-
-            if (audioFormat.getSampleRate() != AudioSystem.NOT_SPECIFIED) {
-                sampleRate = (int) audioFormat.getSampleRate();
-                log.info("Sample rate correctly identified as {} Hz.", sampleRate);
-            } else {
-                // If sampleRate is not specified, we will default to 48 kHz sample rate expected from the frontend
-                sampleRate = 48_000;
-                log.info("Could not identify sample rate, setting to default.");
-            }
-        } catch (IOException e) {
-            throw new TranscriptionException("Issue streaming WAV file.", e);
-        } catch (UnsupportedAudioFileException e) {
-            throw new TranscriptionException("Media file not recognized as valid WAV file.", e);
-        }
-
-        // Put audio file into S3 input bucket and point media object to location
+        // Put audio file into S3 input bucket
         s3Wrapper.putAudioInS3(transcriptionId, transcribeAudioRequest.getAudio());
-        Media media = new Media();
-        media.setMediaFileUri(s3Wrapper.getAudioLocation(transcriptionId));
 
         // Create transcription job request with parameters and start transcription job
         log.info("Creating StartTranscriptionJobRequest...");
-
         StartTranscriptionJobRequest startTranscriptionJobRequest = new StartTranscriptionJobRequest();
         startTranscriptionJobRequest.setTranscriptionJobName(transcriptionId);
+
+        // Get sample rate
+        int sampleRate = TranscriptionUtils.getSampleRate(transcribeAudioRequest.getAudio(), log);
+
+        // Point media object to S3 input object location
+        Media media = new Media();
+        media.setMediaFileUri(s3Wrapper.getAudioLocation(transcriptionId));
 
         startTranscriptionJobRequest.withMedia(media)
                 .withMediaFormat(MediaFormat.Wav)
