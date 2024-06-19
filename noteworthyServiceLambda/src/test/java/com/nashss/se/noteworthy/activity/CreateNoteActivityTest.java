@@ -2,6 +2,7 @@ package com.nashss.se.noteworthy.activity;
 
 import com.nashss.se.noteworthy.activity.requests.CreateNoteRequest;
 import com.nashss.se.noteworthy.activity.results.CreateNoteResult;
+import com.nashss.se.noteworthy.converters.ModelConverter;
 import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.models.NoteModel;
 
@@ -57,6 +58,7 @@ public class CreateNoteActivityTest {
         note.setDateCreated(captor.getValue().getDateCreated());
         note.setDateUpdated(captor.getValue().getDateUpdated());
         note.setEmail(expectedEmail);
+        NoteModel noteModel = ModelConverter.toNoteModel(note);
 
         // THEN
         assertEquals(expectedTitle, resultNote.getTitle());
@@ -69,6 +71,10 @@ public class CreateNoteActivityTest {
         assertTrue(note.equals(captor.getValue()));
         assertEquals(note.toString(), captor.getValue().toString());
         assertEquals(note.hashCode(), captor.getValue().hashCode());
+
+        // Test NoteModel equals() and hashCode()
+        assertTrue(noteModel.equals(resultNote));
+        assertEquals(noteModel.hashCode(), resultNote.hashCode());
     }
 }
 
