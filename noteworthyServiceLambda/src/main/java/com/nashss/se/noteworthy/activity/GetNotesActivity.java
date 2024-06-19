@@ -67,7 +67,6 @@ public class GetNotesActivity {
      * @return the updated order of the notes.
      */
     private List<NoteModel> orderNotes(List<NoteModel> noteModels, String noteOrder) {
-        // TODO: make case statement
         if (noteOrder == null || noteOrder.equals(NoteOrder.DEFAULT)) {
             return noteModels;
         } else if (!Arrays.asList(NoteOrder.values()).contains(noteOrder)) {

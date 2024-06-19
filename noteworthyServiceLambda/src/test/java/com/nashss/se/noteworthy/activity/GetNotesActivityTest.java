@@ -131,5 +131,7 @@ public class GetNotesActivityTest {
         assertEquals(secondNoteResult.getDateCreated(), note2.getDateCreated(),
                 "Expected newest note to be first in list.");
     }
+
+    // TODO: test for invalid order
 }
 
