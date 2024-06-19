@@ -1,6 +1,5 @@
 package com.nashss.se.noteworthy.activity;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.transcribe.AmazonTranscribe;
 import com.nashss.se.noteworthy.activity.requests.TranscribeAudioRequest;
 import com.nashss.se.noteworthy.exceptions.TranscriptionException;

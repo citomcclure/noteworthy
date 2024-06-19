@@ -3,6 +3,7 @@ package com.nashss.se.noteworthy.services.s3;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.nashss.se.noteworthy.activity.TranscribeAudioActivity;
 import com.nashss.se.noteworthy.exceptions.TranscriptionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,29 +17,38 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * Wrapper class for S3 Client to abstract S3 related operations away from {@link TranscribeAudioActivity}
+ */
 @Singleton
 public class S3Wrapper {
+    public static final String INPUT_BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure";
+    public static final String OUTPUT_BUCKET = "nss-s3-c04-u7-noteworthy-cito.mcclure-transcribe-output";
     private final Logger log = LogManager.getLogger();
     private final AmazonS3 s3Client;
-
-    // TODO: bring s3 utils over here
-    // TODO: bring logs over here and add logger
 
     @Inject
     public S3Wrapper(AmazonS3 s3Client) {
         this.s3Client = s3Client;
     }
 
-    // TODO: separate try for opening stream and closing stream
-    public void putAudioInS3(String transcriptionKey, byte[] audio) {
+    /**
+     * I/O streaming of audio byte array to temporary file in execution environment. This file is uploaded to
+     * S3 input bucket and then streams are closed after use.
+     * @param transcriptionId transcriptionID
+     * @param audio byte array of media file from request object
+     */
+    public void putAudioInS3(String transcriptionId, byte[] audio) {
+        log.info("Attempting to save WAV file to temp and put into S3 bucket as '{}'...", transcriptionId);
+
         try {
             // Create I/O stream of audio and save to temp directory
             InputStream inputStream = new ByteArrayInputStream(audio);
-            File file = File.createTempFile(transcriptionKey, ".wav");
+            File file = File.createTempFile(transcriptionId, ".wav");
             Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             // Put new temp file into S3 bucket
-            PutObjectRequest putObjectRequest = new PutObjectRequest(S3Utils.INPUT_BUCKET, transcriptionKey, file);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(INPUT_BUCKET, transcriptionId, file);
             s3Client.putObject(putObjectRequest);
 
             // Close stream and cleanup lambda execution environment
@@ -47,14 +57,25 @@ public class S3Wrapper {
         } catch (IOException e) {
             throw new TranscriptionException("Issue streaming WAV file.", e);
         }
+
+        log.info("Wav file put into S3 bucket as '{}'.", transcriptionId);
     }
 
-    // TODO: get rid of key string
-    public String getAudioLocation(String transcriptionKey) {
-        return s3Client.getUrl(S3Utils.INPUT_BUCKET, transcriptionKey).toString();
+    /**
+     * After uploading to S3, obtain the url for future reference.
+     * @param transcriptionId transcriptionID
+     * @return url string of S3 object location
+     */
+    public String getAudioLocation(String transcriptionId) {
+        return s3Client.getUrl(INPUT_BUCKET, transcriptionId).toString();
     }
 
-    public S3Object getTranscriptionJobResult(String transcriptionJob) {
-        return s3Client.getObject(S3Utils.OUTPUT_BUCKET, transcriptionJob + ".json");
+    /**
+     * After transcription job is finished, retrieve the transcription job results.
+     * @param transcriptionId transcriptionId
+     * @return the S3Object representation, which will be the json response of the transcription job
+     */
+    public S3Object getTranscriptionJobResult(String transcriptionId) {
+        return s3Client.getObject(OUTPUT_BUCKET, transcriptionId + ".json");
     }
 }
