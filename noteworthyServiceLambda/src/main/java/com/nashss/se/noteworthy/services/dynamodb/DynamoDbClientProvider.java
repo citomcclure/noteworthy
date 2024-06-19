@@ -14,6 +14,7 @@ public class DynamoDbClientProvider {
      * Returns DynamoDB client using default region.
      * @return AmazonDynamoDB
      */
+    // TODO: testing coverage for client providers?
     public static AmazonDynamoDB getDynamoDBClient() {
         return getDynamoDBClient(Regions.US_EAST_2);
     }

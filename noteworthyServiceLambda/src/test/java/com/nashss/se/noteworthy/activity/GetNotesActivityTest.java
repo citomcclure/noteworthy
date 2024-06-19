@@ -133,5 +133,7 @@ public class GetNotesActivityTest {
     }
 
     // TODO: test for invalid order
+
+    // TODO: test for no notes
 }
 

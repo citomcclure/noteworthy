@@ -27,7 +27,7 @@ public class TranscriptionUtils {
         for (int i = 0; i < encodedArr.length; i++) {
             // byte sequence corresponds to 'RIFF' found at the beginning of every .wav file
             if (encodedArr[i] == 82 && encodedArr[i + 1] == 73 && encodedArr[i + 2] == 70 && encodedArr[i + 3] == 70) {
-                return Arrays.copyOfRange(encodedArr, i, encodedArr.length - 1);
+                return Arrays.copyOfRange(encodedArr, i, encodedArr.length);
             }
         }
 
