@@ -152,7 +152,7 @@ public class GetNotesActivityTest {
         assertEquals(secondNoteResult.getDateCreated(), note2.getDateCreated(),
                 "Expected newest note to be first in list.");
     }
-    
+
     @Test
     public void handleRequest_invalidOrder_throwsInvalidAttributeValueException() {
         // GIVEN
