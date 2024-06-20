@@ -21,7 +21,7 @@ public class S3ClientProvider {
      * @return AmazonS3
      */
     public static AmazonS3 getS3Client(Regions region) {
-        if (null == region) {
+        if (region == null) {
             throw new IllegalArgumentException("region cannot be null");
         }
 

@@ -2,6 +2,7 @@ package com.nashss.se.noteworthy.activity;
 
 import com.nashss.se.noteworthy.activity.requests.GetNotesRequest;
 import com.nashss.se.noteworthy.activity.results.GetNotesResult;
+import com.nashss.se.noteworthy.exceptions.InvalidAttributeValueException;
 import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import com.nashss.se.noteworthy.models.NoteModel;
@@ -15,9 +16,11 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 public class GetNotesActivityTest {
@@ -63,6 +66,24 @@ public class GetNotesActivityTest {
         assertEquals(expectedDate, resultNote.getDateCreated());
         assertEquals(expectedDate, resultNote.getDateUpdated());
         assertEquals(expectedEmail, resultNote.getEmail());
+    }
+
+    @Test
+    public void handleRequest_noNotesForUser_returnsEmptyListOfNoteModelsInResult() {
+        // GIVEN
+        String expectedEmail = "email@test.com";
+
+        when(noteDao.getAllNotes(expectedEmail)).thenReturn(Collections.emptyList());
+
+        GetNotesRequest request = GetNotesRequest.builder()
+                .withEmail(expectedEmail)
+                .build();
+
+        // WHEN
+        GetNotesResult result = getNotesActivity.handleRequest(request);
+
+        // THEN
+        assertEquals(0, result.getNoteList().size());
     }
 
     @Test
@@ -130,6 +151,23 @@ public class GetNotesActivityTest {
                 "Expected oldest note to be last in list.");
         assertEquals(secondNoteResult.getDateCreated(), note2.getDateCreated(),
                 "Expected newest note to be first in list.");
+    }
+
+    @Test
+    public void handleRequest_invalidOrder_throwsInvalidAttributeValueException() {
+        // GIVEN
+        String email = "email@test.com";
+        String invalidOrder = "random";
+
+        when(noteDao.getAllNotes(email)).thenReturn(Collections.emptyList());
+
+        GetNotesRequest request = GetNotesRequest.builder()
+                .withEmail(email)
+                .withOrder(invalidOrder)
+                .build();
+
+        // WHEN + THEN
+        assertThrows(InvalidAttributeValueException.class, () -> getNotesActivity.handleRequest(request));
     }
 }
 

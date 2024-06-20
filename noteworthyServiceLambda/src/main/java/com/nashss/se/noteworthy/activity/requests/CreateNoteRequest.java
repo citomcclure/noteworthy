@@ -30,7 +30,7 @@ public class CreateNoteRequest {
     @Override
     public String toString() {
         return "CreateNoteRequest{" +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", email='" + email + '\'' +
                 '}';

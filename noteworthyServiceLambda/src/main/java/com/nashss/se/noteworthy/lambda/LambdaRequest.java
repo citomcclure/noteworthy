@@ -1,6 +1,6 @@
 package com.nashss.se.noteworthy.lambda;
 
-import com.nashss.se.noteworthy.utils.TranscriptionUtils;
+import com.nashss.se.noteworthy.services.transcribe.TranscriptionUtils;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.nashss.se.noteworthy.utils.NullUtils.ifNull;
+import static com.nashss.se.noteworthy.lambda.NullUtils.ifNull;
 
 /**
  * Represents a generic "APIGateway" request made to a lambda function.

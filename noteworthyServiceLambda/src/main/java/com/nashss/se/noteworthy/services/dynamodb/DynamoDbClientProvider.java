@@ -24,7 +24,7 @@ public class DynamoDbClientProvider {
      * @return AmazonDynamoDB
      */
     public static AmazonDynamoDB getDynamoDBClient(Regions region) {
-        if (null == region) {
+        if (region == null) {
             throw new IllegalArgumentException("region cannot be null");
         }
 

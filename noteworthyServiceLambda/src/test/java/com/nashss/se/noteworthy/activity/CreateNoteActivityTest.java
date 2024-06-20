@@ -2,17 +2,22 @@ package com.nashss.se.noteworthy.activity;
 
 import com.nashss.se.noteworthy.activity.requests.CreateNoteRequest;
 import com.nashss.se.noteworthy.activity.results.CreateNoteResult;
+import com.nashss.se.noteworthy.converters.ModelConverter;
 import com.nashss.se.noteworthy.services.dynamodb.NoteDao;
 import com.nashss.se.noteworthy.models.NoteModel;
 
+import com.nashss.se.noteworthy.services.dynamodb.models.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 
 public class CreateNoteActivityTest {
     @Mock
@@ -39,9 +44,21 @@ public class CreateNoteActivityTest {
                 .withEmail(expectedEmail)
                 .build();
 
+        ArgumentCaptor<Note> captor = ArgumentCaptor.forClass(Note.class);
+
         // WHEN
         CreateNoteResult result = createNoteActivity.handleRequest(request);
         NoteModel resultNote = result.getNote();
+
+        verify(noteDao).saveNote(captor.capture());
+
+        Note note = new Note();
+        note.setTitle(expectedTitle);
+        note.setContent(expectedContent);
+        note.setDateCreated(captor.getValue().getDateCreated());
+        note.setDateUpdated(captor.getValue().getDateUpdated());
+        note.setEmail(expectedEmail);
+        NoteModel noteModel = ModelConverter.toNoteModel(note);
 
         // THEN
         assertEquals(expectedTitle, resultNote.getTitle());
@@ -49,6 +66,15 @@ public class CreateNoteActivityTest {
         assertNotNull(resultNote.getDateCreated());
         assertNotNull(resultNote.getDateUpdated());
         assertEquals(expectedEmail, resultNote.getEmail());
+
+        // Test Note POJO methods
+        assertTrue(note.equals(captor.getValue()));
+        assertEquals(note.toString(), captor.getValue().toString());
+        assertEquals(note.hashCode(), captor.getValue().hashCode());
+
+        // Test NoteModel equals() and hashCode()
+        assertTrue(noteModel.equals(resultNote));
+        assertEquals(noteModel.hashCode(), resultNote.hashCode());
     }
 }
 

@@ -1,4 +1,4 @@
-package com.nashss.se.noteworthy.utils;
+package com.nashss.se.noteworthy.lambda;
 
 import java.util.function.Supplier;
 
@@ -28,28 +28,5 @@ public class NullUtils {
      */
     public static <T> T ifNull(T obj, Supplier<T> valIfNullSupplier) {
         return obj != null ? obj : valIfNullSupplier.get();
-    }
-
-    /**
-     * If obj is null, return null, otherwise return valIfNotNull.
-     * @param obj The object to check for null.
-     * @param valIfNotNull The value to return if obj is not null.
-     * @param <T> The type of obj and valIfNotNull.
-     * @return null or valIfNotNull.
-     */
-    public static <T> T ifNotNull(T obj, T valIfNotNull) {
-        return obj == null ? null : valIfNotNull;
-    }
-
-    /**
-     * If obj is null, return value supplied by valIfNotNullSupplier.
-     * @param obj The object to check for null.
-     * @param valIfNotNullSupplier The supplier of the value to return if obj is not null.
-     * @param <T> The type of obj.
-     * @param <U> The type of returned by the supplier.
-     * @return null or value returned by valIfNotNullSupplier.
-     */
-    public static <T, U> U ifNotNull(T obj, Supplier<U> valIfNotNullSupplier) {
-        return obj == null ? null : valIfNotNullSupplier.get();
     }
 }

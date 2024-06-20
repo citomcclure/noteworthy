@@ -20,8 +20,8 @@ public class TranscribeClientProvider {
      * @return AmazonTranscribe
      */
     public static AmazonTranscribe getTranscribeClient(Regions region) {
-        if (null == region) {
-            throw new IllegalArgumentException("region cannot be null");
+        if (region == null) {
+            throw new IllegalArgumentException("Region cannot be null");
         }
 
         return AmazonTranscribeClientBuilder
