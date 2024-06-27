@@ -126,11 +126,7 @@ body {
 }
 
 /* ----------------------- Note Preview Area ----------------------- */
-.note-previews-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
+.note-previews-container-scroll {
     margin-bottom: 15px;
     height: 490px;
     max-height: 490px;
@@ -155,6 +151,14 @@ body {
     mask-position: center;
     mask-repeat:no-repeat;
     mask-composite: intersect;
+}
+
+.note-previews-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    direction: ltr;
 }
 
 .note-previews-container .button {
